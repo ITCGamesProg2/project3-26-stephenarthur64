@@ -40,60 +40,75 @@ void Game::update()
 {
     handleInput();
 
-    if (!m_rewinding)
+    if (m_rewinding)
     {
-        m_player.update();
-
-        m_testnpc.setTarget(m_player.getPosition());
-
-        if (!m_timestop)
-        {
-            m_testnpc.update();
-
-            if (m_timeCounting < TIME_INTERVAL)
-            {
-                m_timeCounting += GetFrameTime();
-            }
-            else
-            {
-                m_timeCounting = 0.0f;
-                m_newTime.position = m_player.getPosition();
-                m_newTime.radius = m_player.getRadius();
-                m_timeline.addTime(m_newTime);
-            }
-        }
-        else
-        {
-            if (m_timeCounting < TIME_STOP_MAX)
-            {
-                m_timeCounting += GetFrameTime();
-            }
-            else
-            {
-                m_timestop = false;
-                m_timeCounting = 0.0f;
-            }
-        }
+        rewindingUpdate();
+    }
+    else if (m_timestop)
+    {
+        timeStoppedUpdate();
     }
     else
     {
-        if (m_rewindTimer >= TIME_INTERVAL / 8)
-        {
-            m_rewindTimer = 0.0f;
-            m_tempTime = m_timeline.rewind();
-
-            if (m_tempTime.position.x != 0.0f)
-            {
-                m_player.rewind(m_tempTime);
-            }
-            else
-            {
-                m_rewinding = false;
-                m_rewindTimer = 0.0f;
-            }
-        }
-        m_rewindTimer += GetFrameTime();
+        standardUpdate();
     }
+}
+
+void Game::standardUpdate()
+{
+    m_player.update();
+
+    m_testnpc.setTarget(m_player.getPosition());
+    m_testnpc.update();
+
+    if (m_timeCounting < TIME_INTERVAL)
+    {
+        m_timeCounting += GetFrameTime();
+    }
+    else
+    {
+        m_timeCounting = 0.0f;
+        m_newTime.position = m_player.getPosition();
+        m_newTime.radius = m_player.getRadius();
+        m_timeline.addTime(m_newTime);
+    }
+}
+
+
+void Game::timeStoppedUpdate()
+{
+    m_player.update();
+
+    if (m_timeCounting < TIME_STOP_MAX)
+    {
+        m_timeCounting += GetFrameTime();
+    }
+    else
+    {
+        m_timestop = false;
+        m_timeCounting = 0.0f;
+    }
+}
+
+
+void Game::rewindingUpdate()
+{
+    if (m_rewindTimer >= TIME_INTERVAL / 8)
+    {
+        m_rewindTimer = 0.0f;
+        m_tempTime = m_timeline.rewind();
+
+        if (m_tempTime.position.x != 0.0f)
+        {
+            m_player.rewind(m_tempTime);
+        }
+        else
+        {
+            m_rewinding = false;
+            m_rewindTimer = 0.0f;
+        }
+    }
+    m_rewindTimer += GetFrameTime();
 }
 
 void Game::handleInput()

@@ -13,6 +13,9 @@ public:
     void init();
     void draw();
     void update();
+    void timeStoppedUpdate();
+    void rewindingUpdate();
+    void standardUpdate();
     void handleInput();
 
 private:
