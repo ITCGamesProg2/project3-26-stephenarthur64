@@ -19,3 +19,8 @@ void Player::moveDirection(Vector2 t_direction)
 {
 	m_velocity = t_direction * m_speed;
 }
+
+void Player::rewind(Time t_new)
+{
+	m_position = t_new.position;
+}

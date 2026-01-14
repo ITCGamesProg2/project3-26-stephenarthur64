@@ -2,7 +2,7 @@
 #include "stdio.h"
 #include "../include/game.h"
 
-Game::Game() : m_player(BLUE, 35.0f)
+Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f)
 {
 }
 
@@ -14,31 +14,81 @@ void Game::draw()
 {
     DrawFPS(0, 0);
     m_player.draw();
+
+    if (m_rewinding)
+    {
+        m_timeline.drawTimeline();
+    }
 }
 
 void Game::update()
 {
     handleInput();
-    m_player.update();
+
+    if (!m_rewinding)
+    {
+        m_player.update();
+
+        if (m_timeCounting < TIME_INTERVAL)
+        {
+            m_timeCounting += GetFrameTime();
+        }
+        else
+        {
+            m_timeCounting = 0.0f;
+            m_newTime.position = m_player.getPosition();
+            m_newTime.radius = m_player.getRadius();
+            m_timeline.addTime(m_newTime);
+        }
+    }
+    else
+    {
+        if (m_rewindTimer >= TIME_INTERVAL / 8)
+        {
+            m_rewindTimer = 0.0f;
+            m_tempTime = m_timeline.rewind();
+
+            if (m_tempTime.position.x != 0.0f)
+            {
+                m_player.rewind(m_tempTime);
+            }
+            else
+            {
+                m_rewinding = false;
+                m_rewindTimer = 0.0f;
+            }
+        }
+        m_rewindTimer += GetFrameTime();
+    }
 }
 
 void Game::handleInput()
 {
+    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+    {
+        m_rewinding = true;
+        return;
+    }
+    else
+    {
+        m_rewinding = false;
+    }
+
     Vector2 direction = { 0.0f, 0.0f };
 
     if (IsKeyDown(KEY_W)) // Up
     {
         direction.y += -1.0f;
     }
-    else if (IsKeyDown(KEY_S)) // Down
+    if (IsKeyDown(KEY_S)) // Down
     {
         direction.y += 1.0f;
     }
-    else if (IsKeyDown(KEY_A)) // Left
+    if (IsKeyDown(KEY_A)) // Left
     {
         direction.x += -1.0f;
     }
-    else if (IsKeyDown(KEY_D)) // Right
+    if (IsKeyDown(KEY_D)) // Right
     {
         direction.x += 1.0f;
     }

@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\GameObject.h" />
+    <ClInclude Include="include\globals.h" />
     <ClInclude Include="include\NPC.h" />
     <ClInclude Include="include\Player.h" />
     <ClInclude Include="include\Timeline.h" />

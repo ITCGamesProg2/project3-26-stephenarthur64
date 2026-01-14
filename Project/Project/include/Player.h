@@ -1,5 +1,7 @@
 #pragma once
 #include "GameObject.h"
+#include "globals.h"
+
 class Player :
     public GameObject
 {
@@ -8,5 +10,9 @@ public:
     virtual void update() override;
     virtual void move() override;
     void moveDirection(Vector2 t_direction);
+
+    float getRadius() { return m_radius; }
+
+    void rewind(Time t_new);
 };
 
