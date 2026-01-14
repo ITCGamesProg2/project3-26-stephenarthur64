@@ -132,10 +132,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\game.h" />
+    <ClInclude Include="include\GameObject.h" />
+    <ClInclude Include="include\NPC.h" />
+    <ClInclude Include="include\Player.h" />
+    <ClInclude Include="include\Timeline.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\NPC.cpp" />
+    <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\Timeline.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
