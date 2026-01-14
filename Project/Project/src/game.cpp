@@ -2,7 +2,7 @@
 #include "stdio.h"
 #include "../include/game.h"
 
-Game::Game() : m_player(BLUE, 35.0f), m_testnpc(RED, 30.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f)
+Game::Game() : m_player(BLUE, 35.0f), m_testnpc(RED, 30.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2)
 {
     m_testnpc.setPosition({ 600.0f, 200.0f });
 }
@@ -17,6 +17,10 @@ void Game::draw()
     if (m_rewinding)
     {
         ClearBackground(DARKBLUE);
+    }
+    else if (m_timestop)
+    {
+        ClearBackground(GRAY);
     }
     else
     {
@@ -41,18 +45,34 @@ void Game::update()
         m_player.update();
 
         m_testnpc.setTarget(m_player.getPosition());
-        m_testnpc.update();
 
-        if (m_timeCounting < TIME_INTERVAL)
+        if (!m_timestop)
         {
-            m_timeCounting += GetFrameTime();
+            m_testnpc.update();
+
+            if (m_timeCounting < TIME_INTERVAL)
+            {
+                m_timeCounting += GetFrameTime();
+            }
+            else
+            {
+                m_timeCounting = 0.0f;
+                m_newTime.position = m_player.getPosition();
+                m_newTime.radius = m_player.getRadius();
+                m_timeline.addTime(m_newTime);
+            }
         }
         else
         {
-            m_timeCounting = 0.0f;
-            m_newTime.position = m_player.getPosition();
-            m_newTime.radius = m_player.getRadius();
-            m_timeline.addTime(m_newTime);
+            if (m_timeCounting < TIME_STOP_MAX)
+            {
+                m_timeCounting += GetFrameTime();
+            }
+            else
+            {
+                m_timestop = false;
+                m_timeCounting = 0.0f;
+            }
         }
     }
     else
@@ -78,7 +98,12 @@ void Game::update()
 
 void Game::handleInput()
 {
-    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+    if (IsKeyReleased(KEY_SPACE))
+    {
+        m_timestop = !m_timestop;
+    }
+
+    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) && !m_timestop)
     {
         if (m_timeline.canRewind())
         {
