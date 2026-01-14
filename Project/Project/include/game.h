@@ -2,6 +2,7 @@
 #define GAME_H
 #include "raylib.h"
 #include "Player.h"
+#include "NPC.h"
 #include "Timeline.h"
 #include "globals.h"
 
@@ -16,6 +17,8 @@ public:
 
 private:
     Player m_player;
+    NPC m_testnpc;
+
     Timeline m_timeline;
     Time m_tempTime;
     Time m_newTime;

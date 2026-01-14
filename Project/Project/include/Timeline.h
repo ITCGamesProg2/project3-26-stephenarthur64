@@ -10,6 +10,7 @@ public:
 	void addTime(Time t_new);
 	Time rewind();
 	void drawTimeline();
+	bool canRewind();
 
 private:
 	std::list<Time> m_timeline;

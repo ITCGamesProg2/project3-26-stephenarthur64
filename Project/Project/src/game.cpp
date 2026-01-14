@@ -2,8 +2,9 @@
 #include "stdio.h"
 #include "../include/game.h"
 
-Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f)
+Game::Game() : m_player(BLUE, 35.0f), m_testnpc(RED, 30.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f)
 {
+    m_testnpc.setPosition({ 600.0f, 200.0f });
 }
 
 void Game::init()
@@ -13,7 +14,17 @@ void Game::init()
 void Game::draw()
 {
     DrawFPS(0, 0);
+    if (m_rewinding)
+    {
+        ClearBackground(DARKBLUE);
+    }
+    else
+    {
+        ClearBackground(WHITE);
+    }
     m_player.draw();
+
+    m_testnpc.draw();
 
     if (m_rewinding)
     {
@@ -28,6 +39,9 @@ void Game::update()
     if (!m_rewinding)
     {
         m_player.update();
+
+        m_testnpc.setTarget(m_player.getPosition());
+        m_testnpc.update();
 
         if (m_timeCounting < TIME_INTERVAL)
         {
@@ -66,7 +80,10 @@ void Game::handleInput()
 {
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
     {
-        m_rewinding = true;
+        if (m_timeline.canRewind())
+        {
+            m_rewinding = true;
+        }
         return;
     }
     else
