@@ -1,23 +1,35 @@
 #include "Player.h"
 
-Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r)
+Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MIN_SPEED(0.01f)
 {
-	m_speed = 3.0f;
+	m_speed = 0.4f;
 }
 
 void Player::update()
 {
-	move();
+	if (m_velocity.x != 0.0f || m_velocity.y != 0.0f)
+	{
+		move();
+	}
 }
 
 void Player::move()
 {
 	m_position += m_velocity;
+	m_velocity *= 0.94f;
 }
 
 void Player::moveDirection(Vector2 t_direction)
 {
-	m_velocity = t_direction * m_speed;
+	m_velocity += t_direction * m_speed;
+	if (m_velocity.x > MAX_SPEED)
+	{
+		m_velocity.x = MAX_SPEED;
+	}
+	if (m_velocity.y > MAX_SPEED)
+	{
+		m_velocity.y = MAX_SPEED;
+	}
 }
 
 void Player::rewind(Time t_new)

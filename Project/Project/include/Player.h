@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "globals.h"
+#include "reasings.h"
 
 class Player :
     public GameObject
@@ -14,5 +15,11 @@ public:
     float getRadius() { return m_radius; }
 
     void rewind(Time t_new);
+
+private:
+    Vector2 m_positionBuffer;
+    float deltaTime;
+    const float MAX_SPEED;
+    const float MIN_SPEED;
 };
 

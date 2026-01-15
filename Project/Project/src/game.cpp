@@ -150,5 +150,8 @@ void Game::handleInput()
         direction.x += 1.0f;
     }
 
-    m_player.moveDirection(direction);
+    if (direction.x != 0.0f || direction.y != 0.0f)
+    {
+    }
+        m_player.moveDirection(direction);
 }
