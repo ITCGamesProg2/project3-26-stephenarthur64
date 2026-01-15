@@ -3,17 +3,12 @@
 #include "globals.h"
 #include <list>
 
-class Timeline
+static class Timeline
 {
 public:
-	Timeline();
-	void addTime(Time t_new);
-	Time rewind();
-	void drawTimeline();
-	bool canRewind();
-
-private:
-	std::list<Time> m_timeline;
-	const int MAX_TIME;
+	static void addTime(Time t_new);
+	static Time rewind();
+	static void drawTimeline();
+	static bool canRewind();
 };
 

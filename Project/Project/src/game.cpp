@@ -32,7 +32,7 @@ void Game::draw()
 
     if (m_rewinding)
     {
-        m_timeline.drawTimeline();
+        Timeline::drawTimeline();
     }
 }
 
@@ -68,9 +68,7 @@ void Game::standardUpdate()
     else
     {
         m_timeCounting = 0.0f;
-        m_newTime.position = m_player.getPosition();
-        m_newTime.radius = m_player.getRadius();
-        m_timeline.addTime(m_newTime);
+        Timeline::addTime(m_player.generateTime());
     }
 }
 
@@ -96,17 +94,7 @@ void Game::rewindingUpdate()
     if (m_rewindTimer >= TIME_INTERVAL / 8)
     {
         m_rewindTimer = 0.0f;
-        m_tempTime = m_timeline.rewind();
-
-        if (m_tempTime.position.x != 0.0f)
-        {
-            m_player.rewind(m_tempTime);
-        }
-        else
-        {
-            m_rewinding = false;
-            m_rewindTimer = 0.0f;
-        }
+        m_rewinding = m_player.rewind();
     }
     m_rewindTimer += GetFrameTime();
 }
@@ -120,7 +108,7 @@ void Game::handleInput()
 
     if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) && !m_timestop)
     {
-        if (m_timeline.canRewind())
+        if (Timeline::canRewind())
         {
             m_rewinding = true;
         }
@@ -129,6 +117,11 @@ void Game::handleInput()
     else
     {
         m_rewinding = false;
+    }
+
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+    {
+        m_player.useAttack(AttackTypes::LIGHT);
     }
 
     Vector2 direction = { 0.0f, 0.0f };
@@ -153,5 +146,5 @@ void Game::handleInput()
     if (direction.x != 0.0f || direction.y != 0.0f)
     {
     }
-        m_player.moveDirection(direction);
+        m_player.addForce(direction);
 }

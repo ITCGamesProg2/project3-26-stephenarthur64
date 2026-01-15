@@ -22,7 +22,6 @@ private:
     Player m_player;
     NPC m_testnpc;
 
-    Timeline m_timeline;
     Time m_tempTime;
     Time m_newTime;
     bool m_rewinding;

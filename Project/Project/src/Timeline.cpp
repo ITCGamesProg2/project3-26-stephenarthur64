@@ -1,9 +1,8 @@
 #include "Timeline.h"
 #include <iostream>
 
-Timeline::Timeline() : MAX_TIME(30)
-{
-}
+static std::list<Time> m_timeline;
+static const int MAX_TIME = 30;
 
 void Timeline::addTime(Time t_new)
 {
@@ -32,7 +31,7 @@ void Timeline::drawTimeline()
 	int alpha = 70;
 	Vector2 lastpos = {-1000, -1000};
 
-	for (Time t : m_timeline)
+	for (Time &t : m_timeline)
 	{
 		if (lastpos.x == t.position.x && lastpos.y == t.position.y)
 		{
