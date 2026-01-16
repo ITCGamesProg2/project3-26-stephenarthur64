@@ -9,7 +9,9 @@ public:
 	virtual void draw();
 	virtual void update() = 0;
 	virtual void move() = 0;
+	virtual void collision (bool t_damage, Vector2 t_pos) = 0;
 	Vector2 getPosition() { return m_position; }
+	float getRadius() { return m_radius; }
 
 protected:
 	Vector2 m_position;

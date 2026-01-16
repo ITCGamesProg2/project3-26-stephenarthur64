@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "NPC.h"
 #include "Timeline.h"
+#include "CollisionCheck.h"
 #include "globals.h"
 
 class Game
@@ -17,6 +18,7 @@ public:
     void rewindingUpdate();
     void standardUpdate();
     void handleInput();
+    void CheckCollisions();
 
 private:
     Player m_player;

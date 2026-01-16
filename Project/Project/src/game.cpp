@@ -39,6 +39,7 @@ void Game::draw()
 void Game::update()
 {
     handleInput();
+    CheckCollisions();
 
     if (m_rewinding)
     {
@@ -106,7 +107,7 @@ void Game::handleInput()
         m_timestop = !m_timestop;
     }
 
-    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) && !m_timestop)
+    if (IsKeyDown(KEY_Q) && !m_timestop)
     {
         if (Timeline::canRewind())
         {
@@ -122,6 +123,10 @@ void Game::handleInput()
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
     {
         m_player.useAttack(AttackTypes::LIGHT);
+    }
+    else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+    {
+        m_player.useAttack(AttackTypes::HEAVY);
     }
 
     Vector2 direction = { 0.0f, 0.0f };
@@ -147,4 +152,10 @@ void Game::handleInput()
     {
     }
         m_player.addForce(direction);
+}
+
+void Game::CheckCollisions()
+{
+    CollisionCheck::CheckCollisionAttack(LIGHT, m_testnpc);
+    CollisionCheck::CheckCollisionAttack(HEAVY, m_testnpc);
 }

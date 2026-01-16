@@ -1,10 +1,10 @@
 #include "Player.h"
 
-Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MIN_SPEED(0.01f), m_light(m_position)
+Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MIN_SPEED(0.01f), m_light(m_position), m_heavy(m_position)
 {
 	m_speed = 0.4f;
-	Vector2 end = { m_position.x + 1000, m_position.y };
-	m_light.setEnd(end);
+	CollisionCheck::setAttackReference(LIGHT, &m_light);
+	CollisionCheck::setAttackReference(HEAVY, &m_heavy);
 }
 
 void Player::update()
@@ -15,6 +15,9 @@ void Player::update()
 	}
 	m_light.setStart(m_position);
 	m_light.process();
+
+	m_heavy.setStart(m_position);
+	m_heavy.process();
 }
 
 void Player::move()
@@ -28,6 +31,11 @@ void Player::draw()
 	GameObject::draw();
 
 	m_light.draw();
+	m_heavy.draw();
+}
+
+void Player::collision(bool t_damage, Vector2 t_pos)
+{
 }
 
 void Player::addForce(Vector2 t_direction)
@@ -73,6 +81,7 @@ void Player::useAttack(AttackTypes t_attack)
 		m_light.execute();
 		break;
 	case HEAVY:
+		m_heavy.execute();
 		break;
 	default:
 		break;

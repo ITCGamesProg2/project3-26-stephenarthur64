@@ -39,6 +39,12 @@
     <ClInclude Include="include\LightAttack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\CollisionCheck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HeavyAttack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
@@ -62,7 +68,7 @@
     <ClCompile Include="src\Attack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\LightAttack.cpp">
+    <ClCompile Include="src\CollisionCheck.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

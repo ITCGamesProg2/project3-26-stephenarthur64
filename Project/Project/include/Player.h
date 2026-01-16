@@ -3,6 +3,8 @@
 #include "globals.h"
 #include "Timeline.h"
 #include "LightAttack.h"
+#include "HeavyAttack.h"
+#include "CollisionCheck.h"
 
 class Player :
     public GameObject
@@ -12,6 +14,7 @@ public:
     virtual void update() override;
     virtual void move() override;
     virtual void draw() override;
+    virtual void collision (bool t_damage, Vector2 t_pos) override;
     void addForce(Vector2 t_direction);
 
     float getRadius() { return m_radius; }
@@ -27,5 +30,6 @@ private:
     const float MIN_SPEED;
 
     LightAttack m_light;
+    HeavyAttack m_heavy;
 };
 
