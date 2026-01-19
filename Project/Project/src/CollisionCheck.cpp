@@ -2,6 +2,8 @@
 
 static Attack* m_lightAttack;
 static Attack* m_heavyAttack;
+static Attack* m_specialAttack;
+static GameObject* m_player;
 
 /// <summary>
 /// Checks Collsions between 2 GameObjects. The first parameter is considered the priority, meaning that if
@@ -42,6 +44,14 @@ void CollisionCheck::CheckCollisionAttack(AttackTypes t_type, GameObject& t_go)
             t_go.collision(true, m_heavyAttack->getPosition()); // Collision will damage GameObject
         }
     }
+    else if (t_type == SPECIAL)
+    {
+        if (CheckCollisionCircles(t_go.getPosition(), t_go.getRadius(), m_specialAttack->getPosition(), m_specialAttack->getRadius()))
+        {
+            t_go.collision(true, m_specialAttack->getPosition());
+            m_player->applyKnockback(t_go.getPosition());
+        }
+    }
 }
 
 void CollisionCheck::setAttackReference(AttackTypes t_type, Attack* t_attack)
@@ -54,7 +64,15 @@ void CollisionCheck::setAttackReference(AttackTypes t_type, Attack* t_attack)
     case HEAVY:
         m_heavyAttack = t_attack;
         break;
+    case SPECIAL:
+        m_specialAttack = t_attack;
+        break;
     default:
         break;
     }
+}
+
+void CollisionCheck::setPlayerReference(GameObject *t_player)
+{
+    m_player = t_player;
 }

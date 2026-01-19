@@ -8,3 +8,12 @@ void GameObject::draw()
 {
 	DrawCircle(m_position.x, m_position.y, m_radius, m_colour);
 }
+
+void GameObject::applyKnockback(Vector2 t_collidePos)
+{
+	Vector2 knockback;
+	knockback = m_position - t_collidePos;
+	knockback = Vector2Normalize(knockback);
+
+	m_velocity += knockback * 10.0f;
+}

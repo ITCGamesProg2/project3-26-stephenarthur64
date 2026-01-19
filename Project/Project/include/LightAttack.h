@@ -18,6 +18,7 @@ public:
 		m_maxCooldown = 0.2f;
 		m_cooldown = m_maxCooldown;
 		m_hitboxOffset = 50.0f;
+		m_type = LIGHT;
     }
 };
 

@@ -10,4 +10,5 @@ struct Time {
 enum AttackTypes {
 	LIGHT,
 	HEAVY,
+	SPECIAL
 };

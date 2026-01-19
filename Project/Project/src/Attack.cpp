@@ -2,7 +2,7 @@
 
 void Attack::execute()
 {
-	if (!m_running && m_cooldown > m_maxCooldown)
+	if (!m_running && m_cooldown >= m_maxCooldown)
 	{
 		m_running = true;
 		m_cooldown = 0.0f;
@@ -57,6 +57,15 @@ Rectangle Attack::getHitbox()
 	{
 		return { -1000, -1000, 0, 0 };
 	}
+}
+
+bool Attack::canAttack()
+{
+	if (m_running || m_cooldown <= m_maxCooldown)
+	{
+		return false;
+	}
+	return true;
 }
 
 void Attack::draw()

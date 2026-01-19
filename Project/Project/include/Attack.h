@@ -1,6 +1,8 @@
 #pragma once
+#include "globals.h"
 #include "raylib.h"
 #include "raymath.h"
+#include <list>
 
 class Attack
 {
@@ -11,6 +13,11 @@ public:
 	Rectangle getHitbox();
 	Vector2 getPosition() { return m_startPos; }
 	void setStart(Vector2 t_start) { m_startPos = t_start; }
+	float getRadius() { if (m_running) { return m_radius; } return 0.0f; }
+	AttackTypes getType() { return m_type; }
+
+	bool isRunning() { return m_running; }
+	bool canAttack();
 
 protected:
 	bool m_running;
@@ -28,5 +35,7 @@ protected:
 	float m_cooldown;
 	float m_maxCooldown;
 	float m_hitboxOffset;
+	float m_radius;
+	AttackTypes m_type;
 };
 

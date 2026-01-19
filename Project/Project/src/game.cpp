@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "stdio.h"
 #include "../include/game.h"
+#include <fstream>
 
 Game::Game() : m_player(BLUE, 35.0f), m_testnpc(RED, 30.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2)
 {
@@ -128,6 +129,10 @@ void Game::handleInput()
     {
         m_player.useAttack(AttackTypes::HEAVY);
     }
+    else if (IsKeyDown(KEY_R))
+    {
+        m_player.useAttack(AttackTypes::SPECIAL);
+    }
 
     Vector2 direction = { 0.0f, 0.0f };
 
@@ -158,4 +163,13 @@ void Game::CheckCollisions()
 {
     CollisionCheck::CheckCollisionAttack(LIGHT, m_testnpc);
     CollisionCheck::CheckCollisionAttack(HEAVY, m_testnpc);
+    CollisionCheck::CheckCollisionAttack(SPECIAL, m_testnpc);
+}
+
+void Game::loadFile()
+{
+    std::ifstream file("combos.json");
+
+    std::string json((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
 }

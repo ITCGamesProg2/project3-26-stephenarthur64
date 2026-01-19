@@ -10,5 +10,6 @@ public:
 	static void CheckCollisionsGameObject(GameObject& t_go1, GameObject& t_go2);
 	static void CheckCollisionAttack(AttackTypes t_type, GameObject& t_go);
 	static void setAttackReference(AttackTypes t_type, Attack* t_attack);
+	static void setPlayerReference(GameObject *t_player);
 };
 

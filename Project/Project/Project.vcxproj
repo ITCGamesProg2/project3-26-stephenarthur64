@@ -140,6 +140,7 @@
     <ClInclude Include="include\LightAttack.h" />
     <ClInclude Include="include\NPC.h" />
     <ClInclude Include="include\Player.h" />
+    <ClInclude Include="include\SpecialAttack.h" />
     <ClInclude Include="include\Timeline.h" />
   </ItemGroup>
   <ItemGroup>
