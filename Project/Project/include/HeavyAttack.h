@@ -18,6 +18,7 @@ public:
 		m_cooldown = m_maxCooldown;
 		m_hitboxOffset = 25.0f;
 		m_type = HEAVY;
+		m_damage = 2;
     }
 };
 

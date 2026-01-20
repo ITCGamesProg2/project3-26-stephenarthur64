@@ -17,10 +17,19 @@ public:
     virtual void update() override;
     virtual void move() override;
     virtual void draw() override;
-    virtual void collision (bool t_damage, Vector2 t_pos) override;
+    virtual void collision (int t_damage, Vector2 t_pos) override;
+    virtual void damage(int t_amount) override;
     void addForce(Vector2 t_direction);
+    void addMomentum(float t_amount);
+    void decreaseMomentum();
+
+    void setMousePosition(Camera2D& t_cam);
 
     float getRadius() { return m_radius; }
+    Attack* getAttack(AttackTypes t_type);
+    float getMomentum() { return m_momentum; }
+
+    bool canTimeStop() { if (m_momentum == m_maxMomentum) { return true; } return false; }
 
     bool rewind();
     Time generateTime();
@@ -48,5 +57,10 @@ private:
     SpecialAttack m_special;
 
     std::vector<Attack*> m_combo;
+
+    float m_momentum;
+    float m_maxMomentum;
+
+    Vector2 m_mouse;
 };
 

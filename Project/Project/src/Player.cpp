@@ -2,23 +2,25 @@
 #include <iostream>
 
 Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MIN_SPEED(0.01f), m_light(m_position), m_heavy(m_position), m_special(m_position), 
-										DEFAULT_FRICTION(0.94f), m_comboCurrent(0), COMBO_MAX(3), COMBO_MAX_COOLDOWN(10.5f), m_comboCountdown(0.0f)
+										DEFAULT_FRICTION(0.94f), m_comboCurrent(0), COMBO_MAX(3), COMBO_MAX_COOLDOWN(1.5f), m_comboCountdown(0.0f), m_momentum(100.0f),
+										m_maxMomentum(100.0f)
 {
 	m_speed = 0.4f;
 	m_friction = DEFAULT_FRICTION;
-	CollisionCheck::setAttackReference(LIGHT, &m_light);
-	CollisionCheck::setAttackReference(HEAVY, &m_heavy);
-	CollisionCheck::setAttackReference(SPECIAL, &m_special);
 	CollisionCheck::setPlayerReference(this);
 
 	m_combo.push_back(&m_light);
 	m_combo.push_back(&m_light);
 	m_combo.push_back(&m_heavy);
 	m_combo.push_back(&m_special);
+
+	m_health = 100;
 }
 
 void Player::update()
 {
+	GameObject::update();
+
 	if (m_comboCountdown < COMBO_MAX_COOLDOWN)
 	{
 		m_comboCountdown += GetFrameTime();
@@ -26,14 +28,30 @@ void Player::update()
 
 	if (m_comboCurrent == COMBO_MAX)
 	{
-		m_combo.back()->execute();
+		m_combo.back()->execute(GetMousePosition());
 		m_comboCurrent = 0;
-		std::cout << m_comboCurrent << "\n";
 	}
-
+	
+	if (m_special.isRunning())
+	{
+		decreaseMomentum();
+	}
 	if (!m_special.isRunning())
 	{
 		m_friction = DEFAULT_FRICTION;
+	}
+
+	if (m_light.isCollided())
+	{
+		addMomentum(5.0f);
+	}
+	if (m_heavy.isCollided())
+	{
+		addMomentum(10.0f);
+	}
+	if (m_special.isCollided())
+	{
+		addMomentum(5.0f);
 	}
 
 	move();
@@ -63,8 +81,21 @@ void Player::draw()
 	m_special.draw();
 }
 
-void Player::collision(bool t_damage, Vector2 t_pos)
+void Player::collision(int t_damage, Vector2 t_pos)
 {
+	applyKnockback(t_pos);
+	damage(t_damage);
+}
+
+void Player::damage(int t_amount)
+{
+	GameObject::damage(t_amount);
+
+	m_momentum -= t_amount * 2;
+	if (m_momentum < 0)
+	{
+		m_momentum = 0;
+	}
 }
 
 void Player::addForce(Vector2 t_direction)
@@ -80,15 +111,60 @@ void Player::addForce(Vector2 t_direction)
 	}
 }
 
+void Player::addMomentum(float t_amount)
+{
+	if (m_momentum <= m_maxMomentum)
+	{
+		m_momentum += t_amount;
+	}
+	else
+	{
+		m_momentum = m_maxMomentum;
+	}
+}
+
+void Player::decreaseMomentum()
+{
+	m_momentum -= 1.0f;
+}
+
+void Player::setMousePosition(Camera2D& t_cam)
+{
+	m_mouse = GetMousePosition();
+	m_mouse = GetScreenToWorld2D(m_mouse, t_cam);
+}
+
+Attack* Player::getAttack(AttackTypes t_type)
+{
+	switch (t_type)
+	{
+	case LIGHT:
+		return &m_light;
+		break;
+	case HEAVY:
+		return &m_heavy;
+		break;
+	case SPECIAL:
+		return &m_special;
+		break;
+	default:
+		break;
+	}
+}
+
 bool Player::rewind()
 {
-	m_newTime = Timeline::rewind();
-
-	if (m_newTime.position.x != 0.0f)
+	if (m_momentum > 0.0f)
 	{
-		m_velocity = m_newTime.velocity;
-		m_position = m_newTime.position;
-		return true;
+		m_newTime = Timeline::rewind();
+
+		if (m_newTime.position.x != 0.0f)
+		{
+			m_velocity = m_newTime.velocity;
+			m_position = m_newTime.position;
+			m_momentum -= 1.0f;
+			return true;
+		}
 	}
 	return false;
 }
@@ -111,18 +187,18 @@ void Player::useAttack(AttackTypes t_attack)
 		{
 			comboCheck(t_attack);
 		}
-		m_light.execute();
+		m_light.execute(m_mouse);
 		break;
 	case HEAVY:
 		if (m_heavy.canAttack())
 		{
 			comboCheck(t_attack);
 		}
-		m_heavy.execute();
+		m_heavy.execute(m_mouse);
 		break;
 	case SPECIAL:
 		m_comboCurrent = 0;
-		m_special.execute();
+		m_special.execute(m_mouse);
 		m_friction = 0.99f;
 		break;
 	default:
@@ -138,12 +214,10 @@ void Player::comboCheck(AttackTypes t_attack)
 		{
 			m_comboCurrent++;
 			m_comboCountdown = 0.0f;
-			std::cout << m_comboCurrent << "\n";
 		}
 		else
 		{
 			m_comboCurrent = 0;
-			std::cout << m_comboCurrent << "\n";
 		}
 	}
 	else

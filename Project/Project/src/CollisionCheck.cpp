@@ -1,8 +1,5 @@
 #include "CollisionCheck.h"
 
-static Attack* m_lightAttack;
-static Attack* m_heavyAttack;
-static Attack* m_specialAttack;
 static GameObject* m_player;
 
 /// <summary>
@@ -26,50 +23,28 @@ void CollisionCheck::CheckCollisionsGameObject(GameObject& t_go1, GameObject& t_
 /// <summary>
 /// Checks collisions between a given GameObject and an attack of given type
 /// </summary>
-/// <param name="t_type">The type of attack being checked</param>
+/// <param name="t_attack">The attack being checked</param>
 /// <param name="t_go">The GameObject being checked</param>
-void CollisionCheck::CheckCollisionAttack(AttackTypes t_type, GameObject& t_go)
+void CollisionCheck::CheckCollisionAttack(Attack* t_attack, GameObject& t_go)
 {
-    if (t_type == LIGHT)
+    if (t_attack->getType() == SPECIAL)
     {
-        if (CheckCollisionCircleRec(t_go.getPosition(), t_go.getRadius(), m_lightAttack->getHitbox()))
+        if (CheckCollisionCircles(t_go.getPosition(), t_go.getRadius(), t_attack->getPosition(), t_attack->getRadius()))
         {
-            t_go.collision(true, m_lightAttack->getPosition()); // Collision will damage GameObject
-        }
-    }
-    else if (t_type == HEAVY)
-    {
-        if (CheckCollisionCircleRec(t_go.getPosition(), t_go.getRadius(), m_heavyAttack->getHitbox()))
-        {
-            t_go.collision(true, m_heavyAttack->getPosition()); // Collision will damage GameObject
-        }
-    }
-    else if (t_type == SPECIAL)
-    {
-        if (CheckCollisionCircles(t_go.getPosition(), t_go.getRadius(), m_specialAttack->getPosition(), m_specialAttack->getRadius()))
-        {
-            t_go.collision(true, m_specialAttack->getPosition());
+            t_go.collision(t_attack->getDamage(), t_attack->getPosition());
             m_player->applyKnockback(t_go.getPosition());
+            t_attack->collide();
         }
     }
-}
-
-void CollisionCheck::setAttackReference(AttackTypes t_type, Attack* t_attack)
-{
-    switch (t_type)
+    else
     {
-    case LIGHT:
-        m_lightAttack = t_attack;
-        break;
-    case HEAVY:
-        m_heavyAttack = t_attack;
-        break;
-    case SPECIAL:
-        m_specialAttack = t_attack;
-        break;
-    default:
-        break;
+        if (CheckCollisionCircleRec(t_go.getPosition(), t_go.getRadius(), t_attack->getHitbox()))
+        {
+            t_go.collision(t_attack->getDamage(), t_attack->getPosition()); // Collision will damage GameObject
+            t_attack->collide();
+        }
     }
+ 
 }
 
 void CollisionCheck::setPlayerReference(GameObject *t_player)

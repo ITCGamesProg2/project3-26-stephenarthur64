@@ -7,7 +7,7 @@
 class Attack
 {
 public:
-	virtual void execute();
+	virtual void execute(Vector2 t_target);
 	virtual void process();
 	virtual void draw();
 	Rectangle getHitbox();
@@ -18,16 +18,23 @@ public:
 
 	bool isRunning() { return m_running; }
 	bool canAttack();
+	bool isCollided();
+	void collide() { m_collided = true; }
+	int getDamage() { return m_damage; }
 
 protected:
 	bool m_running;
+	bool m_collided;
+
 	float m_maxAngle;
 	float m_minAngle;
 	float m_targetAngle;
 	float m_maxDifference;
 	float m_currentAngle;
+
 	Vector2 m_startPos;
 	Vector2 m_targetPos;
+
 	float m_speed;
 	float m_width;
 	float m_height;
@@ -36,6 +43,8 @@ protected:
 	float m_maxCooldown;
 	float m_hitboxOffset;
 	float m_radius;
+
 	AttackTypes m_type;
+	int m_damage;
 };
 

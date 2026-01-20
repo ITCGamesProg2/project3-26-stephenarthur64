@@ -10,22 +10,26 @@ Game::Game() : m_player(BLUE, 35.0f), m_testnpc(RED, 30.0f), m_rewinding(false),
 
 void Game::init()
 {
+    m_background = LoadTexture("img/backgroundtemp.png");
+    m_camera.zoom = 1.0f;
 }
 
 void Game::draw()
 {
+    BeginMode2D(m_camera);
     DrawFPS(0, 0);
     if (m_rewinding)
     {
-        ClearBackground(DARKBLUE);
+        DrawTexture(m_background, 0, 0, DARKBLUE);
     }
     else if (m_timestop)
     {
-        ClearBackground(GRAY);
+        DrawTexture(m_background, 0, 0, GRAY);
     }
     else
     {
         ClearBackground(WHITE);
+        DrawTexture(m_background, 0, 0, WHITE);
     }
     m_player.draw();
 
@@ -35,11 +39,18 @@ void Game::draw()
     {
         Timeline::drawTimeline();
     }
+
+    EndMode2D();
+
+    DrawRectangle(10, 40, 50, 320, BLACK);
+    DrawRectangle(20, 50, 30, (m_player.getMomentum() / 100) * 300, LIGHTGRAY);
 }
 
 void Game::update()
 {
+    m_player.setMousePosition(m_camera);
     handleInput();
+    cameraMove();
     CheckCollisions();
 
     if (m_rewinding)
@@ -78,8 +89,14 @@ void Game::standardUpdate()
 void Game::timeStoppedUpdate()
 {
     m_player.update();
+    m_player.decreaseMomentum();
 
-    if (m_timeCounting < TIME_STOP_MAX)
+    if (m_player.getMomentum() <= 0.0f)
+    {
+        m_timestop = false;
+    }
+
+    /*if (m_timeCounting < TIME_STOP_MAX)
     {
         m_timeCounting += GetFrameTime();
     }
@@ -87,7 +104,7 @@ void Game::timeStoppedUpdate()
     {
         m_timestop = false;
         m_timeCounting = 0.0f;
-    }
+    }*/
 }
 
 
@@ -105,12 +122,19 @@ void Game::handleInput()
 {
     if (IsKeyReleased(KEY_SPACE))
     {
-        m_timestop = !m_timestop;
+        if (m_player.canTimeStop() && m_timestop == false)
+        {
+            m_timestop = true;
+        }
+        else
+        {
+            m_timestop = false;
+        }
     }
 
     if (IsKeyDown(KEY_Q) && !m_timestop)
     {
-        if (Timeline::canRewind())
+        if (Timeline::canRewind() && m_player.getMomentum() > 5.0f)
         {
             m_rewinding = true;
         }
@@ -152,18 +176,16 @@ void Game::handleInput()
     {
         direction.x += 1.0f;
     }
-
-    if (direction.x != 0.0f || direction.y != 0.0f)
-    {
-    }
-        m_player.addForce(direction);
+    m_player.addForce(direction);
 }
 
 void Game::CheckCollisions()
 {
-    CollisionCheck::CheckCollisionAttack(LIGHT, m_testnpc);
-    CollisionCheck::CheckCollisionAttack(HEAVY, m_testnpc);
-    CollisionCheck::CheckCollisionAttack(SPECIAL, m_testnpc);
+    CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), m_testnpc);
+    CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), m_testnpc);
+    CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), m_testnpc);
+
+    CollisionCheck::CheckCollisionAttack(m_testnpc.getAttack(), m_player);
 }
 
 void Game::loadFile()
@@ -172,4 +194,12 @@ void Game::loadFile()
 
     std::string json((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
+    
+}
+
+void Game::cameraMove()
+{
+    m_camera.target = m_player.getPosition();
+    m_camera.offset.x = SCREEN_WIDTH / 2.0f;
+    m_camera.offset.y = SCREEN_HEIGHT / 2.0f;
 }

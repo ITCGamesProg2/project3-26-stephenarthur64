@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include "stdio.h"
+#include "globals.h"
 
 #include "../include/game.h"
 
@@ -8,9 +9,6 @@
 #include <emscripten/emscripten.h>
 #endif
 
-const int screenWidth = 800;
-const int screenHeight = 600;
-
 void GameLoop(void);
 
 Game game;
@@ -18,7 +16,7 @@ Game game;
 int main(void)
 {
 
-    InitWindow(screenWidth, screenHeight, "Raylib StarterKit GPPI");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Raylib StarterKit GPPI");
 
     game.init();
 

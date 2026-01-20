@@ -13,6 +13,7 @@ public:
         m_cooldown = m_maxCooldown;
         m_hitboxOffset = 25.0f;
         m_type = SPECIAL;
+        m_damage = 1;
     }
     virtual void draw() override
     {

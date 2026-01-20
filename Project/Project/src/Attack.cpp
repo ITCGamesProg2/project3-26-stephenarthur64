@@ -1,17 +1,17 @@
 #include "Attack.h"
 
-void Attack::execute()
+void Attack::execute(Vector2 t_target)
 {
 	if (!m_running && m_cooldown >= m_maxCooldown)
 	{
 		m_running = true;
 		m_cooldown = 0.0f;
-		m_targetPos = GetMousePosition() - m_startPos;
+		m_targetPos = t_target - m_startPos;
 		m_targetPos = Vector2Normalize(m_targetPos);
 		m_targetPos *= m_hitboxOffset;
 
 		// Keeping here for when there is an asset for the attack
-		/*m_targetAngle = -(atan2(m_startPos.x - GetMousePosition().x, m_startPos.y - GetMousePosition().y) * RAD2DEG) - 90;
+		/*m_targetAngle = -(atan2(m_startPos.x - t_target.x, m_startPos.y - t_target.y) * RAD2DEG) - 90;
 
 		m_minAngle = m_targetAngle - (m_maxDifference / 2);
 		m_maxAngle = m_targetAngle + (m_maxDifference / 2);
@@ -66,6 +66,16 @@ bool Attack::canAttack()
 		return false;
 	}
 	return true;
+}
+
+bool Attack::isCollided()
+{
+	if (m_collided)
+	{
+		m_collided = false;
+		return true;
+	}
+	return false;
 }
 
 void Attack::draw()

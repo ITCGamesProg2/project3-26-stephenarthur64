@@ -19,6 +19,8 @@ public:
     void standardUpdate();
     void handleInput();
     void CheckCollisions();
+    void loadFile();
+    void cameraMove();
 
 private:
     Player m_player;
@@ -32,6 +34,9 @@ private:
     float m_rewindTimer;
     const float TIME_INTERVAL;
     const float TIME_STOP_MAX;
+
+    Texture2D m_background;
+    Camera2D m_camera;
 };
 
 #endif // GAME_H
