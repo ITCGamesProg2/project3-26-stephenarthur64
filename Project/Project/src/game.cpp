@@ -12,6 +12,7 @@ void Game::init()
 {
     m_background = LoadTexture("img/backgroundtemp.png");
     m_camera.zoom = 1.0f;
+    m_camTarget = m_player.getPosition();
 }
 
 void Game::draw()
@@ -200,6 +201,22 @@ void Game::loadFile()
 void Game::cameraMove()
 {
     m_camera.target = m_player.getPosition();
+    Vector2 toMouse = GetScreenToWorld2D(GetMousePosition(), m_camera) - m_player.getPosition();
+    toMouse = Vector2Normalize(toMouse);
+    float scale = Vector2Distance(m_player.getPosition(), GetScreenToWorld2D(GetMousePosition(), m_camera));
+
+    toMouse *= scale / 5.0f;
+    m_camTarget = m_player.getPosition() + toMouse;
+
+    m_camera.target = m_camTarget;
     m_camera.offset.x = SCREEN_WIDTH / 2.0f;
     m_camera.offset.y = SCREEN_HEIGHT / 2.0f;
+
+   /* if (Vector2DistanceSqr(m_camTarget, m_player.getPosition()) < 10000)
+    {
+        Vector2 velocity = GetScreenToWorld2D(GetMousePosition(), m_camera) - m_camTarget;
+        velocity = Vector2Normalize(velocity);
+        velocity *= 5.0f;
+        m_camTarget += velocity;
+    }*/
 }

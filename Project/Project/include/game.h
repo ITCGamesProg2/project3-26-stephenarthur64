@@ -37,6 +37,7 @@ private:
 
     Texture2D m_background;
     Camera2D m_camera;
+    Vector2 m_camTarget;
 };
 
 #endif // GAME_H

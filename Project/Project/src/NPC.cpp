@@ -5,6 +5,7 @@ NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), MIN_DISTANCE(12000), MAX_
 	m_speed = 0.3f;
 	m_health = 3;
 	m_maxIFrames = 2.0f;
+	m_alive = true;
 }
 
 void NPC::update()
