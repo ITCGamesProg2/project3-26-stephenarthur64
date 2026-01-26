@@ -2,8 +2,12 @@
 #include "stdio.h"
 #include "../include/game.h"
 #include <fstream>
+#include <json.hpp>
+#include <iostream>
 
-Game::Game() : m_player(BLUE, 35.0f), m_testnpc(RED, 30.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2)
+using json = nlohmann::json;
+
+Game::Game() : m_player(BLUE, 35.0f), m_testnpc(RED, 30.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(MENU)
 {
     m_testnpc.setPosition({ 600.0f, 200.0f });
 }
@@ -13,58 +17,105 @@ void Game::init()
     m_background = LoadTexture("img/backgroundtemp.png");
     m_camera.zoom = 1.0f;
     m_camTarget = m_player.getPosition();
+
+    loadLevel(1);
+}
+
+void Game::loadLevel(int t_level)
+{
+    std::string name;
+    std::string filename = "level" + std::to_string(t_level) + ".json";
+
+    std::ifstream file(filename);
+    json data = json::parse(file);
+
+    std::cout << data["walls"][0]["wall1"] << '\n';
+
+    float size = data["walls"][0]["size"];
+
+    for (int i = 1; i < data["walls"][0].size(); i++)
+    {
+        name = "wall" + std::to_string(i);
+        m_walls.push_back(Wall(BROWN, size, size));
+        m_walls.back().setPosition({ data["walls"][0][name][0], data["walls"][0][name][1] });
+    }
+
+    m_testnpc.setPosition({ data["enemies"][0]["e1"][0], data["enemies"][0]["e1"][1] });
 }
 
 void Game::draw()
 {
     BeginMode2D(m_camera);
     DrawFPS(0, 0);
-    if (m_rewinding)
+    if (m_state == MENU)
     {
-        DrawTexture(m_background, 0, 0, DARKBLUE);
+        m_menu.draw();
     }
-    else if (m_timestop)
+    else if (m_state == GAMEPLAY)
     {
-        DrawTexture(m_background, 0, 0, GRAY);
+        if (m_rewinding)
+        {
+            DrawTexture(m_background, 0, 0, DARKBLUE);
+        }
+        else if (m_timestop)
+        {
+            DrawTexture(m_background, 0, 0, GRAY);
+        }
+        else
+        {
+            ClearBackground(WHITE);
+            DrawTexture(m_background, 0, 0, WHITE);
+        }
+        m_player.draw();
+
+        m_testnpc.draw();
+
+        for (Wall& wall : m_walls)
+        {
+            wall.draw();
+        }
+
+        if (m_rewinding)
+        {
+            Timeline::drawTimeline();
+        }
+
+        EndMode2D();
+
+        DrawRectangle(10, 40, 50, 320, BLACK);
+        DrawRectangle(20, 50, 30, (m_player.getMomentum() / 100) * 300, LIGHTGRAY);
     }
-    else
-    {
-        ClearBackground(WHITE);
-        DrawTexture(m_background, 0, 0, WHITE);
-    }
-    m_player.draw();
-
-    m_testnpc.draw();
-
-    if (m_rewinding)
-    {
-        Timeline::drawTimeline();
-    }
-
-    EndMode2D();
-
-    DrawRectangle(10, 40, 50, 320, BLACK);
-    DrawRectangle(20, 50, 30, (m_player.getMomentum() / 100) * 300, LIGHTGRAY);
 }
 
 void Game::update()
 {
-    m_player.setMousePosition(m_camera);
-    handleInput();
-    cameraMove();
-    CheckCollisions();
+    if (m_state == MENU)
+    {
+        m_menu.update();
+        if (m_menu.ended())
+        {
+            m_state = GAMEPLAY;
+        }
+    }
+    else if (m_state == GAMEPLAY)
+    {
+        m_player.setMousePosition(m_camera);
+        handleInput();
+        cameraMove();
+        CheckCollisions();
 
-    if (m_rewinding)
-    {
-        rewindingUpdate();
-    }
-    else if (m_timestop)
-    {
-        timeStoppedUpdate();
-    }
-    else
-    {
-        standardUpdate();
+        if (m_rewinding)
+        {
+            rewindingUpdate();
+        }
+        else if (m_timestop)
+        {
+            timeStoppedUpdate();
+        }
+        else
+        {
+            standardUpdate();
+        }
     }
 }
 
@@ -187,6 +238,12 @@ void Game::CheckCollisions()
     CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), m_testnpc);
 
     CollisionCheck::CheckCollisionAttack(m_testnpc.getAttack(), m_player);
+
+    for (Wall& wall : m_walls)
+    {
+        CollisionCheck::CheckCollisionsWall(m_player, wall);
+        CollisionCheck::CheckCollisionsWall(m_testnpc, wall);
+    }
 }
 
 void Game::loadFile()

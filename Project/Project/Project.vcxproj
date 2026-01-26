@@ -140,21 +140,32 @@
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\globals.h" />
     <ClInclude Include="include\HeavyAttack.h" />
+    <ClInclude Include="include\LevelLoader.h" />
     <ClInclude Include="include\LightAttack.h" />
+    <ClInclude Include="include\MainMenu.h" />
     <ClInclude Include="include\NPC.h" />
     <ClInclude Include="include\Player.h" />
     <ClInclude Include="include\SpecialAttack.h" />
     <ClInclude Include="include\Timeline.h" />
+    <ClInclude Include="include\Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Attack.cpp" />
     <ClCompile Include="src\CollisionCheck.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\LevelLoader.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\MainMenu.cpp" />
     <ClCompile Include="src\NPC.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\Timeline.cpp" />
+    <ClCompile Include="src\Wall.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="combos.json" />
+    <None Include="level1.json" />
+    <None Include="level2.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,6 +21,19 @@ void CollisionCheck::CheckCollisionsGameObject(GameObject& t_go1, GameObject& t_
 }
 
 /// <summary>
+/// Checks collisions between a GameObject and a wall
+/// </summary>
+/// <param name="t_go1">GameObject to be checked</param>
+/// <param name="t_go2">Wall</param>
+void CollisionCheck::CheckCollisionsWall(GameObject& t_go, Wall& t_wall)
+{
+    if (CheckCollisionCircleRec(t_go.getPosition(), t_go.getRadius(), t_wall.GetHitbox()))
+    {
+        t_go.applyKnockback(t_wall.getPosition());
+    }
+}
+
+/// <summary>
 /// Checks collisions between a given GameObject and an attack of given type
 /// </summary>
 /// <param name="t_attack">The attack being checked</param>

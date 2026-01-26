@@ -1,17 +1,25 @@
 #ifndef GAME_H
 #define GAME_H
 #include "raylib.h"
+#include "MainMenu.h"
 #include "Player.h"
 #include "NPC.h"
+#include "Wall.h"
 #include "Timeline.h"
 #include "CollisionCheck.h"
 #include "globals.h"
+
+enum GameState {
+    MENU,
+    GAMEPLAY
+};
 
 class Game
 {
 public:
     Game();
     void init();
+    void loadLevel(int t_level);
     void draw();
     void update();
     void timeStoppedUpdate();
@@ -23,8 +31,13 @@ public:
     void cameraMove();
 
 private:
+    GameState m_state;
+    MainMenu m_menu;
+
     Player m_player;
     NPC m_testnpc;
+
+    std::vector<Wall> m_walls;
 
     Time m_tempTime;
     Time m_newTime;

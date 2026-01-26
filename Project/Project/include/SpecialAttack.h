@@ -37,5 +37,7 @@ public:
             m_cooldown = m_maxCooldown;
         }
     }
+
+    float getRadius() { return m_radius; }
 };
 

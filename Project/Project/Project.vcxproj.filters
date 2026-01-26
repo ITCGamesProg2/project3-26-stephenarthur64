@@ -48,6 +48,15 @@
     <ClInclude Include="include\SpecialAttack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Wall.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LevelLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MainMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
@@ -74,5 +83,25 @@
     <ClCompile Include="src\CollisionCheck.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Wall.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LevelLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MainMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="combos.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="level1.json">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="level2.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

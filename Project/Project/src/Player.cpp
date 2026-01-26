@@ -6,6 +6,7 @@ Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MI
 										m_maxMomentum(100.0f)
 {
 	m_speed = 0.4f;
+	m_baseRadius = t_r;
 	m_friction = DEFAULT_FRICTION;
 	CollisionCheck::setPlayerReference(this);
 
@@ -35,10 +36,12 @@ void Player::update()
 	if (m_special.isRunning())
 	{
 		decreaseMomentum();
+		m_radius = m_special.getRadius();
 	}
 	if (!m_special.isRunning())
 	{
 		m_friction = DEFAULT_FRICTION;
+		m_radius = m_baseRadius;
 	}
 
 	if (m_light.isCollided())

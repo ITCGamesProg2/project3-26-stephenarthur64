@@ -62,5 +62,7 @@ private:
     float m_maxMomentum;
 
     Vector2 m_mouse;
+
+    float m_baseRadius;
 };
 
