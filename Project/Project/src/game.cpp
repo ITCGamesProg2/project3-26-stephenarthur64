@@ -7,9 +7,8 @@
 
 using json = nlohmann::json;
 
-Game::Game() : m_player(BLUE, 35.0f), m_testnpc(RED, 30.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(MENU)
+Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(MENU)
 {
-    m_testnpc.setPosition({ 600.0f, 200.0f });
 }
 
 void Game::init()
@@ -25,11 +24,10 @@ void Game::loadLevel(int t_level)
 {
     std::string name;
     std::string filename = "level" + std::to_string(t_level) + ".json";
+    std::string debug = "levelclear.json";
 
     std::ifstream file(filename);
     json data = json::parse(file);
-
-    std::cout << data["walls"][0]["wall1"] << '\n';
 
     float size = data["walls"][0]["size"];
 
@@ -40,7 +38,19 @@ void Game::loadLevel(int t_level)
         m_walls.back().setPosition({ data["walls"][0][name][0], data["walls"][0][name][1] });
     }
 
-    m_testnpc.setPosition({ data["enemies"][0]["e1"][0], data["enemies"][0]["e1"][1] });
+    for (int i = 0; i < data["enemies"][0]["light"].size(); i++)
+    {
+        EnemyLight light(RED, 30.0f);
+        light.setPosition({ data["enemies"][0]["light"][i]["position"][0], data["enemies"][0]["light"][i]["position"][1]});
+        m_light.push_back(light);
+    }
+
+    for (int i = 0; i < data["enemies"][0]["heavy"].size(); i++)
+    {
+        EnemyHeavy heavy(RED, 45.0f);
+        heavy.setPosition({ data["enemies"][0]["heavy"][i]["position"][0], data["enemies"][0]["heavy"][i]["position"][1] });
+        m_heavy.push_back(heavy);
+    }
 }
 
 void Game::draw()
@@ -68,7 +78,15 @@ void Game::draw()
         }
         m_player.draw();
 
-        m_testnpc.draw();
+        for (EnemyLight& l : m_light)
+        {
+            l.draw();
+        }
+
+        for (EnemyHeavy& h : m_heavy)
+        {
+            h.draw();
+        }
 
         for (Wall& wall : m_walls)
         {
@@ -123,8 +141,17 @@ void Game::standardUpdate()
 {
     m_player.update();
 
-    m_testnpc.setTarget(m_player.getPosition());
-    m_testnpc.update();
+    for (EnemyLight& l : m_light)
+    {
+        l.setTarget(m_player.getPosition());
+        l.update();
+    }
+
+    for (EnemyHeavy& h : m_heavy)
+    {
+        h.setTarget(m_player.getPosition());
+        h.update();
+    }
 
     if (m_timeCounting < TIME_INTERVAL)
     {
@@ -233,16 +260,39 @@ void Game::handleInput()
 
 void Game::CheckCollisions()
 {
-    CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), m_testnpc);
-    CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), m_testnpc);
-    CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), m_testnpc);
+    // Refactor later to use spacial partitioning
 
-    CollisionCheck::CheckCollisionAttack(m_testnpc.getAttack(), m_player);
+    for (EnemyLight& l : m_light)
+    {
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), l);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), l);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), l);
 
+        CollisionCheck::CheckCollisionAttack(l.getAttack(), m_player);
+    }
+
+    for (EnemyHeavy& h : m_heavy)
+    {
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), h);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), h);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), h);
+
+        CollisionCheck::CheckCollisionAttack(h.getAttack(), m_player);
+    }
+    
     for (Wall& wall : m_walls)
     {
         CollisionCheck::CheckCollisionsWall(m_player, wall);
-        CollisionCheck::CheckCollisionsWall(m_testnpc, wall);
+
+        for (EnemyLight& l : m_light)
+        {
+            CollisionCheck::CheckCollisionsWall(l, wall);
+        }
+
+        for (EnemyHeavy& h : m_heavy)
+        {
+            CollisionCheck::CheckCollisionsWall(h, wall);
+        }
     }
 }
 

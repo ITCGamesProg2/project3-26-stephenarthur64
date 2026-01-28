@@ -3,7 +3,8 @@
 #include "raylib.h"
 #include "MainMenu.h"
 #include "Player.h"
-#include "NPC.h"
+#include "EnemyLight.h"
+#include "EnemyHeavy.h"
 #include "Wall.h"
 #include "Timeline.h"
 #include "CollisionCheck.h"
@@ -35,7 +36,8 @@ private:
     MainMenu m_menu;
 
     Player m_player;
-    NPC m_testnpc;
+    std::vector<EnemyLight> m_light;
+    std::vector<EnemyHeavy> m_heavy;
 
     std::vector<Wall> m_walls;
 

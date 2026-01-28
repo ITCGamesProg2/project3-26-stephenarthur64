@@ -1,6 +1,6 @@
 #pragma once
 #include "GameObject.h"
-#include "LightAttack.h"
+#include "Attack.h"
 
 class NPC :
     public GameObject
@@ -12,16 +12,16 @@ public:
     virtual void draw() override;
     virtual void collision(int t_damage, Vector2 t_pos) override;
     virtual void addForce(float t_amount);
-    Attack* getAttack() { return &m_attack; }
+    Attack* getAttack() { return m_attack; }
 
     void setTarget(Vector2 t_target) { m_target = t_target; }
     void setPosition(Vector2 t_pos) { m_position = t_pos; }
 
-private:
+protected:
     Vector2 m_target;
     const float MIN_DISTANCE;
     const float MAX_SPEED;
     const float MIN_SPEED;
-    LightAttack m_attack;
+    Attack *m_attack;
 };
 

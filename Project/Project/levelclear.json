@@ -13,18 +13,6 @@
       "light": [
         {
           "position": [ 0, 400 ]
-        },
-        {
-          "position": [ 200, 400 ]
-        }
-      ],
-
-      "heavy": [
-        {
-          "position": [ 400, 900 ]
-        },
-        {
-          "position": [ 700, 900 ]
         }
       ]
     }

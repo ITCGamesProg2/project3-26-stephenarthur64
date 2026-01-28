@@ -136,6 +136,8 @@
   <ItemGroup>
     <ClInclude Include="include\Attack.h" />
     <ClInclude Include="include\CollisionCheck.h" />
+    <ClInclude Include="include\EnemyHeavy.h" />
+    <ClInclude Include="include\EnemyLight.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\globals.h" />
@@ -152,6 +154,8 @@
   <ItemGroup>
     <ClCompile Include="src\Attack.cpp" />
     <ClCompile Include="src\CollisionCheck.cpp" />
+    <ClCompile Include="src\EnemyHeavy.cpp" />
+    <ClCompile Include="src\EnemyLight.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\LevelLoader.cpp" />
@@ -166,6 +170,7 @@
     <None Include="combos.json" />
     <None Include="level1.json" />
     <None Include="level2.json" />
+    <None Include="levelclear.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,6 @@
 #include "NPC.h"
 
-NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), MIN_DISTANCE(12000), MAX_SPEED(0.4f), MIN_SPEED(0.1f), m_attack(m_position)
+NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), MIN_DISTANCE(12000), MAX_SPEED(0.4f), MIN_SPEED(0.1f)
 {
 	m_speed = 0.3f;
 	m_health = 3;
@@ -12,7 +12,7 @@ void NPC::update()
 {
 	if (!m_alive)
 	{
-		m_attack.setStart({ -1000.0f, 0.0f });
+		m_attack->setStart({ -1000.0f, 0.0f });
 		m_position = { -1000.0f, 0.0f };
 		return;
 	}
@@ -25,11 +25,11 @@ void NPC::update()
 	}
 	else
 	{
-		m_attack.execute(m_target);
+		m_attack->execute(m_target);
 	}
 
-	m_attack.setStart(m_position);
-	m_attack.process();
+	m_attack->setStart(m_position);
+	m_attack->process();
 
 	move();
 }
@@ -44,7 +44,7 @@ void NPC::draw()
 {
 	GameObject::draw();
 
-	m_attack.draw();
+	m_attack->draw();
 }
 
 void NPC::collision(int t_damage, Vector2 t_pos)

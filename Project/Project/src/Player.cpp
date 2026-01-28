@@ -7,6 +7,9 @@ Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MI
 {
 	m_speed = 0.4f;
 	m_baseRadius = t_r;
+	m_maxHealth = 10;
+	m_health = m_maxHealth;
+	m_maxIFrames = 2.0f;
 	m_friction = DEFAULT_FRICTION;
 	CollisionCheck::setPlayerReference(this);
 
@@ -14,8 +17,6 @@ Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MI
 	m_combo.push_back(&m_light);
 	m_combo.push_back(&m_heavy);
 	m_combo.push_back(&m_special);
-
-	m_health = 100;
 }
 
 void Player::update()
@@ -93,6 +94,7 @@ void Player::collision(int t_damage, Vector2 t_pos)
 void Player::damage(int t_amount)
 {
 	GameObject::damage(t_amount);
+	std::cout << m_health << "\n";
 
 	m_momentum -= t_amount * 2;
 	if (m_momentum < 0)

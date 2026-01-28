@@ -5,7 +5,7 @@
 class GameObject
 {
 public:
-	GameObject(Color t_c, float t_radius);
+	GameObject(Color t_c = RED, float t_radius = 30.0f);
 	virtual void draw();
 	virtual void update();
 	virtual void move() = 0;

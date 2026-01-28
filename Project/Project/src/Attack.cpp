@@ -14,7 +14,7 @@ void Attack::execute(Vector2 t_target)
 		/*m_targetAngle = -(atan2(m_startPos.x - t_target.x, m_startPos.y - t_target.y) * RAD2DEG) - 90;
 
 		m_minAngle = m_targetAngle - (m_maxDifference / 2);
-		m_maxAngle = m_targetAngle + (m_maxDifference / 2);
+		m_maxAngle = m_targetAngle + (m_maxDifference / 2);*/
 
 		if (m_direction == 1)
 		{
@@ -23,7 +23,7 @@ void Attack::execute(Vector2 t_target)
 		else
 		{
 			m_currentAngle = m_maxAngle;
-		}*/
+		}
 	}
 }
 

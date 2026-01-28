@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <iostream>
 
 #include "GameObject.h"
 #include "globals.h"
