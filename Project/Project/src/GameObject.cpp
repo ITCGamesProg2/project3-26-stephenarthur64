@@ -52,3 +52,10 @@ void GameObject::damage(int t_amount)
 		}
 	}
 }
+
+void GameObject::respawn()
+{
+	m_health = m_maxHealth;
+	m_alive = true;
+	m_velocity = { 0.0f, 0.0f };
+}

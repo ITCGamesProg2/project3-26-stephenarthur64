@@ -17,6 +17,8 @@ public:
     void setTarget(Vector2 t_target) { m_target = t_target; }
     void setPosition(Vector2 t_pos) { m_position = t_pos; }
 
+    void setActive(bool t_active) { m_alive = t_active; }
+
 protected:
     Vector2 m_target;
     const float MIN_DISTANCE;

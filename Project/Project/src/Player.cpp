@@ -7,7 +7,7 @@ Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MI
 {
 	m_speed = 0.4f;
 	m_baseRadius = t_r;
-	m_maxHealth = 10;
+	m_maxHealth = 1;
 	m_health = m_maxHealth;
 	m_maxIFrames = 2.0f;
 	m_friction = DEFAULT_FRICTION;
@@ -88,7 +88,11 @@ void Player::draw()
 void Player::collision(int t_damage, Vector2 t_pos)
 {
 	applyKnockback(t_pos);
-	damage(t_damage);
+
+	if (t_damage > 0)
+	{
+		damage(t_damage);
+	}
 }
 
 void Player::damage(int t_amount)
@@ -101,6 +105,11 @@ void Player::damage(int t_amount)
 	{
 		m_momentum = 0;
 	}
+}
+
+void Player::respawn()
+{
+	GameObject::respawn();
 }
 
 void Player::addForce(Vector2 t_direction)

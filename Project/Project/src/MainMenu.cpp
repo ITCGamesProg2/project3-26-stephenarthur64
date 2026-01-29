@@ -16,3 +16,8 @@ void MainMenu::draw()
 {
 	DrawText("Main Menu", 100, 100, 50, WHITE);
 }
+
+void MainMenu::resetMenu()
+{
+	m_end = false;
+}

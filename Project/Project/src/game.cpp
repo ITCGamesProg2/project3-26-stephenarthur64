@@ -5,8 +5,6 @@
 #include <json.hpp>
 #include <iostream>
 
-using json = nlohmann::json;
-
 Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(MENU)
 {
 }
@@ -16,40 +14,17 @@ void Game::init()
     m_background = LoadTexture("img/backgroundtemp.png");
     m_camera.zoom = 1.0f;
     m_camTarget = m_player.getPosition();
-
-    loadLevel(1);
 }
 
-void Game::loadLevel(int t_level)
+void Game::loadLevel()
 {
-    std::string name;
-    std::string filename = "level" + std::to_string(t_level) + ".json";
-    std::string debug = "levelclear.json";
+    resetGame();
 
-    std::ifstream file(filename);
-    json data = json::parse(file);
+    LevelLoader::LoadLevel(m_walls, m_goals, m_light, m_heavy, m_player);
 
-    float size = data["walls"][0]["size"];
-
-    for (int i = 1; i < data["walls"][0].size(); i++)
+    if (LevelLoader::isAtEnd())
     {
-        name = "wall" + std::to_string(i);
-        m_walls.push_back(Wall(BROWN, size, size));
-        m_walls.back().setPosition({ data["walls"][0][name][0], data["walls"][0][name][1] });
-    }
-
-    for (int i = 0; i < data["enemies"][0]["light"].size(); i++)
-    {
-        EnemyLight light(RED, 30.0f);
-        light.setPosition({ data["enemies"][0]["light"][i]["position"][0], data["enemies"][0]["light"][i]["position"][1]});
-        m_light.push_back(light);
-    }
-
-    for (int i = 0; i < data["enemies"][0]["heavy"].size(); i++)
-    {
-        EnemyHeavy heavy(RED, 45.0f);
-        heavy.setPosition({ data["enemies"][0]["heavy"][i]["position"][0], data["enemies"][0]["heavy"][i]["position"][1] });
-        m_heavy.push_back(heavy);
+        m_state = END;
     }
 }
 
@@ -61,7 +36,7 @@ void Game::draw()
     {
         m_menu.draw();
     }
-    else if (m_state == GAMEPLAY)
+    else if (m_state == GAMEPLAY || m_state == DEATH)
     {
         if (m_rewinding)
         {
@@ -93,6 +68,11 @@ void Game::draw()
             wall.draw();
         }
 
+        for (Goal& goal : m_goals)
+        {
+            goal.draw();
+        }
+
         if (m_rewinding)
         {
             Timeline::drawTimeline();
@@ -102,6 +82,16 @@ void Game::draw()
 
         DrawRectangle(10, 40, 50, 320, BLACK);
         DrawRectangle(20, 50, 30, (m_player.getMomentum() / 100) * 300, LIGHTGRAY);
+
+        if (m_state == DEATH)
+        {
+            DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
+            DrawText("Player Dead", (SCREEN_WIDTH / 2.0f), SCREEN_HEIGHT / 2.0f, 20, WHITE);
+        }
+    }
+    else if (m_state == END)
+    {
+        DrawText("END OF GAME", 200, 200, 50, WHITE);
     }
 }
 
@@ -113,6 +103,8 @@ void Game::update()
         if (m_menu.ended())
         {
             m_state = GAMEPLAY;
+            resetGame();
+            loadLevel();
         }
     }
     else if (m_state == GAMEPLAY)
@@ -134,7 +126,29 @@ void Game::update()
         {
             standardUpdate();
         }
+
+        if (!m_player.isAlive())
+        {
+            m_state = DEATH;
+        }
     }
+    else if (m_state == DEATH)
+    {
+        deadUpdate();
+    }
+    else if (m_state == END)
+    {
+        gameEndUpdate();
+    }
+}
+
+void Game::resetGame()
+{
+    m_player.respawn();
+    m_light.clear();
+    m_heavy.clear();
+    m_walls.clear();
+    m_goals.clear();
 }
 
 void Game::standardUpdate()
@@ -161,6 +175,31 @@ void Game::standardUpdate()
     {
         m_timeCounting = 0.0f;
         Timeline::addTime(m_player.generateTime());
+    }
+
+    if (LevelLoader::isNextLevelReady())
+    {
+        loadLevel();
+    }
+}
+
+void Game::deadUpdate()
+{
+    if (IsKeyReleased(KEY_SPACE))
+    {
+        m_state = GAMEPLAY;
+        resetGame();
+        loadLevel();
+    }
+}
+
+void Game::gameEndUpdate()
+{
+    if (IsKeyReleased(KEY_SPACE))
+    {
+        m_state = MENU;
+        LevelLoader::clearProgress();
+        m_menu.resetMenu();
     }
 }
 
@@ -282,27 +321,23 @@ void Game::CheckCollisions()
     
     for (Wall& wall : m_walls)
     {
-        CollisionCheck::CheckCollisionsWall(m_player, wall);
+        CollisionCheck::CheckCollisionsWall(m_player, wall, true);
 
         for (EnemyLight& l : m_light)
         {
-            CollisionCheck::CheckCollisionsWall(l, wall);
+            CollisionCheck::CheckCollisionsWall(l, wall, true);
         }
 
         for (EnemyHeavy& h : m_heavy)
         {
-            CollisionCheck::CheckCollisionsWall(h, wall);
+            CollisionCheck::CheckCollisionsWall(h, wall, true);
         }
     }
-}
 
-void Game::loadFile()
-{
-    std::ifstream file("combos.json");
-
-    std::string json((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-
-    
+    for (Goal& goal : m_goals)
+    {
+        CollisionCheck::CheckCollisionsWall(m_player, goal, false);
+    }
 }
 
 void Game::cameraMove()

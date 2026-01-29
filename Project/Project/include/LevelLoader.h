@@ -1,11 +1,20 @@
 #pragma once
 #include <vector>
+#include <fstream>
+#include <json.hpp>
 #include "Wall.h"
-#include "NPC.h"
+#include "EnemyLight.h"
+#include "EnemyHeavy.h"
+#include "Goal.h"
+#include "Player.h"
 
 static class LevelLoader
 {
-	static void LoadLevels(std::vector<Wall>& t_walls, std::vector<NPC>& t_enemies);
-	static void LoadCombos();
+public:
+	static void LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<EnemyLight>& t_l, std::vector<EnemyHeavy>& t_h, Player& t_p);
+	static void addProgress();
+	static void clearProgress();
+	static bool isNextLevelReady();
+	static bool isAtEnd();
 };
 

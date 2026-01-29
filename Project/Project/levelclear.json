@@ -12,9 +12,14 @@
     {
       "light": [
         {
-          "position": [ 0, 400 ]
+          "position": [ 0, 400 ],
+          "active" :  false
         }
       ]
     }
-  ]
+  ],
+
+  "player": {
+    "position": [ 400, 100 ]
+  }
 }

@@ -14,6 +14,8 @@ public:
 	virtual void damage(int t_amount);
 	Vector2 getPosition() { return m_position; }
 	float getRadius() { return m_radius; }
+	bool isAlive() { return m_alive; }
+	virtual void respawn();
 
 protected:
 	Vector2 m_position;

@@ -20,11 +20,13 @@ public:
     virtual void draw() override;
     virtual void collision (int t_damage, Vector2 t_pos) override;
     virtual void damage(int t_amount) override;
+    virtual void respawn() override;
     void addForce(Vector2 t_direction);
     void addMomentum(float t_amount);
     void decreaseMomentum();
 
     void setMousePosition(Camera2D& t_cam);
+    void setPosition(Vector2 t_pos) { m_position = t_pos; }
 
     float getRadius() { return m_radius; }
     Attack* getAttack(AttackTypes t_type);

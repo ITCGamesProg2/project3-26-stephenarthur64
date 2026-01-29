@@ -12,21 +12,29 @@
     {
       "light": [
         {
-          "position": [ 0, 400 ]
+          "position": [ 0, 400 ],
+          "active": true
         },
         {
-          "position": [ 200, 400 ]
+          "position": [ 200, 400 ],
+          "active": true
         }
       ],
 
       "heavy": [
         {
-          "position": [ 400, 900 ]
+          "position": [ 400, 900 ],
+          "active": true
         },
         {
-          "position": [ 700, 900 ]
+          "position": [ 700, 900 ],
+          "active": true
         }
       ]
     }
-  ]
+  ],
+
+  "player": {
+    "position" :  [100, 100]
+  }
 }

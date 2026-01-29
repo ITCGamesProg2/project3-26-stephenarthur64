@@ -8,11 +8,15 @@
 #include "Wall.h"
 #include "Timeline.h"
 #include "CollisionCheck.h"
+#include "Goal.h"
+#include "LevelLoader.h"
 #include "globals.h"
 
 enum GameState {
     MENU,
-    GAMEPLAY
+    GAMEPLAY,
+    DEATH,
+    END
 };
 
 class Game
@@ -20,15 +24,17 @@ class Game
 public:
     Game();
     void init();
-    void loadLevel(int t_level);
+    void loadLevel();
     void draw();
     void update();
+    void resetGame();
     void timeStoppedUpdate();
     void rewindingUpdate();
     void standardUpdate();
+    void deadUpdate();
+    void gameEndUpdate();
     void handleInput();
     void CheckCollisions();
-    void loadFile();
     void cameraMove();
 
 private:
@@ -40,6 +46,7 @@ private:
     std::vector<EnemyHeavy> m_heavy;
 
     std::vector<Wall> m_walls;
+    std::vector<Goal> m_goals;
 
     Time m_tempTime;
     Time m_newTime;
@@ -53,6 +60,8 @@ private:
     Texture2D m_background;
     Camera2D m_camera;
     Vector2 m_camTarget;
+
+    int m_levelProgress;
 };
 
 #endif // GAME_H

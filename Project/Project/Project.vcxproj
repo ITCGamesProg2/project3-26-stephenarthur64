@@ -141,6 +141,7 @@
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\globals.h" />
+    <ClInclude Include="include\Goal.h" />
     <ClInclude Include="include\HeavyAttack.h" />
     <ClInclude Include="include\LevelLoader.h" />
     <ClInclude Include="include\LightAttack.h" />
@@ -158,6 +159,7 @@
     <ClCompile Include="src\EnemyLight.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\Goal.cpp" />
     <ClCompile Include="src\LevelLoader.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MainMenu.cpp" />
