@@ -31,7 +31,7 @@ void CollisionCheck::CheckCollisionsWall(GameObject& t_go, Wall& t_wall, bool t_
     {
         if (t_knockback)
         {
-            t_go.applyKnockback(t_wall.getPosition());
+            t_go.applyKnockback(t_wall.getPosition(), 5.0f);
         }
         else
         {

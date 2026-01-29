@@ -10,7 +10,7 @@ public:
 	virtual void update();
 	virtual void move() = 0;
 	virtual void collision (int t_damage, Vector2 t_pos) = 0;
-	virtual void applyKnockback(Vector2 t_collidePos);
+	virtual void applyKnockback(Vector2 t_collidePos, float t_force = 10.0f);
 	virtual void damage(int t_amount);
 	Vector2 getPosition() { return m_position; }
 	float getRadius() { return m_radius; }

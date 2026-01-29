@@ -1,10 +1,22 @@
 {
   "walls": [
     {
-      "size": 100,
-      "wall1": [ 200, 100 ],
-      "wall2": [ 300, 100 ],
-      "wall3": [ 500, 100 ]
+      "wall1": [ 0, 100, 400, 100 ],
+      "wall2": [ 700, 100, 400, 100 ],
+      "wall3": [ 0, 100, 100, 1000 ],
+      "wall4": [ 1000, 100, 100, 1000 ],
+      "wall5": [ 0, 1000, 1000, 100 ],
+      "wall6": [ 300, -400, 100, 500 ],
+      "wall7": [ 700, -700, 100, 800 ],
+      "wall8": [ 0, -700, 700, 100 ],
+      "wall9": [ 0, -400, 400, 100 ]
+    }
+  ],
+
+  "goals": [
+    {
+      "position": [ 700, -100 ],
+      "size" :  [300, 100]
     }
   ],
 
@@ -13,28 +25,28 @@
       "light": [
         {
           "position": [ 0, 400 ],
-          "active": true
+          "active": false
         },
         {
           "position": [ 200, 400 ],
-          "active": true
+          "active": false
         }
       ],
 
       "heavy": [
         {
           "position": [ 400, 900 ],
-          "active": true
+          "active": false
         },
         {
           "position": [ 700, 900 ],
-          "active": true
+          "active": false
         }
       ]
     }
   ],
 
   "player": {
-    "position" :  [100, 100]
+    "position": [ 400, 200 ]
   }
 }

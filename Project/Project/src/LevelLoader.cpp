@@ -1,6 +1,6 @@
 #include "LevelLoader.h"
 
-static int m_level = 2;
+static int m_level = 1;
 static int m_progress = 0;
 static int m_progresLimit = 1;
 static bool m_nextLevelReady = false;
@@ -31,18 +31,22 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
         return;
     }
 
-    float size = data["walls"][0]["size"];
+    int size;
 
-    for (int i = 1; i < data["walls"][0].size(); i++)
+    for (int i = 0; i < data["walls"][0].size(); i++)
     {
-        name = "wall" + std::to_string(i);
-        t_w.push_back(Wall(BROWN, size, size));
+        name = "wall" + std::to_string(i + 1);
+        t_w.push_back(Wall(BROWN, data["walls"][0][name][2], data["walls"][0][name][3]));
         t_w.back().setPosition({ data["walls"][0][name][0], data["walls"][0][name][1] });
     }
 
-    Goal goal(GREEN, 100.0f, 100.0f);
-    goal.setPosition({ 200, 200 });
-    t_g.push_back(goal);
+    for (int i = 0; i < data["goals"][0].size(); i++)
+    {
+        Goal goal(GREEN, data["goals"][0]["size"][0], data["goals"][0]["size"][1]);
+        goal.setPosition({ data["goals"][0]["position"][0], data["goals"][0]["position"][1] });
+        t_g.push_back(goal);
+    }
+    
 
     for (int i = 0; i < data["enemies"][0]["light"].size(); i++)
     {
@@ -77,7 +81,7 @@ void LevelLoader::addProgress()
 
 void LevelLoader::clearProgress()
 {
-    m_level = 0;
+    m_level = 1;
     m_progress = 0;
     m_nextLevelReady = false;
     m_endOfLevels = false;
