@@ -9,14 +9,24 @@
       "wall6": [ 300, -400, 100, 500 ],
       "wall7": [ 700, -700, 100, 800 ],
       "wall8": [ 0, -700, 700, 100 ],
-      "wall9": [ 0, -400, 400, 100 ]
+      "wall9": [ 0, -400, 400, 100 ],
+      "wall10": [ 0, -1000, 100, 300 ],
+      "wall11": [ 0, -400, 100, 300 ],
+      "wall12": [ -800, -200, 800, 100 ],
+      "wall13": [ -800, -1000, 800, 100 ],
+      "wall14": [ -900, -1000, 100, 900 ]
     }
   ],
 
   "goals": [
     {
-      "position": [ 700, -100 ],
-      "size" :  [300, 100]
+      "position": [ 400, -100 ],
+      "size": [ 300, 100 ]
+    },
+
+    {
+      "position": [ -700, -600 ],
+      "size": [ 300, 100 ]
     }
   ],
 
@@ -24,29 +34,29 @@
     {
       "light": [
         {
-          "position": [ 0, 400 ],
-          "active": false
+          "position": [ 700, 400 ],
+          "active": true
         },
         {
           "position": [ 200, 400 ],
-          "active": false
+          "active": true
         }
       ],
 
       "heavy": [
         {
           "position": [ 400, 900 ],
-          "active": false
+          "active": true
         },
         {
           "position": [ 700, 900 ],
-          "active": false
+          "active": true
         }
       ]
     }
   ],
 
   "player": {
-    "position": [ 400, 200 ]
+    "position": [ 400, 300 ]
   }
 }

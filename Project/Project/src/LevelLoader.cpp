@@ -42,11 +42,12 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
 
     for (int i = 0; i < data["goals"][0].size(); i++)
     {
-        Goal goal(GREEN, data["goals"][0]["size"][0], data["goals"][0]["size"][1]);
-        goal.setPosition({ data["goals"][0]["position"][0], data["goals"][0]["position"][1] });
+        Goal goal(GREEN, data["goals"][i]["size"][0], data["goals"][i]["size"][1]);
+        goal.setPosition({ data["goals"][i]["position"][0], data["goals"][i]["position"][1] });
         t_g.push_back(goal);
     }
     
+    m_progresLimit = data["goals"][0].size();
 
     for (int i = 0; i < data["enemies"][0]["light"].size(); i++)
     {
@@ -58,13 +59,15 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
 
     for (int i = 0; i < data["enemies"][0]["heavy"].size(); i++)
     {
+        // for (array size)
+        // vector(data[houses][i][0])(data[houses][i][1]).makehouse
         EnemyHeavy heavy(RED, 45.0f);
         heavy.setPosition({ data["enemies"][0]["heavy"][i]["position"][0], data["enemies"][0]["heavy"][i]["position"][1] });
         heavy.setActive(data["enemies"][0]["heavy"][i]["active"]);
         t_h.push_back(heavy);
     }
 
-    t_p.setPosition({ data["player"]["position"][0], data["player"]["position"][0] });
+    t_p.setPosition({ data["player"]["position"][0], data["player"]["position"][1] });
 }
 
 void LevelLoader::addProgress()

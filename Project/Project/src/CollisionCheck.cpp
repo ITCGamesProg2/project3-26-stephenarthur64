@@ -27,16 +27,29 @@ void CollisionCheck::CheckCollisionsGameObject(GameObject& t_go1, GameObject& t_
 /// <param name="t_go2">Wall</param>
 void CollisionCheck::CheckCollisionsWall(GameObject& t_go, Wall& t_wall, bool t_knockback)
 {
-    if (CheckCollisionCircleRec(t_go.getPosition(), t_go.getRadius(), t_wall.GetHitbox()))
+    if (CheckCollisionPointRec(t_go.nextPositionX(), t_wall.GetHitbox()))
     {
-        if (t_knockback)
-        {
-            t_go.applyKnockback(t_wall.getPosition(), 5.0f);
-        }
-        else
-        {
-            t_wall.collision(0, {0, 0});
-        }
+        t_go.stopVelocity(0);
+    }
+    if (CheckCollisionCircleRec(t_go.nextPositionFull(), t_go.getRadius(), t_wall.GetHitbox()))
+    {
+        t_go.stopVelocity(2);
+    }
+    if (CheckCollisionPointRec(t_go.nextPositionY(), t_wall.GetHitbox()))
+    {
+        t_go.stopVelocity(1);
+    }
+    if (CheckCollisionCircleRec(t_go.nextPositionFull(), t_go.getRadius(), t_wall.GetHitbox()))
+    {
+        t_go.stopVelocity(2);
+    }
+}
+
+void CollisionCheck::CheckCollisionsGoal(GameObject& t_go, Goal& t_goal)
+{
+    if (CheckCollisionCircleRec(t_go.getPosition(), t_go.getRadius(), t_goal.GetHitbox()))
+    {
+        t_goal.collision(0, {0, 0});
     }
 }
 

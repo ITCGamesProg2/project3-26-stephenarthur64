@@ -1,7 +1,9 @@
 #include "Wall.h"
+#include <iostream>
 
 Wall::Wall(Color t_c, float t_x, float t_y) : GameObject(t_c, t_x), m_sizeX(t_x), m_sizeY(t_y)
 {
+	std::cout << "Im a wall :D\n";
 	m_colour = t_c;
 }
 

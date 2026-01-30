@@ -62,6 +62,79 @@ void GameObject::applyKnockback(Vector2 t_collidePos, float t_force)
 	m_velocity += knockback * t_force;
 }
 
+Vector2 GameObject::nextPositionX()
+{
+	Vector2 value;
+	if (m_velocity.x >= 0)
+	{
+		value.x = m_position.x + m_radius;
+	}
+	else
+	{
+		value.x = m_position.x - m_radius;
+	}
+
+	if (m_velocity.y >= 0)
+	{
+		value.y = m_position.y + m_radius;
+	}
+	else
+	{
+		value.y = m_position.y - m_radius;
+	}
+	value.x += m_velocity.x;
+	return value;
+}
+
+Vector2 GameObject::nextPositionY()
+{
+	Vector2 value;
+	if (m_velocity.x >= 0)
+	{
+		value.x = m_position.x + m_radius;
+	}
+	else
+	{
+		value.x = m_position.x - m_radius;
+	}
+
+	if (m_velocity.y >= 0)
+	{
+		value.y = m_position.y + m_radius;
+	}
+	else
+	{
+		value.y = m_position.y - m_radius;
+	}
+	value.y += m_velocity.y;
+	return value;
+}
+
+Vector2 GameObject::nextPositionFull()
+{
+	Vector2 value;
+	value = m_position;
+	value += m_velocity;
+	return value;
+}
+
+void GameObject::stopVelocity(int t_direction)
+{
+	if (t_direction == 0)
+	{
+		m_velocity.x = 0.0f;
+	}
+	else if (t_direction == 1)
+	{
+		m_velocity.y = 0.0f;
+	}
+	else
+	{
+		m_velocity.x = 0.0f;
+		m_velocity.y = 0.0f;
+	}
+}
+
 void GameObject::damage(int t_amount)
 {
 	if (m_invincibilityFrames <= 0.0f)
@@ -71,6 +144,7 @@ void GameObject::damage(int t_amount)
 		if (m_health <= 0)
 		{
 			m_alive = false;
+			m_position = { 0.0f, 0.0f };
 		}
 		else
 		{

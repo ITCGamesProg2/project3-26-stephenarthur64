@@ -200,6 +200,7 @@ void Game::gameEndUpdate()
         m_state = MENU;
         LevelLoader::clearProgress();
         m_menu.resetMenu();
+        m_player.setPosition({ 0.0f, 0.0f });
     }
 }
 
@@ -336,7 +337,7 @@ void Game::CheckCollisions()
 
     for (Goal& goal : m_goals)
     {
-        CollisionCheck::CheckCollisionsWall(m_player, goal, false);
+        CollisionCheck::CheckCollisionsGoal(m_player, goal);
     }
 }
 

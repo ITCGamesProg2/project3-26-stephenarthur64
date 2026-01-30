@@ -4,7 +4,7 @@ NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), MIN_DISTANCE(12000), MAX_
 {
 	m_speed = 0.3f;
 	m_health = 3;
-	m_maxIFrames = 2.0f;
+	m_maxIFrames = 0.5f;
 	m_alive = true;
 }
 
@@ -25,7 +25,10 @@ void NPC::update()
 	}
 	else
 	{
-		m_attack->execute(m_target);
+		if (m_attack->canAttack())
+		{
+			m_attack->execute(m_target);
+		}
 	}
 
 	m_attack->setStart(m_position);

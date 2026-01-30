@@ -10,9 +10,11 @@ public:
 	virtual void execute(Vector2 t_target);
 	virtual void process();
 	virtual void draw();
+	void setCooldownScale(float t_scale) { m_maxCooldown *= t_scale; }
+	void setWindupScale(float t_scale) { m_maxWindup *= t_scale; }
 	Rectangle getHitbox();
 	Vector2 getPosition() { return m_startPos; }
-	void setStart(Vector2 t_start) { m_startPos = t_start; }
+	void setStart(Vector2 t_start);
 	float getRadius() { if (m_running) { return m_radius; } return 0.0f; }
 	AttackTypes getType() { return m_type; }
 
@@ -26,21 +28,21 @@ protected:
 	bool m_running;
 	bool m_collided;
 
-	float m_maxAngle;
-	float m_minAngle;
-	float m_targetAngle;
-	float m_maxDifference;
-	float m_currentAngle;
-
 	Vector2 m_startPos;
 	Vector2 m_targetPos;
+
+	int test = 0;
+
+	float m_windup;
+	float m_maxWindup;
+	float m_duration;
+	float m_maxDuration;
+	float m_cooldown;
+	float m_maxCooldown;
 
 	float m_speed;
 	float m_width;
 	float m_height;
-	int m_direction = 1;
-	float m_cooldown;
-	float m_maxCooldown;
 	float m_hitboxOffset;
 	float m_radius;
 

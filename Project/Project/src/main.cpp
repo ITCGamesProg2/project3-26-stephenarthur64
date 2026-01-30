@@ -16,7 +16,7 @@ Game game;
 int main(void)
 {
 
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Raylib StarterKit GPPI");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Evanescent Gloom");
 
     game.init();
 

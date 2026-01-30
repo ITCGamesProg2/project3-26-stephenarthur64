@@ -1,4 +1,5 @@
 #include "Attack.h"
+#include <iostream>
 
 void Attack::execute(Vector2 t_target)
 {
@@ -6,24 +7,11 @@ void Attack::execute(Vector2 t_target)
 	{
 		m_running = true;
 		m_cooldown = 0.0f;
+		m_windup = 0.0f;
+		m_duration = 0.0f;
 		m_targetPos = t_target - m_startPos;
 		m_targetPos = Vector2Normalize(m_targetPos);
 		m_targetPos *= m_hitboxOffset;
-
-		// Keeping here for when there is an asset for the attack
-		/*m_targetAngle = -(atan2(m_startPos.x - t_target.x, m_startPos.y - t_target.y) * RAD2DEG) - 90;
-
-		m_minAngle = m_targetAngle - (m_maxDifference / 2);
-		m_maxAngle = m_targetAngle + (m_maxDifference / 2);*/
-
-		if (m_direction == 1)
-		{
-			m_currentAngle = m_minAngle;
-		}
-		else
-		{
-			m_currentAngle = m_maxAngle;
-		}
 	}
 }
 
@@ -31,14 +19,22 @@ void Attack::process()
 {
 	if (m_running)
 	{
-		m_currentAngle += m_speed * m_direction;
-		m_startPos.x += m_targetPos.x;
-		m_startPos.y += m_targetPos.y;
+		m_windup += GetFrameTime();
 
-		if (m_currentAngle > m_maxAngle || m_currentAngle < m_minAngle)
+		if (m_windup >= m_maxWindup)
 		{
-			m_running = false;
-			m_direction = -m_direction;
+			m_duration += GetFrameTime();
+
+			if (m_duration < m_maxDuration)
+			{
+				m_startPos.x += m_targetPos.x;
+				m_startPos.y += m_targetPos.y;
+			}
+			else
+			{
+				m_running = false;
+				m_windup = 0.0f;
+			}
 		}
 	}
 	else
@@ -57,6 +53,11 @@ Rectangle Attack::getHitbox()
 	{
 		return { -1000, -1000, 0, 0 };
 	}
+}
+
+void Attack::setStart(Vector2 t_start)
+{
+	m_startPos = t_start; 
 }
 
 bool Attack::canAttack()

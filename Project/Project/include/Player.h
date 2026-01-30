@@ -8,7 +8,6 @@
 #include "LightAttack.h"
 #include "HeavyAttack.h"
 #include "SpecialAttack.h"
-#include "CollisionCheck.h"
 
 class Player :
     public GameObject
@@ -30,9 +29,9 @@ public:
 
     float getRadius() { return m_radius; }
     Attack* getAttack(AttackTypes t_type);
-    float getMomentum() { return m_momentum; }
+    float const getMomentum() { return m_momentum; }
 
-    bool canTimeStop() { if (m_momentum == m_maxMomentum) { return true; } return false; }
+    bool const canTimeStop() { if (m_momentum == m_maxMomentum) { return true; } return false; }
 
     bool rewind();
     Time generateTime();
@@ -69,3 +68,4 @@ private:
     float m_baseRadius;
 };
 
+#include "CollisionCheck.h"

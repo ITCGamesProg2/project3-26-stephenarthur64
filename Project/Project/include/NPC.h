@@ -11,7 +11,7 @@ public:
     virtual void move() override;
     virtual void draw() override;
     virtual void collision(int t_damage, Vector2 t_pos) override;
-    virtual void addForce(float t_amount);
+    void addForce(float t_amount);
     Attack* getAttack() { return m_attack; }
 
     void setTarget(Vector2 t_target) { m_target = t_target; }

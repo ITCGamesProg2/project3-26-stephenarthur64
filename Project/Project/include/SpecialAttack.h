@@ -11,6 +11,8 @@ public:
         m_speed = 7.0f;
         m_maxCooldown = 3.0f;
         m_cooldown = m_maxCooldown;
+        m_maxWindup = 0.1f;
+        m_maxDuration = 10.0f;
         m_hitboxOffset = 25.0f;
         m_type = SPECIAL;
         m_damage = 1;

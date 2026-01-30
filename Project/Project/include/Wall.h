@@ -13,7 +13,7 @@ public:
 
     Rectangle GetHitbox() { return { m_position.x, m_position.y, m_sizeX, m_sizeY }; }
 
-protected:
+private:
     float m_sizeX;
     float m_sizeY;
 };
