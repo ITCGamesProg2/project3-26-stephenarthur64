@@ -30,29 +30,57 @@
     }
   ],
 
-  "enemies": [
+  "rooms": [
     {
-      "light": [
-        {
-          "position": [ 700, 400 ],
-          "active": true
-        },
-        {
-          "position": [ 200, 400 ],
-          "active": true
-        }
-      ],
+      "1": {
+        "enemies": [
+          {
+            "light": [
+              {
+                "position": [ 700, 400 ],
+                "active": true
+              },
+              {
+                "position": [ 200, 400 ],
+                "active": true
+              },
+              {
+                "position": [ 300, 400 ],
+                "active": true
+              }
+            ],
 
-      "heavy": [
-        {
-          "position": [ 400, 900 ],
-          "active": true
-        },
-        {
-          "position": [ 700, 900 ],
-          "active": true
-        }
-      ]
+            "heavy": [
+              {
+                "position": [ 400, 900 ],
+                "active": false
+              },
+              {
+                "position": [ 700, 900 ],
+                "active": false
+              }
+            ]
+          }
+        ],
+        "doors": [
+          {
+            "position": [ 400, 100, 300, 100 ]
+          }
+        ]
+      }
+    },
+    {
+      "2": {
+        "enemies": [
+          {
+          }
+        ],
+        "doors": [
+          {
+            "position": [ -700, -600, 200, 100 ]
+          }
+        ]
+      }
     }
   ],
 

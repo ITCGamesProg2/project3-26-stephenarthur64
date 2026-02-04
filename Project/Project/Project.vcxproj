@@ -135,7 +135,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\Attack.h" />
+    <ClInclude Include="include\Boss.h" />
     <ClInclude Include="include\CollisionCheck.h" />
+    <ClInclude Include="include\Door.h" />
     <ClInclude Include="include\EnemyHeavy.h" />
     <ClInclude Include="include\EnemyLight.h" />
     <ClInclude Include="include\game.h" />
@@ -154,7 +156,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Attack.cpp" />
+    <ClCompile Include="src\Boss.cpp" />
     <ClCompile Include="src\CollisionCheck.cpp" />
+    <ClCompile Include="src\Door.cpp" />
     <ClCompile Include="src\EnemyHeavy.cpp" />
     <ClCompile Include="src\EnemyLight.cpp" />
     <ClCompile Include="src\game.cpp" />

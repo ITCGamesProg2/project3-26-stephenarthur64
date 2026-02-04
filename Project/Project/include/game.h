@@ -9,6 +9,7 @@
 #include "Timeline.h"
 #include "CollisionCheck.h"
 #include "Goal.h"
+#include "Door.h"
 #include "LevelLoader.h"
 #include "globals.h"
 
@@ -47,6 +48,7 @@ private:
 
     std::vector<Wall> m_walls;
     std::vector<Goal> m_goals;
+    std::vector<Door> m_doors;
 
     Time m_tempTime;
     Time m_newTime;

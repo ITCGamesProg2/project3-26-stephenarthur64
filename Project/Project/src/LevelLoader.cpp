@@ -6,7 +6,7 @@ static int m_progresLimit = 1;
 static bool m_nextLevelReady = false;
 static bool m_endOfLevels = false;
 
-void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<EnemyLight>& t_l, std::vector<EnemyHeavy>& t_h, Player& t_p)
+void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<EnemyLight>& t_l, std::vector<EnemyHeavy>& t_h, std::vector<Door>& t_d, Player& t_p)
 {
     m_nextLevelReady = false;
 
@@ -49,22 +49,35 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
     
     m_progresLimit = data["goals"][0].size();
 
-    for (int i = 0; i < data["enemies"][0]["light"].size(); i++)
+    for (int room = 1; room < data["rooms"].size() + 1; room++)
     {
-        EnemyLight light(RED, 30.0f);
-        light.setPosition({ data["enemies"][0]["light"][i]["position"][0], data["enemies"][0]["light"][i]["position"][1] });
-        light.setActive(data["enemies"][0]["light"][i]["active"]);
-        t_l.push_back(light);
-    }
+        for (int i = 0; i < data["rooms"][room - 1][std::to_string(room)]["doors"].size(); i++)
+        {
+            Door door(BLUE, data["rooms"][room - 1][std::to_string(room)]["doors"][0]["position"][2], data["rooms"][room - 1][std::to_string(room)]["doors"][0]["position"][3]);
+            door.setPosition({ data["rooms"][room - 1][std::to_string(room)]["doors"][0]["position"][0], data["rooms"][room - 1][std::to_string(room)]["doors"][0]["position"][1] });
+            t_d.push_back(door);
+        }
 
-    for (int i = 0; i < data["enemies"][0]["heavy"].size(); i++)
-    {
-        // for (array size)
-        // vector(data[houses][i][0])(data[houses][i][1]).makehouse
-        EnemyHeavy heavy(RED, 45.0f);
-        heavy.setPosition({ data["enemies"][0]["heavy"][i]["position"][0], data["enemies"][0]["heavy"][i]["position"][1] });
-        heavy.setActive(data["enemies"][0]["heavy"][i]["active"]);
-        t_h.push_back(heavy);
+        t_l.reserve(data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"].size());
+
+        for (int i = 0; i < data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"].size(); i++)
+        {
+            EnemyLight light(RED, 30.0f);
+            light.setPosition({ data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"][i]["position"][0], data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"][i]["position"][1] });
+            light.setActive(data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"][i]["active"]);
+            t_l.push_back(light);
+            t_d.at(room - 1).addEnemy(&t_l.at(i));
+        }
+
+        t_h.reserve(data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"].size());
+
+        for (int i = 0; i < data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"].size(); i++)
+        {
+            EnemyHeavy heavy(RED, 45.0f);
+            heavy.setPosition({ data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"][i]["position"][0], data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"][i]["position"][1] });
+            heavy.setActive(data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"][i]["active"]);
+            t_h.push_back(heavy);
+        }
     }
 
     t_p.setPosition({ data["player"]["position"][0], data["player"]["position"][1] });

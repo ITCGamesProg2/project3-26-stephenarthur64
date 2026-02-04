@@ -20,7 +20,7 @@ void Game::loadLevel()
 {
     resetGame();
 
-    LevelLoader::LoadLevel(m_walls, m_goals, m_light, m_heavy, m_player);
+    LevelLoader::LoadLevel(m_walls, m_goals, m_light, m_heavy, m_doors, m_player);
 
     if (LevelLoader::isAtEnd())
     {
@@ -73,6 +73,11 @@ void Game::draw()
             goal.draw();
         }
 
+        for (Door& door : m_doors)
+        {
+            door.draw();
+        }
+        
         if (m_rewinding)
         {
             Timeline::drawTimeline();
@@ -165,6 +170,11 @@ void Game::standardUpdate()
     {
         h.setTarget(m_player.getPosition());
         h.update();
+    }
+
+    for (Door& d : m_doors)
+    {
+        d.update();
     }
 
     if (m_timeCounting < TIME_INTERVAL)
@@ -338,6 +348,24 @@ void Game::CheckCollisions()
     for (Goal& goal : m_goals)
     {
         CollisionCheck::CheckCollisionsGoal(m_player, goal);
+    }
+
+    for (Door& door : m_doors)
+    {
+        if (door.isAlive())
+        {
+            CollisionCheck::CheckCollisionsWall(m_player, door, true);
+
+            for (EnemyLight& l : m_light)
+            {
+                CollisionCheck::CheckCollisionsWall(l, door, true);
+            }
+
+            for (EnemyHeavy& h : m_heavy)
+            {
+                CollisionCheck::CheckCollisionsWall(h, door, true);
+            }
+        }
     }
 }
 
