@@ -12,7 +12,7 @@
 static class LevelLoader
 {
 public:
-	static void LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<EnemyLight>& t_l, std::vector<EnemyHeavy>& t_h, std::vector<Door>& t_d, Player& t_p);
+	static void LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<Door>& t_d, Player& t_p);
 	static void addProgress();
 	static void clearProgress();
 	static bool isNextLevelReady();

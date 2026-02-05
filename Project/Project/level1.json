@@ -12,7 +12,7 @@
       "wall9": [ 0, -400, 400, 100 ],
       "wall10": [ 0, -1000, 100, 300 ],
       "wall11": [ 0, -400, 100, 300 ],
-      "wall12": [ -800, -200, 800, 100 ],
+      "wall12": [ -700, -200, 800, 100 ],
       "wall13": [ -800, -1000, 800, 100 ],
       "wall14": [ -900, -1000, 100, 900 ]
     }
@@ -37,27 +37,22 @@
           {
             "light": [
               {
-                "position": [ 700, 400 ],
-                "active": true
+                "position": [ 700, 400 ]
               },
               {
-                "position": [ 200, 400 ],
-                "active": true
+                "position": [ 200, 400 ]
               },
               {
-                "position": [ 300, 400 ],
-                "active": true
+                "position": [ 300, 400 ]
               }
             ],
 
             "heavy": [
               {
-                "position": [ 400, 900 ],
-                "active": false
+                "position": [ 400, 900 ]
               },
               {
-                "position": [ 700, 900 ],
-                "active": false
+                "position": [ 700, 900 ]
               }
             ]
           }
@@ -73,11 +68,28 @@
       "2": {
         "enemies": [
           {
+            "light": [
+              {
+                "position": [ -600, -200 ]
+              }
+            ],
+
+            "heavy": [
+              {
+                "position": [ -300, -500 ]
+              },
+              {
+                "position": [ -700, -700 ]
+              },
+              {
+                "position": [ -500, -100 ]
+              }
+            ]
           }
         ],
         "doors": [
           {
-            "position": [ -700, -600, 200, 100 ]
+            "position": [ -500, -600, 200, 100 ]
           }
         ]
       }
@@ -85,6 +97,6 @@
   ],
 
   "player": {
-    "position": [ 400, 300 ]
+    "position": [ 450, 300 ]
   }
 }

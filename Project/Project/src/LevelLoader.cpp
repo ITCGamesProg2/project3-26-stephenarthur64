@@ -6,9 +6,11 @@ static int m_progresLimit = 1;
 static bool m_nextLevelReady = false;
 static bool m_endOfLevels = false;
 
-void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<EnemyLight>& t_l, std::vector<EnemyHeavy>& t_h, std::vector<Door>& t_d, Player& t_p)
+void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<Door>& t_d, Player& t_p)
 {
     m_nextLevelReady = false;
+
+    t_e.reserve(25);
 
     std::string name;
     std::string filename = "level" + std::to_string(m_level) + ".json";
@@ -58,25 +60,20 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
             t_d.push_back(door);
         }
 
-        t_l.reserve(data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"].size());
-
         for (int i = 0; i < data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"].size(); i++)
         {
             EnemyLight light(RED, 30.0f);
             light.setPosition({ data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"][i]["position"][0], data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"][i]["position"][1] });
-            light.setActive(data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"][i]["active"]);
-            t_l.push_back(light);
-            t_d.at(room - 1).addEnemy(&t_l.at(i));
+            t_e.push_back(light);
+            t_d.at(room - 1).addEnemy(&t_e.back());
         }
-
-        t_h.reserve(data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"].size());
 
         for (int i = 0; i < data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"].size(); i++)
         {
             EnemyHeavy heavy(RED, 45.0f);
             heavy.setPosition({ data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"][i]["position"][0], data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"][i]["position"][1] });
-            heavy.setActive(data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"][i]["active"]);
-            t_h.push_back(heavy);
+            t_e.push_back(heavy);
+            t_d.at(room - 1).addEnemy(&t_e.back());
         }
     }
 

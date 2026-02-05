@@ -20,7 +20,7 @@ void Game::loadLevel()
 {
     resetGame();
 
-    LevelLoader::LoadLevel(m_walls, m_goals, m_light, m_heavy, m_doors, m_player);
+    LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_doors, m_player);
 
     if (LevelLoader::isAtEnd())
     {
@@ -53,14 +53,9 @@ void Game::draw()
         }
         m_player.draw();
 
-        for (EnemyLight& l : m_light)
+        for (NPC& e : m_enemies)
         {
-            l.draw();
-        }
-
-        for (EnemyHeavy& h : m_heavy)
-        {
-            h.draw();
+            e.draw();
         }
 
         for (Wall& wall : m_walls)
@@ -150,8 +145,7 @@ void Game::update()
 void Game::resetGame()
 {
     m_player.respawn();
-    m_light.clear();
-    m_heavy.clear();
+    m_enemies.clear();
     m_walls.clear();
     m_goals.clear();
 }
@@ -160,16 +154,10 @@ void Game::standardUpdate()
 {
     m_player.update();
 
-    for (EnemyLight& l : m_light)
+    for (NPC& e : m_enemies)
     {
-        l.setTarget(m_player.getPosition());
-        l.update();
-    }
-
-    for (EnemyHeavy& h : m_heavy)
-    {
-        h.setTarget(m_player.getPosition());
-        h.update();
+        e.setTarget(m_player.getPosition());
+        e.update();
     }
 
     for (Door& d : m_doors)
@@ -224,16 +212,6 @@ void Game::timeStoppedUpdate()
     {
         m_timestop = false;
     }
-
-    /*if (m_timeCounting < TIME_STOP_MAX)
-    {
-        m_timeCounting += GetFrameTime();
-    }
-    else
-    {
-        m_timestop = false;
-        m_timeCounting = 0.0f;
-    }*/
 }
 
 
@@ -312,36 +290,22 @@ void Game::CheckCollisions()
 {
     // Refactor later to use spacial partitioning
 
-    for (EnemyLight& l : m_light)
+    for (NPC& e : m_enemies)
     {
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), l);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), l);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), l);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), e);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), e);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), e);
 
-        CollisionCheck::CheckCollisionAttack(l.getAttack(), m_player);
-    }
-
-    for (EnemyHeavy& h : m_heavy)
-    {
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), h);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), h);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), h);
-
-        CollisionCheck::CheckCollisionAttack(h.getAttack(), m_player);
+        CollisionCheck::CheckCollisionAttack(e.getAttack(), m_player);
     }
     
     for (Wall& wall : m_walls)
     {
         CollisionCheck::CheckCollisionsWall(m_player, wall, true);
 
-        for (EnemyLight& l : m_light)
+        for (NPC& e : m_enemies)
         {
-            CollisionCheck::CheckCollisionsWall(l, wall, true);
-        }
-
-        for (EnemyHeavy& h : m_heavy)
-        {
-            CollisionCheck::CheckCollisionsWall(h, wall, true);
+            CollisionCheck::CheckCollisionsWall(e, wall, true);
         }
     }
 
@@ -356,14 +320,9 @@ void Game::CheckCollisions()
         {
             CollisionCheck::CheckCollisionsWall(m_player, door, true);
 
-            for (EnemyLight& l : m_light)
+            for (NPC& e : m_enemies)
             {
-                CollisionCheck::CheckCollisionsWall(l, door, true);
-            }
-
-            for (EnemyHeavy& h : m_heavy)
-            {
-                CollisionCheck::CheckCollisionsWall(h, door, true);
+                CollisionCheck::CheckCollisionsWall(e, door, true);
             }
         }
     }

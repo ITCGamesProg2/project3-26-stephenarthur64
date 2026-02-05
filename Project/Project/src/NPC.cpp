@@ -34,7 +34,11 @@ void NPC::update()
 	m_attack->setStart(m_position);
 	m_attack->process();
 
-	move();
+	if (Vector2DistanceSqr(m_target, m_position) > 100)
+	{
+		move();
+	}
+
 }
 
 void NPC::move()

@@ -43,8 +43,7 @@ private:
     MainMenu m_menu;
 
     Player m_player;
-    std::vector<EnemyLight> m_light;
-    std::vector<EnemyHeavy> m_heavy;
+    std::vector<NPC> m_enemies;
 
     std::vector<Wall> m_walls;
     std::vector<Goal> m_goals;
