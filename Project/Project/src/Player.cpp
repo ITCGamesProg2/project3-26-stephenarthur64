@@ -9,7 +9,7 @@ Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MI
 	m_baseRadius = t_r;
 	m_maxHealth = 10;
 	m_health = m_maxHealth;
-	m_maxIFrames = 2.0f;
+	m_maxIFrames = 0.3f;
 	m_friction = DEFAULT_FRICTION;
 	CollisionCheck::setPlayerReference(this);
 
@@ -100,10 +100,14 @@ void Player::damage(int t_amount)
 	GameObject::damage(t_amount);
 	std::cout << m_health << "\n";
 
-	m_momentum -= t_amount * 2;
-	if (m_momentum < 0)
+	if (m_invincibilityFrames <= 0.0f)
 	{
-		m_momentum = 0;
+		m_momentum -= t_amount * 2;
+		if (m_momentum < 0)
+		{
+			m_momentum = 0;
+		}
+		m_invincibilityFrames = m_maxIFrames;
 	}
 }
 
@@ -127,7 +131,7 @@ void Player::addForce(Vector2 t_direction)
 
 void Player::addMomentum(float t_amount)
 {
-	if (m_momentum <= m_maxMomentum)
+	if (m_momentum + t_amount <= m_maxMomentum)
 	{
 		m_momentum += t_amount;
 	}
@@ -176,6 +180,7 @@ bool Player::rewind()
 		{
 			m_velocity = m_newTime.velocity;
 			m_position = m_newTime.position;
+			m_health = m_newTime.health;
 			m_momentum -= 1.0f;
 			return true;
 		}
@@ -188,6 +193,7 @@ Time Player::generateTime()
 	m_newTime.position = m_position;
 	m_newTime.radius = m_radius;
 	m_newTime.velocity = m_velocity;
+	m_newTime.health = m_health;
 
 	return m_newTime;
 }

@@ -81,7 +81,7 @@ void Game::draw()
         EndMode2D();
 
         DrawRectangle(10, 40, 50, 320, BLACK);
-        DrawRectangle(20, 50, 30, (m_player.getMomentum() / 100) * 300, LIGHTGRAY);
+        DrawRectangle(20, 50, 30, (m_player.getMomentum() / m_player.getMaxMomentum()) * 300, LIGHTGRAY);
 
         if (m_state == DEATH)
         {
@@ -138,6 +138,7 @@ void Game::update()
     }
     else if (m_state == END)
     {
+        m_camera.target = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
         gameEndUpdate();
     }
 }
@@ -148,6 +149,7 @@ void Game::resetGame()
     m_enemies.clear();
     m_walls.clear();
     m_goals.clear();
+    m_doors.clear();
 }
 
 void Game::standardUpdate()
@@ -296,7 +298,10 @@ void Game::CheckCollisions()
         CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), e);
         CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), e);
 
-        CollisionCheck::CheckCollisionAttack(e.getAttack(), m_player);
+        if (!m_timestop)
+        {
+            CollisionCheck::CheckCollisionAttack(e.getAttack(), m_player);
+        }
     }
     
     for (Wall& wall : m_walls)

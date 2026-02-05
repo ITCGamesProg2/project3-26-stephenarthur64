@@ -58,8 +58,13 @@ void GameObject::applyKnockback(Vector2 t_collidePos, float t_force)
 	Vector2 knockback;
 	knockback = m_position - collide;
 	knockback = Vector2Normalize(knockback);
+	knockback = Vector2Scale(knockback, t_force);
+	float thing = (Vector2Length(m_velocity + knockback));
 
-	m_velocity += knockback * t_force;
+	if (Vector2Length(m_velocity + knockback) < 30)
+	{
+		m_velocity += knockback;
+	}
 }
 
 Vector2 GameObject::nextPositionX()

@@ -19,26 +19,25 @@ void NPC::update()
 
 	GameObject::update();
 
-	if (Vector2DistanceSqr(m_target, m_position) > MIN_DISTANCE)
+	if (Vector2DistanceSqr(m_target, m_position) < 200000)
 	{
-		addForce(m_speed);
-	}
-	else
-	{
-		if (m_attack->canAttack())
+		if (Vector2DistanceSqr(m_target, m_position) > MIN_DISTANCE)
 		{
-			m_attack->execute(m_target);
+			addForce(m_speed);
 		}
-	}
+		else
+		{
+			if (m_attack->canAttack())
+			{
+				m_attack->execute(m_target);
+			}
+		}
 
-	m_attack->setStart(m_position);
-	m_attack->process();
+		m_attack->setStart(m_position);
+		m_attack->process();
 
-	if (Vector2DistanceSqr(m_target, m_position) > 100)
-	{
 		move();
 	}
-
 }
 
 void NPC::move()

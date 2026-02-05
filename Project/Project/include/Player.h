@@ -30,6 +30,7 @@ public:
     float getRadius() { return m_radius; }
     Attack* getAttack(AttackTypes t_type);
     float const getMomentum() { return m_momentum; }
+    float const getMaxMomentum() { return m_maxMomentum; }
 
     bool const canTimeStop() { if (m_momentum == m_maxMomentum) { return true; } return false; }
 
