@@ -17,5 +17,8 @@ public:
 	static void clearProgress();
 	static bool isNextLevelReady();
 	static bool isAtEnd();
+	static void saveFile();
+	static void loadFile();
+	static void clearFile();
 };
 

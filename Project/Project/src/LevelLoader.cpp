@@ -42,7 +42,7 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
         t_w.back().setPosition({ data["walls"][0][name][0], data["walls"][0][name][1] });
     }
 
-    for (int i = 0; i < data["goals"][0].size(); i++)
+    for (int i = m_progress; i < data["goals"][0].size(); i++)
     {
         Goal goal(GREEN, data["goals"][i]["size"][0], data["goals"][i]["size"][1]);
         goal.setPosition({ data["goals"][i]["position"][0], data["goals"][i]["position"][1] });
@@ -51,7 +51,7 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
     
     m_progresLimit = data["goals"][0].size();
 
-    for (int room = 1; room < data["rooms"].size() + 1; room++)
+    for (int room = m_progress + 1; room < data["rooms"].size() + 1; room++)
     {
         for (int i = 0; i < data["rooms"][room - 1][std::to_string(room)]["doors"].size(); i++)
         {
@@ -65,7 +65,7 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
             EnemyLight light(RED, 30.0f);
             light.setPosition({ data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"][i]["position"][0], data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"][i]["position"][1] });
             t_e.push_back(light);
-            t_d.at(room - 1).addEnemy(&t_e.back());
+            t_d.at(room - 1 - m_progress).addEnemy(&t_e.back());
         }
 
         for (int i = 0; i < data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"].size(); i++)
@@ -73,11 +73,18 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
             EnemyHeavy heavy(RED, 45.0f);
             heavy.setPosition({ data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"][i]["position"][0], data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"][i]["position"][1] });
             t_e.push_back(heavy);
-            t_d.at(room - 1).addEnemy(&t_e.back());
+            t_d.at(room - 1 - m_progress).addEnemy(&t_e.back());
         }
     }
 
-    t_p.setPosition({ data["player"]["position"][0], data["player"]["position"][1] });
+    if (m_progress == 0)
+    {
+        t_p.setPosition({ data["player"]["position"][0], data["player"]["position"][1] });
+    }
+    else
+    {
+        t_p.setPosition({ data["goals"][m_progress - 1]["position"][0] + 50.0f, data["goals"][m_progress - 1]["position"][1] });
+    }
 }
 
 void LevelLoader::addProgress()
@@ -90,6 +97,8 @@ void LevelLoader::addProgress()
         m_nextLevelReady = true;
         m_progress = 0;
     }
+
+    saveFile();
 }
 
 void LevelLoader::clearProgress()
@@ -108,4 +117,29 @@ bool LevelLoader::isNextLevelReady()
 bool LevelLoader::isAtEnd()
 {
     return m_endOfLevels;
+}
+
+void LevelLoader::saveFile()
+{
+    std::ofstream Save("savefile.txt");
+
+    Save << m_level;
+    Save << m_progress;
+}
+
+void LevelLoader::loadFile()
+{
+    std::ifstream Load;
+    Load.open("savefile.txt");
+
+    m_level = Load.get() - '0';
+    m_progress = Load.get() - '0';
+}
+
+void LevelLoader::clearFile()
+{
+    std::ofstream Save("savefile.txt");
+
+    Save << 1;
+    Save << 0;
 }

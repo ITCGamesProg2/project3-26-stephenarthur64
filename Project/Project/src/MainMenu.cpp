@@ -9,6 +9,12 @@ void MainMenu::update()
 	if (IsKeyReleased(KEY_SPACE))
 	{
 		m_end = true;
+		LevelLoader::clearFile();
+	}
+	if (IsKeyReleased(KEY_S))
+	{
+		m_end = true;
+		LevelLoader::loadFile();
 	}
 }
 

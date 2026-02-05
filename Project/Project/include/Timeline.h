@@ -10,5 +10,6 @@ public:
 	static Time rewind();
 	static void drawTimeline();
 	static bool canRewind();
+	static void clearTimeline();
 };
 

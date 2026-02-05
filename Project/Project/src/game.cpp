@@ -20,6 +20,7 @@ void Game::loadLevel()
 {
     resetGame();
 
+    LevelLoader::loadFile();
     LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_doors, m_player);
 
     if (LevelLoader::isAtEnd())
@@ -150,6 +151,7 @@ void Game::resetGame()
     m_walls.clear();
     m_goals.clear();
     m_doors.clear();
+    Timeline::clearTimeline();
 }
 
 void Game::standardUpdate()

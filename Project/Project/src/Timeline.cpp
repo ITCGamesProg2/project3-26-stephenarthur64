@@ -53,3 +53,8 @@ bool Timeline::canRewind()
 {
 	return m_timeline.size() > 5;
 }
+
+void Timeline::clearTimeline()
+{
+	m_timeline.clear();
+}
