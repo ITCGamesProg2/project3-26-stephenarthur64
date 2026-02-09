@@ -2,7 +2,7 @@
 #include <iostream>
 
 Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MIN_SPEED(0.01f), m_light(m_position), m_heavy(m_position), m_special(m_position), 
-										DEFAULT_FRICTION(0.94f), m_comboCurrent(0), COMBO_MAX(3), COMBO_MAX_COOLDOWN(1.5f), m_comboCountdown(0.0f), m_momentum(100.0f),
+										DEFAULT_FRICTION(0.94f), m_comboCurrent(0), COMBO_MAX(3), COMBO_MAX_COOLDOWN(2.0f), m_comboCountdown(0.0f), m_momentum(100.0f),
 										m_maxMomentum(100.0f)
 {
 	m_speed = 0.4f;

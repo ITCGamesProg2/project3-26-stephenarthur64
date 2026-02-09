@@ -42,7 +42,6 @@ public:
 
 private:
     Time m_newTime;
-    float deltaTime;
     const float MAX_SPEED;
     const float MIN_SPEED;
 

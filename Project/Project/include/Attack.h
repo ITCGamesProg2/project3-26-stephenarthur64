@@ -31,8 +31,6 @@ protected:
 	Vector2 m_startPos;
 	Vector2 m_targetPos;
 
-	int test = 0;
-
 	float m_windup;
 	float m_maxWindup;
 	float m_duration;
