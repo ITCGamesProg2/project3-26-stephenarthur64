@@ -6,7 +6,7 @@
 #include <iostream>
 
 Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(MENU), m_skipCount(0), m_postSkipTimer(0), 
-                m_skipColours(0), SKIP_MAX(2.0f)
+                m_skipColours(0), SKIP_MAX(1.0f)
 {
 }
 
@@ -28,6 +28,9 @@ void Game::loadLevel()
     {
         m_state = END;
     }
+
+    testpickup.setPosition({ 400, 400 });
+    testpickup.setAbility(TimeAbilities::STOP);
 }
 
 void Game::draw()
@@ -59,7 +62,7 @@ void Game::draw()
             DrawTexture(m_background, 0, 0, WHITE);
         }
         m_player.draw();
-
+        testpickup.draw();
         for (NPC& e : m_enemies)
         {
             e.draw();
@@ -278,7 +281,7 @@ void Game::rewindingUpdate()
 
 void Game::handleInput()
 {
-    if (IsKeyReleased(KEY_SPACE))
+    if (IsKeyReleased(KEY_SPACE) && m_player.canUse(TimeAbilities::STOP))
     {
         if (m_player.canTimeStop() && m_timestop == false)
         {
@@ -290,7 +293,7 @@ void Game::handleInput()
         }
     }
 
-    if (IsKeyDown(KEY_Q) && !m_timestop)
+    if (IsKeyDown(KEY_Q) && m_player.canUse(TimeAbilities::REWIND) && !m_timestop)
     {
         if (Timeline::canRewind() && m_player.getMomentum() > 5.0f)
         {
@@ -303,7 +306,7 @@ void Game::handleInput()
         m_rewinding = false;
     }
 
-    if (IsKeyReleased(KEY_R) && !m_timestop && !m_timeSkip)
+    if (IsKeyReleased(KEY_R) && m_player.canUse(TimeAbilities::SKIP) && !m_timestop && !m_timeSkip)
     {
         m_timeSkip = true;
         m_player.decreaseMomentum(20.0f);
@@ -384,6 +387,15 @@ void Game::CheckCollisions()
             {
                 CollisionCheck::CheckCollisionsWall(e, door, true);
             }
+        }
+    }
+
+    if (testpickup.isAlive())
+    {
+        if (CollisionCheck::CheckCollisionPickup(m_player, testpickup))
+        {
+            m_player.newAbility(testpickup.getAbility());
+            testpickup.deactivate();
         }
     }
 }

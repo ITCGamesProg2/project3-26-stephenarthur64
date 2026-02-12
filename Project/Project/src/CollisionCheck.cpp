@@ -84,3 +84,8 @@ void CollisionCheck::setPlayerReference(GameObject *t_player)
 {
     m_player = t_player;
 }
+
+bool CollisionCheck::CheckCollisionPickup(GameObject& t_go, Pickup& t_p)
+{
+    return CheckCollisionCircles(t_go.getPosition(), t_go.getRadius(), t_p.getPosition(), t_p.getRadius());
+}

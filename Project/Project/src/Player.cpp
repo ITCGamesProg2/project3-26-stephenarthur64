@@ -251,3 +251,13 @@ void Player::addToCombo(Attack* t_attack)
 {
 	m_combo.push_back(t_attack);
 }
+
+void Player::newAbility(TimeAbilities t_a)
+{
+	m_abilities[t_a] = true;
+}
+
+bool Player::canUse(TimeAbilities t_a)
+{
+	return m_abilities[t_a];
+}

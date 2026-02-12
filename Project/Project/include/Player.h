@@ -40,6 +40,9 @@ public:
     void comboCheck(AttackTypes t_attack);
     void addToCombo(Attack* t_attack);
 
+    void newAbility(TimeAbilities t_a);
+    bool canUse(TimeAbilities t_a);
+
 private:
     Time m_newTime;
     const float MAX_SPEED;
@@ -66,6 +69,8 @@ private:
     Vector2 m_mouse;
 
     float m_baseRadius;
+
+    bool m_abilities[TimeAbilities::MAX] = {};
 };
 
 #include "CollisionCheck.h"

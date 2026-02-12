@@ -4,6 +4,7 @@
 #include "Attack.h"
 #include "Wall.h"
 #include "Goal.h"
+#include "Pickup.h"
 #include "globals.h"
 
 static class CollisionCheck
@@ -14,5 +15,6 @@ public:
 	static void CheckCollisionsGoal(GameObject& t_go, Goal& t_goal);
 	static void CheckCollisionAttack(Attack* t_attack, GameObject& t_go);
 	static void setPlayerReference(GameObject *t_player);
+	static bool CheckCollisionPickup(GameObject& t_go, Pickup& t_p);
 };
 

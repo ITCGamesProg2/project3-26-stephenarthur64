@@ -149,7 +149,9 @@
     <ClInclude Include="include\LightAttack.h" />
     <ClInclude Include="include\MainMenu.h" />
     <ClInclude Include="include\NPC.h" />
+    <ClInclude Include="include\Pickup.h" />
     <ClInclude Include="include\Player.h" />
+    <ClInclude Include="include\RewindBoss.h" />
     <ClInclude Include="include\SpecialAttack.h" />
     <ClInclude Include="include\Timeline.h" />
     <ClInclude Include="include\Wall.h" />
@@ -168,7 +170,9 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MainMenu.cpp" />
     <ClCompile Include="src\NPC.cpp" />
+    <ClCompile Include="src\Pickup.cpp" />
     <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\RewindBoss.cpp" />
     <ClCompile Include="src\Timeline.cpp" />
     <ClCompile Include="src\Wall.cpp" />
   </ItemGroup>

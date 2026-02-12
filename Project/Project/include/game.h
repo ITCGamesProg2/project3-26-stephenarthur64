@@ -11,6 +11,7 @@
 #include "Goal.h"
 #include "Door.h"
 #include "LevelLoader.h"
+#include "Pickup.h"
 #include "globals.h"
 
 enum GameState {
@@ -49,6 +50,8 @@ private:
     std::vector<Wall> m_walls;
     std::vector<Goal> m_goals;
     std::vector<Door> m_doors;
+
+    Pickup testpickup;
 
     Time m_tempTime;
     Time m_newTime;
