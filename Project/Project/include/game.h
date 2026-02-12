@@ -34,6 +34,7 @@ public:
     void standardUpdate();
     void deadUpdate();
     void gameEndUpdate();
+    void timeSkip();
     void handleInput();
     void CheckCollisions();
     void cameraMove();
@@ -53,7 +54,10 @@ private:
     Time m_newTime;
     bool m_rewinding;
     bool m_timestop;
+    bool m_timeSkip;
     float m_timeCounting;
+    float m_postSkipTimer;
+    const float SKIP_MAX;
     float m_rewindTimer;
     const float TIME_INTERVAL;
     const float TIME_STOP_MAX;
@@ -63,6 +67,10 @@ private:
     Vector2 m_camTarget;
 
     int m_levelProgress;
+
+    int m_skipCount;
+
+    float m_skipColours;
 };
 
 #endif // GAME_H

@@ -22,7 +22,7 @@ public:
     virtual void respawn() override;
     void addForce(Vector2 t_direction);
     void addMomentum(float t_amount);
-    void decreaseMomentum();
+    void decreaseMomentum(float t_amount = 1.0f);
 
     void setMousePosition(Camera2D& t_cam);
     void setPosition(Vector2 t_pos) { m_position = t_pos; }

@@ -1,6 +1,6 @@
 #include "NPC.h"
 
-NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), MIN_DISTANCE(12000), MAX_SPEED(0.4f), MIN_SPEED(0.1f)
+NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), MIN_DISTANCE(12000), MAX_SPEED(0.4f), MIN_SPEED(0.1f), m_surprise(false)
 {
 	m_speed = 0.3f;
 	m_health = 3;

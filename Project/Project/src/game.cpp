@@ -5,7 +5,8 @@
 #include <json.hpp>
 #include <iostream>
 
-Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(MENU)
+Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(MENU), m_skipCount(0), m_postSkipTimer(0), 
+                m_skipColours(0), SKIP_MAX(2.0f)
 {
 }
 
@@ -46,6 +47,11 @@ void Game::draw()
         else if (m_timestop)
         {
             DrawTexture(m_background, 0, 0, GRAY);
+        }
+        else if (m_postSkipTimer > 0)
+        {
+            DrawTexture(m_background, 0, 0, {255, (unsigned char)m_skipColours,  (unsigned char)m_skipColours, 255});
+            m_skipColours += GetFrameTime() * (255 / SKIP_MAX);
         }
         else
         {
@@ -110,7 +116,10 @@ void Game::update()
     }
     else if (m_state == GAMEPLAY)
     {
-        m_player.setMousePosition(m_camera);
+        if (!m_timeSkip)
+        {
+            m_player.setMousePosition(m_camera);
+        }
         handleInput();
         cameraMove();
         CheckCollisions();
@@ -158,9 +167,27 @@ void Game::standardUpdate()
 {
     m_player.update();
 
+    if (!m_timeSkip)
+    {
+        if (m_postSkipTimer > 0)
+        {
+            m_postSkipTimer -= GetFrameTime();
+        }
+        else
+        {
+            for (NPC& e : m_enemies)
+            {
+                e.unsurprise();
+            }
+        }
+    }
+
     for (NPC& e : m_enemies)
     {
-        e.setTarget(m_player.getPosition());
+        if (!e.isSurprised())
+        {
+            e.setTarget(m_player.getPosition());
+        }
         e.update();
     }
 
@@ -204,6 +231,26 @@ void Game::gameEndUpdate()
         m_menu.resetMenu();
         m_player.setPosition({ 0.0f, 0.0f });
     }
+}
+
+void Game::timeSkip()
+{
+    m_skipCount = 0;
+
+    for (NPC& e : m_enemies)
+    {
+        e.surprise();
+    }
+
+    while (m_skipCount < 60)
+    {
+        update();
+        m_skipCount++;
+    }
+
+    m_timeSkip = false;
+
+    m_postSkipTimer = SKIP_MAX;
 }
 
 
@@ -256,6 +303,13 @@ void Game::handleInput()
         m_rewinding = false;
     }
 
+    if (IsKeyReleased(KEY_R) && !m_timestop && !m_timeSkip)
+    {
+        m_timeSkip = true;
+        m_player.decreaseMomentum(20.0f);
+        timeSkip();
+    }
+
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
     {
         m_player.useAttack(AttackTypes::LIGHT);
@@ -263,10 +317,6 @@ void Game::handleInput()
     else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
     {
         m_player.useAttack(AttackTypes::HEAVY);
-    }
-    else if (IsKeyDown(KEY_R))
-    {
-        m_player.useAttack(AttackTypes::SPECIAL);
     }
 
     Vector2 direction = { 0.0f, 0.0f };
@@ -296,9 +346,12 @@ void Game::CheckCollisions()
 
     for (NPC& e : m_enemies)
     {
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), e);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), e);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), e);
+        if (!e.isSurprised())
+        {
+            CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), e);
+            CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), e);
+            CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), e);
+        }
 
         if (!m_timestop)
         {

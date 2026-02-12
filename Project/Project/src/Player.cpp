@@ -141,9 +141,9 @@ void Player::addMomentum(float t_amount)
 	}
 }
 
-void Player::decreaseMomentum()
+void Player::decreaseMomentum(float t_amount)
 {
-	m_momentum -= 1.0f;
+	m_momentum -= t_amount;
 }
 
 void Player::setMousePosition(Camera2D& t_cam)

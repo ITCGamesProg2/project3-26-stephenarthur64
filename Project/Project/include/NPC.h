@@ -18,6 +18,9 @@ public:
     void setPosition(Vector2 t_pos) { m_position = t_pos; }
 
     void setActive(bool t_active) { m_alive = t_active; }
+    bool isSurprised() { return m_surprise; }
+    void surprise() { m_surprise = true; }
+    void unsurprise() { m_surprise = false; }
 
 protected:
     Vector2 m_target;
@@ -25,5 +28,6 @@ protected:
     const float MAX_SPEED;
     const float MIN_SPEED;
     Attack *m_attack;
+    bool m_surprise;
 };
 
