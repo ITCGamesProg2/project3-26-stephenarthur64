@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Attack.h"
+#include <iostream>
 
 class NPC :
     public GameObject
@@ -21,6 +22,7 @@ public:
     bool isSurprised() { return m_surprise; }
     void surprise() { m_surprise = true; }
     void unsurprise() { m_surprise = false; }
+    void heal() { m_health++; std::cout << m_health << "\n"; }
 
 protected:
     Vector2 m_target;

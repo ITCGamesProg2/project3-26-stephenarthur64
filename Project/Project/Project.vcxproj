@@ -140,6 +140,7 @@
     <ClInclude Include="include\Door.h" />
     <ClInclude Include="include\EnemyHeavy.h" />
     <ClInclude Include="include\EnemyLight.h" />
+    <ClInclude Include="include\EnemySupport.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\globals.h" />
@@ -153,6 +154,7 @@
     <ClInclude Include="include\Player.h" />
     <ClInclude Include="include\RewindBoss.h" />
     <ClInclude Include="include\SpecialAttack.h" />
+    <ClInclude Include="include\SupportAttack.h" />
     <ClInclude Include="include\Timeline.h" />
     <ClInclude Include="include\Wall.h" />
   </ItemGroup>
@@ -163,6 +165,7 @@
     <ClCompile Include="src\Door.cpp" />
     <ClCompile Include="src\EnemyHeavy.cpp" />
     <ClCompile Include="src\EnemyLight.cpp" />
+    <ClCompile Include="src\EnemySupport.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\Goal.cpp" />
@@ -173,6 +176,7 @@
     <ClCompile Include="src\Pickup.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\RewindBoss.cpp" />
+    <ClCompile Include="src\SupportAttack.cpp" />
     <ClCompile Include="src\Timeline.cpp" />
     <ClCompile Include="src\Wall.cpp" />
   </ItemGroup>

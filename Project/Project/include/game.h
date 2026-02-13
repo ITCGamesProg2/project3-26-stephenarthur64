@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "EnemyLight.h"
 #include "EnemyHeavy.h"
+#include "EnemySupport.h"
 #include "Wall.h"
 #include "Timeline.h"
 #include "CollisionCheck.h"
@@ -52,6 +53,7 @@ private:
     std::vector<Door> m_doors;
 
     Pickup testpickup;
+    EnemySupport testsupport;
 
     Time m_tempTime;
     Time m_newTime;

@@ -31,6 +31,8 @@ void Game::loadLevel()
 
     testpickup.setPosition({ 400, 400 });
     testpickup.setAbility(TimeAbilities::STOP);
+
+    testsupport.setPosition({ 500, 400 });
 }
 
 void Game::draw()
@@ -63,6 +65,7 @@ void Game::draw()
         }
         m_player.draw();
         testpickup.draw();
+        testsupport.draw();
         for (NPC& e : m_enemies)
         {
             e.draw();
@@ -182,6 +185,9 @@ void Game::standardUpdate()
             {
                 e.unsurprise();
             }
+
+            testsupport.update();
+            testsupport.findNearest(m_enemies);
         }
     }
 
@@ -359,6 +365,11 @@ void Game::CheckCollisions()
         if (!m_timestop)
         {
             CollisionCheck::CheckCollisionAttack(e.getAttack(), m_player);
+        }
+
+        if (CheckCollisionPointCircle(testsupport.getTarget(), e.getPosition(), e.getRadius()))
+        {
+            e.heal();
         }
     }
     

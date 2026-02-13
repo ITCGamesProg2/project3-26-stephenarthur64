@@ -17,12 +17,14 @@ public:
 	void setStart(Vector2 t_start);
 	float getRadius() { if (m_running) { return m_radius; } return 0.0f; }
 	AttackTypes getType() { return m_type; }
+	Vector2 getTarget() { return m_targetPos; }
 
 	bool isRunning() { return m_running; }
 	bool canAttack();
 	bool isCollided();
 	void collide() { m_collided = true; }
 	int getDamage() { return m_damage; }
+	void stopAttack() { m_running = false; }
 
 protected:
 	bool m_running;
