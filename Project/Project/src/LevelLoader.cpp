@@ -6,7 +6,7 @@ static int m_progresLimit = 1;
 static bool m_nextLevelReady = false;
 static bool m_endOfLevels = false;
 
-void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<Door>& t_d, Player& t_p)
+void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, Player& t_p)
 {
     m_nextLevelReady = false;
 
@@ -76,6 +76,14 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
             heavy.setPosition({ data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"][i]["position"][0], data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"][i]["position"][1] });
             t_e.push_back(heavy);
             t_d.at(room - 1 - m_progress).addEnemy(&t_e.back());
+        }
+
+        for (int i = 0; i < data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["support"].size(); i++)
+        {
+            EnemySupport support;
+            support.setPosition({ data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["support"][i]["position"][0], data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["support"][i]["position"][1] });
+            t_es.push_back(support);
+            t_d.at(room - 1 - m_progress).addEnemy(&t_es.back());
         }
     }
 

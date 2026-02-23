@@ -22,7 +22,7 @@ public:
     bool isSurprised() { return m_surprise; }
     void surprise() { m_surprise = true; }
     void unsurprise() { m_surprise = false; }
-    void heal() { m_health++; std::cout << m_health << "\n"; }
+    void heal();
 
 protected:
     Vector2 m_target;
@@ -31,5 +31,7 @@ protected:
     const float MIN_SPEED;
     Attack *m_attack;
     bool m_surprise;
+    float m_healTimer;
+    const float MAX_HEAL_TIMER;
 };
 

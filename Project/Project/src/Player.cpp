@@ -7,7 +7,7 @@ Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MI
 {
 	m_speed = 0.4f;
 	m_baseRadius = t_r;
-	m_maxHealth = 10;
+	m_maxHealth = 100;
 	m_health = m_maxHealth;
 	m_maxIFrames = 0.3f;
 	m_friction = DEFAULT_FRICTION;

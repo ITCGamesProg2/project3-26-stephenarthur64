@@ -22,7 +22,7 @@ void Game::loadLevel()
     resetGame();
 
     LevelLoader::loadFile();
-    LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_doors, m_player);
+    LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_supports, m_doors, m_player);
 
     if (LevelLoader::isAtEnd())
     {
@@ -31,8 +31,6 @@ void Game::loadLevel()
 
     testpickup.setPosition({ 400, 400 });
     testpickup.setAbility(TimeAbilities::STOP);
-
-    testsupport.setPosition({ 500, 400 });
 }
 
 void Game::draw()
@@ -65,10 +63,15 @@ void Game::draw()
         }
         m_player.draw();
         testpickup.draw();
-        testsupport.draw();
+
         for (NPC& e : m_enemies)
         {
             e.draw();
+        }
+
+        for (EnemySupport& es : m_supports)
+        {
+            es.draw();
         }
 
         for (Wall& wall : m_walls)
@@ -185,9 +188,6 @@ void Game::standardUpdate()
             {
                 e.unsurprise();
             }
-
-            testsupport.update();
-            testsupport.findNearest(m_enemies);
         }
     }
 
@@ -198,6 +198,12 @@ void Game::standardUpdate()
             e.setTarget(m_player.getPosition());
         }
         e.update();
+    }
+
+    for (EnemySupport& es : m_supports)
+    {
+        es.update();
+        es.findNearest(m_enemies);
     }
 
     for (Door& d : m_doors)
@@ -367,9 +373,12 @@ void Game::CheckCollisions()
             CollisionCheck::CheckCollisionAttack(e.getAttack(), m_player);
         }
 
-        if (CheckCollisionPointCircle(testsupport.getTarget(), e.getPosition(), e.getRadius()))
+        for (EnemySupport& es : m_supports)
         {
-            e.heal();
+            if (CheckCollisionPointCircle(es.getTarget(), e.getPosition(), e.getRadius()))
+            {
+                e.heal();
+            }
         }
     }
     

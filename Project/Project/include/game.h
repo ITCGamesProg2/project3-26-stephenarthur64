@@ -47,13 +47,13 @@ private:
 
     Player m_player;
     std::vector<NPC> m_enemies;
+    std::vector<EnemySupport> m_supports;
 
     std::vector<Wall> m_walls;
     std::vector<Goal> m_goals;
     std::vector<Door> m_doors;
 
     Pickup testpickup;
-    EnemySupport testsupport;
 
     Time m_tempTime;
     Time m_newTime;

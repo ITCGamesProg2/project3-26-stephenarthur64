@@ -1,6 +1,6 @@
 #include "NPC.h"
 
-NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), MIN_DISTANCE(12000), MAX_SPEED(0.4f), MIN_SPEED(0.1f), m_surprise(false)
+NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), MIN_DISTANCE(12000), MAX_SPEED(0.4f), MIN_SPEED(0.1f), m_surprise(false), MAX_HEAL_TIMER(1.0f), m_healTimer(0.0f)
 {
 	m_speed = 0.3f;
 	m_health = 3;
@@ -68,4 +68,18 @@ void NPC::addForce(float t_amount)
 	Vector2 direction = m_target - m_position;
 	direction = Vector2Normalize(direction) * t_amount;
 	m_velocity += direction;
+}
+
+void NPC::heal()
+{
+	if (m_healTimer >= MAX_HEAL_TIMER)
+	{
+		m_health++;
+		m_healTimer = 0.0f;
+		std::cout << m_health << "\n";
+	}
+	else
+	{
+		m_healTimer += GetFrameTime();
+	}
 }

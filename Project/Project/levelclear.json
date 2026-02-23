@@ -34,11 +34,21 @@
   "rooms": [
     {
       "1": {
-        "enemies": [
+        "enemies": [ 
           {
             "light": [
               {
                 "position": [ 700, 400 ]
+              },
+
+              {
+                "position": [ 300, 600 ]
+              }
+            ],
+
+            "support": [
+              {
+                "position": [ 500, 400 ]
               }
             ]
           }
