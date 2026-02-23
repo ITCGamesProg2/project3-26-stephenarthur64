@@ -12,8 +12,6 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
 
     t_e.reserve(25);
 
-    m_level = 0;
-
     std::string name;
     std::string filename = "level" + std::to_string(m_level) + ".json";
     std::string debug = "levelclear.json";
@@ -44,14 +42,14 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
         t_w.back().setPosition({ data["walls"][0][name][0], data["walls"][0][name][1] });
     }
 
-    for (int i = m_progress; i < data["goals"][0].size(); i++)
+    for (int i = m_progress; i < data["goals"].size(); i++)
     {
         Goal goal(GREEN, data["goals"][i]["size"][0], data["goals"][i]["size"][1]);
         goal.setPosition({ data["goals"][i]["position"][0], data["goals"][i]["position"][1] });
         t_g.push_back(goal);
     }
     
-    m_progresLimit = data["goals"][0].size();
+    m_progresLimit = data["goals"].size();
 
     for (int room = m_progress + 1; room < data["rooms"].size() + 1; room++)
     {
@@ -93,7 +91,7 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
     }
     else
     {
-        t_p.setPosition({ data["goals"][m_progress - 1]["position"][0] + 50.0f, data["goals"][m_progress - 1]["position"][1] });
+        t_p.setPosition({ data["goals"][m_progress - 1]["position"][0] + 50.0f, data["goals"][m_progress - 1]["position"][1] + 50.0f });
     }
 }
 
