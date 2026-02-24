@@ -18,6 +18,7 @@
 enum GameState {
     MENU,
     GAMEPLAY,
+    EDITING,
     DEATH,
     END
 };
@@ -40,6 +41,7 @@ public:
     void handleInput();
     void CheckCollisions();
     void cameraMove();
+    void placing();
 
 private:
     GameState m_state;
@@ -76,6 +78,11 @@ private:
     int m_skipCount;
 
     float m_skipColours;
+
+    bool m_placing;
+    Vector2 m_placePos;
+    Vector2 m_placeSize;
+    Vector2 m_mousePos;
 };
 
 #endif // GAME_H

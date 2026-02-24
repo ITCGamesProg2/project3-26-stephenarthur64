@@ -5,6 +5,7 @@ static int m_progress = 0;
 static int m_progresLimit = 1;
 static bool m_nextLevelReady = false;
 static bool m_endOfLevels = false;
+static int m_wallCount = 0;
 
 void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, Player& t_p)
 {
@@ -14,7 +15,9 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
 
     std::string name;
     std::string filename = "level" + std::to_string(m_level) + ".json";
-    std::string debug = "levelclear.json";
+    std::string debug = "leveltest.json";
+
+    m_level = 0;
 
     if (m_level == 0)
     {
@@ -150,4 +153,29 @@ void LevelLoader::clearFile()
 
     Save << 1;
     Save << 0;
+}
+
+void LevelLoader::placeWall(Vector2 t_position, int t_sizeX, int t_sizeY, std::vector<Wall>& t_w)
+{
+    std::string filename = "leveltest.json";
+
+    std::ifstream file(filename);
+
+    nlohmann::json data;
+    data = nlohmann::json::parse(file);
+
+    m_wallCount = data["walls"][0].size();
+    m_wallCount++;
+    data["walls"][0]["wall" + std::to_string(m_wallCount)] = {(int)t_position.x, (int)t_position.y, t_sizeX, t_sizeY};
+
+    t_w.push_back(Wall(BROWN, t_sizeX, t_sizeY));
+    t_w.back().setPosition(t_position);
+
+    file.close();
+
+    std::ofstream write(filename);
+
+    write << data.dump(4);
+
+    write.close();
 }

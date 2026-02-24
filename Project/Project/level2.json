@@ -37,6 +37,20 @@
       "1": {
         "enemies": [
           {
+            "light": [
+              {
+                "position": [ 2500, -400 ]
+              },
+              {
+                "position": [ 1800, -400 ]
+              }
+            ],
+
+            "support": [
+              {
+                "position": [ 2500, -1100 ]
+              }
+            ]
           }
         ],
         "doors": [

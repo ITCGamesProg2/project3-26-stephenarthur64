@@ -178,5 +178,8 @@
     <None Include="level2.json">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="leveltest.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@
 #include <iostream>
 
 Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(MENU), m_skipCount(0), m_postSkipTimer(0), 
-                m_skipColours(0), SKIP_MAX(1.0f)
+                m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false)
 {
 }
 
@@ -30,7 +30,7 @@ void Game::loadLevel()
     }
 
     testpickup.setPosition({ 400, 400 });
-    testpickup.setAbility(TimeAbilities::STOP);
+    testpickup.setAbility(TimeAbilities::SKIP);
 }
 
 void Game::draw()
@@ -41,7 +41,7 @@ void Game::draw()
     {
         m_menu.draw();
     }
-    else if (m_state == GAMEPLAY || m_state == DEATH)
+    else if (m_state == GAMEPLAY || m_state == DEATH || m_state == EDITING)
     {
         if (m_rewinding)
         {
@@ -92,6 +92,11 @@ void Game::draw()
         if (m_rewinding)
         {
             Timeline::drawTimeline();
+        }
+
+        if (m_placing)
+        {
+            DrawRectangleLines(m_placePos.x, m_placePos.y, m_placeSize.x, m_placeSize.y, DARKBLUE);
         }
 
         EndMode2D();
@@ -150,6 +155,11 @@ void Game::update()
         {
             m_state = DEATH;
         }
+    }
+    else if (m_state == EDITING)
+    {
+        handleInput();
+        cameraMove();
     }
     else if (m_state == DEATH)
     {
@@ -334,6 +344,23 @@ void Game::handleInput()
         m_player.useAttack(AttackTypes::HEAVY);
     }
 
+    if (m_state == EDITING)
+    {
+        placing();
+    }
+
+    if (IsKeyReleased(KEY_B))
+    {
+        if (m_state == GAMEPLAY)
+        {
+            m_state = EDITING;
+        }
+        else if (m_state == EDITING)
+        {
+            m_state = GAMEPLAY;
+        }
+    }
+
     Vector2 direction = { 0.0f, 0.0f };
 
     if (IsKeyDown(KEY_W)) // Up
@@ -441,4 +468,52 @@ void Game::cameraMove()
         velocity *= 5.0f;
         m_camTarget += velocity;
     }*/
+}
+
+void Game::placing()
+{
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+    {
+        m_placing = true;
+        m_mousePos = GetScreenToWorld2D(GetMousePosition(), m_camera);
+
+        if (m_placePos.x == INFINITY)
+        {
+            m_placePos = m_mousePos;
+            m_placePos.x = m_placePos.x - ((int)m_placePos.x % 100);
+            m_placePos.y = m_placePos.y - ((int)m_placePos.y % 100);
+        }
+        else
+        {
+            m_placeSize.x = (m_mousePos.x + (int)m_mousePos.x % 100) - m_placePos.x;
+            m_placeSize.y = (m_mousePos.y + (int)m_mousePos.y % 100) - m_placePos.y;
+
+            if ((int)m_placeSize.x % 100 != 0)
+            {
+                m_placeSize.x += 100 - (int)m_placeSize.x % 100;
+            }
+            if ((int)m_placeSize.y % 100 != 0)
+            {
+                m_placeSize.y += 100 - (int)m_placeSize.y % 100;
+            }
+
+            if (m_placeSize.x < 100)
+            {
+                m_placeSize.x = 100;
+            }
+            if (m_placeSize.y < 100)
+            {
+                m_placeSize.y = 100;
+            }
+        }
+    }
+
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+    {
+        m_placing = false;
+
+        LevelLoader::placeWall(m_placePos, m_placeSize.x, m_placeSize.y, m_walls);
+
+        m_placePos.x = INFINITY;
+    }
 }
