@@ -14,6 +14,7 @@
 #include "LevelLoader.h"
 #include "Pickup.h"
 #include "globals.h"
+#include "Editor.h"
 
 enum GameState {
     MENU,

@@ -102,6 +102,9 @@
     <ClInclude Include="include\SupportAttack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Editor.h">
+      <Filter>Header Files\Static</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
@@ -162,6 +165,9 @@
       <Filter>Source Files\Static</Filter>
     </ClCompile>
     <ClCompile Include="src\SupportAttack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Editor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

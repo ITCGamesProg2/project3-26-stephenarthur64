@@ -21,6 +21,5 @@ public:
 	static void saveFile();
 	static void loadFile();
 	static void clearFile();
-	static void placeWall(Vector2 t_position, int t_sizeX, int t_sizeY, std::vector<Wall>& t_w);
 };
 

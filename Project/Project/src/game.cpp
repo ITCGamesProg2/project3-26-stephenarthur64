@@ -477,42 +477,14 @@ void Game::placing()
         m_placing = true;
         m_mousePos = GetScreenToWorld2D(GetMousePosition(), m_camera);
 
-        if (m_placePos.x == INFINITY)
-        {
-            m_placePos = m_mousePos;
-            m_placePos.x = m_placePos.x - ((int)m_placePos.x % 100);
-            m_placePos.y = m_placePos.y - ((int)m_placePos.y % 100);
-        }
-        else
-        {
-            m_placeSize.x = (m_mousePos.x + (int)m_mousePos.x % 100) - m_placePos.x;
-            m_placeSize.y = (m_mousePos.y + (int)m_mousePos.y % 100) - m_placePos.y;
-
-            if ((int)m_placeSize.x % 100 != 0)
-            {
-                m_placeSize.x += 100 - (int)m_placeSize.x % 100;
-            }
-            if ((int)m_placeSize.y % 100 != 0)
-            {
-                m_placeSize.y += 100 - (int)m_placeSize.y % 100;
-            }
-
-            if (m_placeSize.x < 100)
-            {
-                m_placeSize.x = 100;
-            }
-            if (m_placeSize.y < 100)
-            {
-                m_placeSize.y = 100;
-            }
-        }
+        Editor::calculateMouse(m_mousePos);
     }
 
     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
     {
         m_placing = false;
 
-        LevelLoader::placeWall(m_placePos, m_placeSize.x, m_placeSize.y, m_walls);
+        Editor::placeWall(m_placePos, m_placeSize.x, m_placeSize.y, m_walls);
 
         m_placePos.x = INFINITY;
     }
