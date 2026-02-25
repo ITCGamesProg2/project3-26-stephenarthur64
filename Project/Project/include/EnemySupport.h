@@ -7,7 +7,7 @@ class EnemySupport :
     public NPC
 {
 public:
-    EnemySupport(Color t_c = RED, float t_r = 20.0f) : NPC(t_c, t_r), m_nearestDist(200)
+    EnemySupport(Color t_c = RED, float t_r = 20.0f) : NPC(t_c, t_r), m_nearestDist(200), m_tempDist(0.0f)
     {
         m_attack = new SupportAttack({ -1000, 1000 });
         m_attack->setCooldownScale(2.0f);

@@ -5,7 +5,7 @@
 #include <json.hpp>
 #include <iostream>
 
-Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(MENU), m_skipCount(0), m_postSkipTimer(0), 
+Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(GameState::MENU), m_skipCount(0), m_postSkipTimer(0), 
                 m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false)
 {
 }
@@ -24,9 +24,15 @@ void Game::loadLevel()
     LevelLoader::loadFile();
     LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_supports, m_doors, m_player);
 
+    Editor::setWallReference(&m_walls);
+    Editor::setDoorReference(&m_doors);
+    Editor::setGoalReference(&m_goals);
+    Editor::setNPCReference(&m_enemies);
+    Editor::setSupportReference(&m_supports);
+
     if (LevelLoader::isAtEnd())
     {
-        m_state = END;
+        m_state = GameState::END;
     }
 
     testpickup.setPosition({ 400, 400 });
@@ -37,11 +43,11 @@ void Game::draw()
 {
     BeginMode2D(m_camera);
     DrawFPS(0, 0);
-    if (m_state == MENU)
+    if (m_state == GameState::MENU)
     {
         m_menu.draw();
     }
-    else if (m_state == GAMEPLAY || m_state == DEATH || m_state == EDITING)
+    else if (m_state == GameState::GAMEPLAY || m_state == GameState::DEATH || m_state == GameState::EDITING)
     {
         if (m_rewinding)
         {
@@ -96,7 +102,7 @@ void Game::draw()
 
         if (m_placing)
         {
-            DrawRectangleLines(m_placePos.x, m_placePos.y, m_placeSize.x, m_placeSize.y, DARKBLUE);
+            Editor::drawPlacing();
         }
 
         EndMode2D();
@@ -104,13 +110,19 @@ void Game::draw()
         DrawRectangle(10, 40, 50, 320, BLACK);
         DrawRectangle(20, 50, 30, (m_player.getMomentum() / m_player.getMaxMomentum()) * 300, LIGHTGRAY);
 
-        if (m_state == DEATH)
+        if (m_state == GameState::EDITING)
+        {
+            DrawText(("Room " + std::to_string(Editor::getRoom())).c_str(), 100, 100, 20, BLUE);
+            DrawText(Editor::getState().c_str(), 100, 50, 30, BLUE);
+        }
+
+        if (m_state == GameState::DEATH)
         {
             DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
             DrawText("Player Dead", (SCREEN_WIDTH / 2.0f), SCREEN_HEIGHT / 2.0f, 20, WHITE);
         }
     }
-    else if (m_state == END)
+    else if (m_state == GameState::END)
     {
         DrawText("END OF GAME", 200, 200, 50, WHITE);
     }
@@ -118,17 +130,17 @@ void Game::draw()
 
 void Game::update()
 {
-    if (m_state == MENU)
+    if (m_state == GameState::MENU)
     {
         m_menu.update();
         if (m_menu.ended())
         {
-            m_state = GAMEPLAY;
+            m_state = GameState::GAMEPLAY;
             resetGame();
             loadLevel();
         }
     }
-    else if (m_state == GAMEPLAY)
+    else if (m_state == GameState::GAMEPLAY)
     {
         if (!m_timeSkip)
         {
@@ -153,19 +165,19 @@ void Game::update()
 
         if (!m_player.isAlive())
         {
-            m_state = DEATH;
+            m_state = GameState::DEATH;
         }
     }
-    else if (m_state == EDITING)
+    else if (m_state == GameState::EDITING)
     {
         handleInput();
         cameraMove();
     }
-    else if (m_state == DEATH)
+    else if (m_state == GameState::DEATH)
     {
         deadUpdate();
     }
-    else if (m_state == END)
+    else if (m_state == GameState::END)
     {
         m_camera.target = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
         gameEndUpdate();
@@ -241,7 +253,7 @@ void Game::deadUpdate()
 {
     if (IsKeyReleased(KEY_SPACE))
     {
-        m_state = GAMEPLAY;
+        m_state = GameState::GAMEPLAY;
         resetGame();
         loadLevel();
     }
@@ -251,7 +263,7 @@ void Game::gameEndUpdate()
 {
     if (IsKeyReleased(KEY_SPACE))
     {
-        m_state = MENU;
+        m_state = GameState::MENU;
         LevelLoader::clearProgress();
         m_menu.resetMenu();
         m_player.setPosition({ 0.0f, 0.0f });
@@ -303,83 +315,85 @@ void Game::rewindingUpdate()
 
 void Game::handleInput()
 {
-    if (IsKeyReleased(KEY_SPACE) && m_player.canUse(TimeAbilities::STOP))
+    if (m_state == GameState::GAMEPLAY)
     {
-        if (m_player.canTimeStop() && m_timestop == false)
+        if (IsKeyReleased(KEY_SPACE) && m_player.canUse(TimeAbilities::STOP))
         {
-            m_timestop = true;
+            if (m_player.canTimeStop() && m_timestop == false)
+            {
+                m_timestop = true;
+            }
+            else
+            {
+                m_timestop = false;
+            }
+        }
+
+        if (IsKeyDown(KEY_Q) && m_player.canUse(TimeAbilities::REWIND) && !m_timestop)
+        {
+            if (Timeline::canRewind() && m_player.getMomentum() > 5.0f)
+            {
+                m_rewinding = true;
+            }
+            return;
         }
         else
         {
-            m_timestop = false;
+            m_rewinding = false;
         }
-    }
 
-    if (IsKeyDown(KEY_Q) && m_player.canUse(TimeAbilities::REWIND) && !m_timestop)
-    {
-        if (Timeline::canRewind() && m_player.getMomentum() > 5.0f)
+        if (IsKeyReleased(KEY_R) && m_player.canUse(TimeAbilities::SKIP) && !m_timestop && !m_timeSkip)
         {
-            m_rewinding = true;
+            m_timeSkip = true;
+            m_player.decreaseMomentum(20.0f);
+            timeSkip();
         }
-        return;
-    }
-    else
-    {
-        m_rewinding = false;
-    }
 
-    if (IsKeyReleased(KEY_R) && m_player.canUse(TimeAbilities::SKIP) && !m_timestop && !m_timeSkip)
-    {
-        m_timeSkip = true;
-        m_player.decreaseMomentum(20.0f);
-        timeSkip();
-    }
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+        {
+            m_player.useAttack(AttackTypes::LIGHT);
+        }
+        else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
+        {
+            m_player.useAttack(AttackTypes::HEAVY);
+        }
 
-    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-    {
-        m_player.useAttack(AttackTypes::LIGHT);
-    }
-    else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
-    {
-        m_player.useAttack(AttackTypes::HEAVY);
-    }
+        Vector2 direction = { 0.0f, 0.0f };
 
-    if (m_state == EDITING)
+        if (IsKeyDown(KEY_W)) // Up
+        {
+            direction.y += -1.0f;
+        }
+        if (IsKeyDown(KEY_S)) // Down
+        {
+            direction.y += 1.0f;
+        }
+        if (IsKeyDown(KEY_A)) // Left
+        {
+            direction.x += -1.0f;
+        }
+        if (IsKeyDown(KEY_D)) // Right
+        {
+            direction.x += 1.0f;
+        }
+        m_player.addForce(direction);
+    }
+    else if (m_state == GameState::EDITING)
     {
-        placing();
+        Editor::handleInputs(m_placing, m_camera);
     }
 
     if (IsKeyReleased(KEY_B))
     {
-        if (m_state == GAMEPLAY)
+        if (m_state == GameState::GAMEPLAY)
         {
-            m_state = EDITING;
+            m_state = GameState::EDITING;
         }
-        else if (m_state == EDITING)
+        else if (m_state == GameState::EDITING)
         {
-            m_state = GAMEPLAY;
+            m_state = GameState::GAMEPLAY;
         }
     }
-
-    Vector2 direction = { 0.0f, 0.0f };
-
-    if (IsKeyDown(KEY_W)) // Up
-    {
-        direction.y += -1.0f;
-    }
-    if (IsKeyDown(KEY_S)) // Down
-    {
-        direction.y += 1.0f;
-    }
-    if (IsKeyDown(KEY_A)) // Left
-    {
-        direction.x += -1.0f;
-    }
-    if (IsKeyDown(KEY_D)) // Right
-    {
-        direction.x += 1.0f;
-    }
-    m_player.addForce(direction);
 }
 
 void Game::CheckCollisions()
@@ -468,24 +482,4 @@ void Game::cameraMove()
         velocity *= 5.0f;
         m_camTarget += velocity;
     }*/
-}
-
-void Game::placing()
-{
-    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-    {
-        m_placing = true;
-        m_mousePos = GetScreenToWorld2D(GetMousePosition(), m_camera);
-
-        Editor::calculateMouse(m_mousePos);
-    }
-
-    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
-    {
-        m_placing = false;
-
-        Editor::placeWall(m_placePos, m_placeSize.x, m_placeSize.y, m_walls);
-
-        m_placePos.x = INFINITY;
-    }
 }

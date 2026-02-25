@@ -16,7 +16,7 @@
 #include "globals.h"
 #include "Editor.h"
 
-enum GameState {
+enum class GameState {
     MENU,
     GAMEPLAY,
     EDITING,
@@ -42,7 +42,6 @@ public:
     void handleInput();
     void CheckCollisions();
     void cameraMove();
-    void placing();
 
 private:
     GameState m_state;

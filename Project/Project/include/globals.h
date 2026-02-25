@@ -24,9 +24,9 @@ enum TimeAbilities {
 
 enum EditState {
 	WALL,
-	LIGHT,
-	HEAVY,
-	SUPPORT,
+	LIGHTENEMY,
+	HEAVYENEMY,
+	SUPPORTENEMY,
 	GOAL,
 	DOOR,
 	END

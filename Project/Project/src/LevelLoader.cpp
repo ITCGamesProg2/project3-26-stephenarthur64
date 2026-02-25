@@ -12,11 +12,12 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
 
     t_e.reserve(25);
 
-    m_level = 2;
 
     std::string name;
     std::string filename = "level" + std::to_string(m_level) + ".json";
     std::string debug = "leveltest.json";
+
+    m_level = 0;
 
     if (m_level == 0)
     {
@@ -64,7 +65,7 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
 
         for (int i = 0; i < data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"].size(); i++)
         {
-            EnemyLight light(RED, 30.0f);
+            EnemyLight light;
             light.setPosition({ data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"][i]["position"][0], data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["light"][i]["position"][1] });
             t_e.push_back(light);
             t_d.at(room - 1 - m_progress).addEnemy(&t_e.back());
@@ -72,7 +73,7 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
 
         for (int i = 0; i < data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"].size(); i++)
         {
-            EnemyHeavy heavy(RED, 45.0f);
+            EnemyHeavy heavy;
             heavy.setPosition({ data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"][i]["position"][0], data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["heavy"][i]["position"][1] });
             t_e.push_back(heavy);
             t_d.at(room - 1 - m_progress).addEnemy(&t_e.back());
