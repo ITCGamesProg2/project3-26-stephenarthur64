@@ -12,7 +12,7 @@ static std::vector<Door>* m_doors;
 static std::vector<Goal>* m_goals;
 static int m_currentState = 0;
 static EditState m_allStates[END] = { WALL, LIGHTENEMY, HEAVYENEMY, SUPPORTENEMY, GOAL, DOOR };
-static std::string m_currentLevel = "leveltest.json";
+static std::string m_currentLevel = "level2.json";
 
 void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
 {
@@ -169,7 +169,7 @@ void Editor::placeWall()
 
     m_entityCount = data["walls"][0].size();
     m_entityCount++;
-    data["walls"][0]["wall" + std::to_string(m_entityCount)] = { (int)m_placePos.x, (int)m_placePos.y, m_placeSize.x, m_placeSize.y };
+    data["walls"][0]["wall" + std::to_string(m_entityCount)] = { (int)m_placePos.x, (int)m_placePos.y, (int)m_placeSize.x, (int)m_placeSize.y };
 
     Wall newWall(BROWN, m_placeSize.x, m_placeSize.y);
     newWall.setPosition(m_placePos);

@@ -1,6 +1,6 @@
 #include "LevelLoader.h"
 
-static int m_level = 1;
+static int m_level = 2;
 static int m_progress = 0;
 static int m_progresLimit = 1;
 static bool m_nextLevelReady = false;
@@ -12,12 +12,11 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
 
     t_e.reserve(25);
 
+    m_level = 2;
 
     std::string name;
     std::string filename = "level" + std::to_string(m_level) + ".json";
     std::string debug = "leveltest.json";
-
-    m_level = 0;
 
     if (m_level == 0)
     {

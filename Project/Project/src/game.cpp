@@ -36,7 +36,7 @@ void Game::loadLevel()
     }
 
     testpickup.setPosition({ 400, 400 });
-    testpickup.setAbility(TimeAbilities::SKIP);
+    testpickup.setAbility(TimeAbilities::REWIND);
 }
 
 void Game::draw()
@@ -421,6 +421,13 @@ void Game::CheckCollisions()
                 e.heal();
             }
         }
+    }
+
+    for (EnemySupport& es : m_supports)
+    {
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), es);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), es);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), es);
     }
     
     for (Wall& wall : m_walls)
