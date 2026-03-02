@@ -4,6 +4,7 @@ void EnemySupport::update()
 {
 	m_attack->setStart(m_position);
 	move();
+	GameObject::update();
 }
 
 void EnemySupport::findNearest(std::vector<NPC>& t_e)

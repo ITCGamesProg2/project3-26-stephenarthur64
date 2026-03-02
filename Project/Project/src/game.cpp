@@ -438,6 +438,11 @@ void Game::CheckCollisions()
         {
             CollisionCheck::CheckCollisionsWall(e, wall, true);
         }
+
+        for (EnemySupport& es : m_supports)
+        {
+            CollisionCheck::CheckCollisionsWall(es, wall, true);
+        }
     }
 
     for (Goal& goal : m_goals)

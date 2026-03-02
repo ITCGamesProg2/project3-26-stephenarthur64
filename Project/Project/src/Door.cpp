@@ -40,3 +40,4 @@ void Door::addEnemy(NPC* t_e)
 	m_enemies.push_back(t_e);
 	m_enemyMax++;
 }
+

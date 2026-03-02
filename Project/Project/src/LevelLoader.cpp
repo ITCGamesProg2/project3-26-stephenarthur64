@@ -11,6 +11,7 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
     m_nextLevelReady = false;
 
     t_e.reserve(25);
+    t_es.reserve(25);
 
     m_level = 2;
 

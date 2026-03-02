@@ -1,6 +1,7 @@
 #pragma once
 #include "Wall.h"
 #include "NPC.h"
+#include "EnemySupport.h"
 #include <vector>
 
 class Door :

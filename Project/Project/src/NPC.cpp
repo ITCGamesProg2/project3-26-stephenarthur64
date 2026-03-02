@@ -74,7 +74,10 @@ void NPC::heal()
 {
 	if (m_healTimer >= MAX_HEAL_TIMER)
 	{
-		m_health++;
+		if (m_health + 1 < m_maxHealth)
+		{
+			m_health++;
+		}
 		m_healTimer = 0.0f;
 		std::cout << m_health << "\n";
 	}
