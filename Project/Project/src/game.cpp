@@ -15,6 +15,8 @@ void Game::init()
     m_background = LoadTexture("img/backgroundtemp.png");
     m_camera.zoom = 1.0f;
     m_camTarget = m_player.getPosition();
+
+    AssetManager::initSprites();
 }
 
 void Game::loadLevel()
@@ -35,8 +37,28 @@ void Game::loadLevel()
         m_state = GameState::END;
     }
 
+    m_player.setSprite(AssetManager::getPlayerSprite());
+
+    for (NPC& e : m_enemies)
+    {
+        switch (e.getType())
+        {
+        case LIGHT:
+            e.setSprite(AssetManager::getLightSprite());
+            break;
+        case HEAVY:
+            e.setSprite(AssetManager::getHeavySprite());
+            break;
+        case SUPPORT:
+            e.setSprite(AssetManager::getLightSprite());
+            break;
+        default:
+            break;
+        }
+    }
+
     testpickup.setPosition({ 400, 400 });
-    testpickup.setAbility(TimeAbilities::REWIND);
+    testpickup.setAbility(TimeAbilities::SKIP);
 }
 
 void Game::draw()
@@ -108,7 +130,10 @@ void Game::draw()
         EndMode2D();
 
         DrawRectangle(10, 40, 50, 320, BLACK);
-        DrawRectangle(20, 50, 30, (m_player.getMomentum() / m_player.getMaxMomentum()) * 300, LIGHTGRAY);
+        DrawRectanglePro({ 50, 350, 30, m_player.getMomentumPercentage() * 300 }, { 0, 0 }, 180, LIGHTGRAY);
+        DrawRectangle(70, 40, 50, 320, BLACK);
+        DrawRectanglePro({ 110, 350, 30, m_player.getHealthPercentage() * 300 }, { 0, 0 }, 180, RED);
+        
 
         if (m_state == GameState::EDITING)
         {

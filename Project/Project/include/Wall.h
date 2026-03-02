@@ -1,5 +1,7 @@
 #pragma once
 #include "GameObject.h"
+#include "AssetManager.h"
+
 class Wall :
     public GameObject
 {

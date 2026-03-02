@@ -79,7 +79,6 @@ void NPC::heal()
 			m_health++;
 		}
 		m_healTimer = 0.0f;
-		std::cout << m_health << "\n";
 	}
 	else
 	{

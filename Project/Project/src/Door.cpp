@@ -9,6 +9,7 @@ void Door::draw()
 	if (m_alive)
 	{
 		DrawRectangle(m_position.x, m_position.y, m_sizeX, m_sizeY, m_colour);
+		DrawTexturePro(AssetManager::getDoorSprite(), { 0, 0, 32 * (m_sizeX / 100), 32 * (m_sizeY / 100) }, { m_position.x, m_position.y, m_sizeX, m_sizeY }, { 0, 0 }, 0.0f, WHITE);
 	}
 }
 

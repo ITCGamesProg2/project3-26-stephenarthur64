@@ -9,6 +9,7 @@ class EnemySupport :
 public:
     EnemySupport(Color t_c = RED, float t_r = 20.0f) : NPC(t_c, t_r), m_nearestDist(200), m_tempDist(0.0f)
     {
+        m_attackType = SUPPORT;
         m_attack = new SupportAttack({ -1000, 1000 });
         m_attack->setCooldownScale(2.0f);
         m_attack->setWindupScale(2.0f);

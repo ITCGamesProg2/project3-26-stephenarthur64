@@ -14,6 +14,7 @@ public:
     virtual void collision(int t_damage, Vector2 t_pos) override;
     void addForce(float t_amount);
     Attack* getAttack() { return m_attack; }
+    AttackTypes getType() { return m_attackType; }
 
     void setTarget(Vector2 t_target) { m_target = t_target; }
     void setPosition(Vector2 t_pos) { m_position = t_pos; }
@@ -33,5 +34,6 @@ protected:
     bool m_surprise;
     float m_healTimer;
     const float MAX_HEAL_TIMER;
+    AttackTypes m_attackType;
 };
 

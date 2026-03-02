@@ -21,6 +21,8 @@ public:
 	bool isAlive() { return m_alive; }
 	virtual void respawn();
 
+	void setSprite(Texture2D& t_sp) { m_sprite = t_sp; m_spriteSource = { 0, 0, (float)m_sprite.width, (float)m_sprite.height }; m_bufferSourceWidth = m_sprite.width; }
+
 protected:
 	Vector2 m_position;
 	Vector2 m_velocity;
@@ -32,5 +34,9 @@ protected:
 	float m_invincibilityFrames;
 	float m_maxIFrames;
 	bool m_alive;
+	Texture2D m_sprite;
+
+	Rectangle m_spriteSource;
+	int m_bufferSourceWidth;
 };
 

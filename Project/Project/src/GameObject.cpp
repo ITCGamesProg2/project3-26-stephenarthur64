@@ -19,10 +19,12 @@ void GameObject::draw()
 		if (m_invincibilityFrames > 0.0f)
 		{
 			DrawCircle(m_position.x, m_position.y, m_radius, ORANGE);
+			DrawTexturePro(m_sprite, m_spriteSource, { m_position.x - (m_sprite.width * 1.5f), m_position.y - (m_sprite.height * 1.5f), m_radius * 3, m_radius * 3 }, { 0, 0 }, 0, ORANGE);
 		}
 		else
 		{
 			DrawCircle(m_position.x, m_position.y, m_radius, m_colour);
+			DrawTexturePro(m_sprite, m_spriteSource, { m_position.x - (m_sprite.width * 1.5f), m_position.y - (m_sprite.height * 1.5f), m_radius * 3, m_radius * 3 }, { 0, 0 }, 0, WHITE);
 		}
 	}
 }

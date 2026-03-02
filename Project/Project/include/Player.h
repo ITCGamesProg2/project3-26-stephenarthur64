@@ -8,6 +8,7 @@
 #include "LightAttack.h"
 #include "HeavyAttack.h"
 #include "SpecialAttack.h"
+#include "AssetManager.h"
 
 class Player :
     public GameObject
@@ -30,7 +31,8 @@ public:
     float getRadius() { return m_radius; }
     Attack* getAttack(AttackTypes t_type);
     float const getMomentum() { return m_momentum; }
-    float const getMaxMomentum() { return m_maxMomentum; }
+    float const getMomentumPercentage() { return m_momentum / m_maxMomentum; }
+    float const getHealthPercentage() { return m_health / (float)m_maxHealth; }
 
     bool const canTimeStop() { if (m_momentum == m_maxMomentum) { return true; } return false; }
 
