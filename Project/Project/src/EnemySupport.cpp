@@ -4,7 +4,7 @@ void EnemySupport::update()
 {
 	m_attack->setStart(m_position);
 	move();
-	GameObject::update();
+	NPC::update();
 }
 
 void EnemySupport::findNearest(std::vector<NPC>& t_e)
@@ -20,7 +20,6 @@ void EnemySupport::findNearest(std::vector<NPC>& t_e)
 			found = true;
 			m_attack->execute(e.getPosition()); 
 			setTarget(e.getPosition());
-			addForce(0.2f);
 			m_nearestDist = m_tempDist;
 		}
 	}
@@ -38,7 +37,6 @@ void EnemySupport::findNearest(std::vector<NPC>& t_e)
 		if (m_tempDist < m_nearestDist)
 		{
 			setTarget(e.getPosition());
-			addForce(0.2f);
 			m_nearestDist = m_tempDist;
 		}
 	}

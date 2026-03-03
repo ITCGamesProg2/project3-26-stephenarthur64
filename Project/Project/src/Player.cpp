@@ -17,6 +17,8 @@ Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MI
 	m_combo.push_back(&m_light);
 	m_combo.push_back(&m_heavy);
 	m_combo.push_back(&m_special);
+
+	m_spriteScale = 1.0f;
 }
 
 void Player::update()

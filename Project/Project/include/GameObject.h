@@ -21,7 +21,7 @@ public:
 	bool isAlive() { return m_alive; }
 	virtual void respawn();
 
-	void setSprite(Texture2D& t_sp) { m_sprite = t_sp; m_spriteSource = { 0, 0, (float)m_sprite.width, (float)m_sprite.height }; m_bufferSourceWidth = m_sprite.width; }
+	void setSprite(Texture2D& t_sp) { m_sprite = t_sp; m_spriteSource = { 0, 0, 32, 32 }; m_bufferSourceWidth = m_sprite.width; }
 
 protected:
 	Vector2 m_position;
@@ -38,5 +38,6 @@ protected:
 
 	Rectangle m_spriteSource;
 	int m_bufferSourceWidth;
+	float m_spriteScale;
 };
 

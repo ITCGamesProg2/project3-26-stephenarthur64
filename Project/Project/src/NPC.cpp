@@ -1,6 +1,6 @@
 #include "NPC.h"
 
-NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), MIN_DISTANCE(12000), MAX_SPEED(0.4f), MIN_SPEED(0.1f), m_surprise(false), MAX_HEAL_TIMER(1.0f), m_healTimer(0.0f)
+NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), m_minDistance(40000), MAX_SPEED(0.4f), MIN_SPEED(0.1f), m_surprise(false), MAX_HEAL_TIMER(1.0f), m_healTimer(0.0f)
 {
 	m_speed = 0.3f;
 	m_health = 3;
@@ -21,7 +21,7 @@ void NPC::update()
 
 	if (Vector2DistanceSqr(m_target, m_position) < 200000)
 	{
-		if (Vector2DistanceSqr(m_target, m_position) > MIN_DISTANCE)
+		if (Vector2DistanceSqr(m_target, m_position) > m_minDistance)
 		{
 			addForce(m_speed);
 		}

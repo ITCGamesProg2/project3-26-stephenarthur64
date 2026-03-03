@@ -10,8 +10,9 @@ public:
     {
         m_attackType = HEAVY;
         m_attack = new HeavyAttack({-1000, -1000});
-        m_attack->setCooldownScale(10.0f);
-        m_attack->setWindupScale(5.0f);
+        m_attack->setCooldownScale(3.0f);
+        m_attack->setWindupScale(2.0f);
+        m_spriteScale = 1.5f;
     }
 };
 

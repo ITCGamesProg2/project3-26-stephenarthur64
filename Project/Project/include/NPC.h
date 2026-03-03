@@ -27,7 +27,7 @@ public:
 
 protected:
     Vector2 m_target;
-    const float MIN_DISTANCE;
+    float m_minDistance;
     const float MAX_SPEED;
     const float MIN_SPEED;
     Attack *m_attack;

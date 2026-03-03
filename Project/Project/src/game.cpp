@@ -12,7 +12,7 @@ Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_
 
 void Game::init()
 {
-    m_background = LoadTexture("img/backgroundtemp.png");
+    m_background = LoadTexture("img/Environment/floor.png");
     m_camera.zoom = 1.0f;
     m_camTarget = m_player.getPosition();
 
@@ -37,34 +37,35 @@ void Game::loadLevel()
         m_state = GameState::END;
     }
 
-    m_player.setSprite(AssetManager::getPlayerSprite());
+    m_player.setSprite(AssetManager::getSprite("player"));
 
     for (NPC& e : m_enemies)
     {
         switch (e.getType())
         {
         case LIGHT:
-            e.setSprite(AssetManager::getLightSprite());
+            e.setSprite(AssetManager::getSprite("light"));
             break;
         case HEAVY:
-            e.setSprite(AssetManager::getHeavySprite());
-            break;
-        case SUPPORT:
-            e.setSprite(AssetManager::getLightSprite());
+            e.setSprite(AssetManager::getSprite("heavy"));
             break;
         default:
             break;
         }
     }
 
+    for (EnemySupport& es : m_supports)
+    {
+        es.setSprite(AssetManager::getSprite("support"));
+    }
+
     testpickup.setPosition({ 400, 400 });
-    testpickup.setAbility(TimeAbilities::SKIP);
+    testpickup.setAbility(TimeAbilities::REWIND);
 }
 
 void Game::draw()
 {
     BeginMode2D(m_camera);
-    DrawFPS(0, 0);
     if (m_state == GameState::MENU)
     {
         m_menu.draw();
@@ -73,7 +74,7 @@ void Game::draw()
     {
         if (m_rewinding)
         {
-            DrawTexture(m_background, 0, 0, DARKBLUE);
+            DrawTexturePro(m_background, { 0, 0, 1000, 1000 }, { 0, 0, 100, 100 }, { 0,0 }, 0.0f, WHITE);
         }
         else if (m_timestop)
         {
@@ -87,7 +88,7 @@ void Game::draw()
         else
         {
             ClearBackground(WHITE);
-            DrawTexture(m_background, 0, 0, WHITE);
+            DrawTexturePro(m_background, { 0, 0, 640, 640 }, { -1500, -1500, 5000, 5000 }, { 0,0 }, 0.0f, WHITE);
         }
         m_player.draw();
         testpickup.draw();
@@ -133,6 +134,45 @@ void Game::draw()
         DrawRectanglePro({ 50, 350, 30, m_player.getMomentumPercentage() * 300 }, { 0, 0 }, 180, LIGHTGRAY);
         DrawRectangle(70, 40, 50, 320, BLACK);
         DrawRectanglePro({ 110, 350, 30, m_player.getHealthPercentage() * 300 }, { 0, 0 }, 180, RED);
+
+
+        if (m_player.canUse(TimeAbilities::REWIND))
+        {
+            if (!m_rewinding)
+            {
+                DrawTexturePro(AssetManager::getSprite("powers"), { 0, 0, 32, 32 }, { SCREEN_WIDTH - 240, 10, 70, 70 }, { 0, 0 }, 0.0f, WHITE);
+            }
+            else
+            {
+                DrawTexturePro(AssetManager::getSprite("powers"), { 0, 0, 32, 32 }, { SCREEN_WIDTH - 240, 10, 70, 70 }, { 0, 0 }, 0.0f, DARKBLUE);
+            }
+        }
+
+        if (m_player.canUse(TimeAbilities::SKIP))
+        {
+            if (m_postSkipTimer <= 0)
+            {
+                DrawTexturePro(AssetManager::getSprite("powers"), { 32, 0, 32, 32 }, { SCREEN_WIDTH - 160, 10, 70, 70 }, { 0, 0 }, 0.0f, WHITE);
+            }
+            else
+            {
+                DrawTexturePro(AssetManager::getSprite("powers"), { 32, 0, 32, 32 }, { SCREEN_WIDTH - 160, 10, 70, 70 }, { 0, 0 }, 0.0f, RED);
+            }
+        }
+
+        if (m_player.canUse(TimeAbilities::STOP))
+        {
+            if (!m_timestop)
+            {
+                DrawTexturePro(AssetManager::getSprite("powers"), { 64, 0, 32, 32 }, { SCREEN_WIDTH - 80, 10, 70, 70 }, { 0, 0 }, 0.0f, WHITE);
+            }
+            else
+            {
+                DrawTexturePro(AssetManager::getSprite("powers"), { 96, 0, 32, 32 }, { SCREEN_WIDTH - 80, 10, 70, 70 }, { 0, 0 }, 0.0f, YELLOW);
+            }
+        }
+
+        DrawFPS(0, 0);
         
 
         if (m_state == GameState::EDITING)

@@ -99,14 +99,14 @@
     <ClInclude Include="include\Wall.h">
       <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="include\SupportAttack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Editor.h">
       <Filter>Header Files\Static</Filter>
     </ClInclude>
     <ClInclude Include="include\AssetManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Static</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SupportAttack.h">
+      <Filter>Header Files\Attacks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -114,9 +114,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Timeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\MainMenu.cpp">
@@ -174,7 +171,10 @@
       <Filter>Source Files\Attacks</Filter>
     </ClCompile>
     <ClCompile Include="src\AssetManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Static</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Timeline.cpp">
+      <Filter>Source Files\Static</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
