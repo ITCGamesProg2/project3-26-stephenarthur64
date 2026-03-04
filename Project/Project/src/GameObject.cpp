@@ -128,14 +128,35 @@ void GameObject::stopVelocity(int t_direction)
 {
 	if (t_direction == 0)
 	{
+		if (m_velocity.x != 0.0f)
+		{
+			if (!IsSoundPlaying(AssetManager::getSound("bump")))
+			{
+				PlaySound(AssetManager::getSound("bump"));
+			}
+		}
 		m_velocity.x = 0.0f;
 	}
 	else if (t_direction == 1)
 	{
+		if (m_velocity.y != 0.0f)
+		{
+			if (!IsSoundPlaying(AssetManager::getSound("bump")))
+			{
+				PlaySound(AssetManager::getSound("bump"));
+			}
+		}
 		m_velocity.y = 0.0f;
 	}
 	else
 	{
+		if (m_velocity.x != 0.0f && m_velocity.y != 0.0f)
+		{
+			if (!IsSoundPlaying(AssetManager::getSound("bump")))
+			{
+				PlaySound(AssetManager::getSound("bump"));
+			}
+		}
 		m_velocity.x = 0.0f;
 		m_velocity.y = 0.0f;
 	}
@@ -146,9 +167,11 @@ void GameObject::damage(int t_amount)
 	if (m_invincibilityFrames <= 0.0f)
 	{
 		m_health -= t_amount;
+		PlaySound(AssetManager::getSound("hurt"));
 
 		if (m_health <= 0)
 		{
+			PlaySound(AssetManager::getSound("die"));
 			m_alive = false;
 			m_position = { 0.0f, 0.0f };
 		}

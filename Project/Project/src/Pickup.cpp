@@ -16,3 +16,9 @@ void Pickup::setPosition(Vector2 t_pos)
 {
 	m_position = t_pos;
 }
+
+void Pickup::deactivate()
+{
+	m_alive = false;
+	PlaySound(AssetManager::getSound("powerup"));
+}

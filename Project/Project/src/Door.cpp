@@ -33,6 +33,10 @@ void Door::update()
 
 void Door::open()
 {
+	if (m_alive)
+	{
+		PlaySound(AssetManager::getSound("door_open"));
+	}
 	m_alive = false;
 }
 

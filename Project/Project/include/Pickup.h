@@ -1,6 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include "globals.h"
+#include "AssetManager.h"
 
 class Pickup
 {
@@ -13,7 +14,7 @@ public:
     Vector2 getPosition() { return m_position; }
     float getRadius() { return m_radius; }
     TimeAbilities getAbility() { return m_ability; }
-    void deactivate() { m_alive = false; }
+    void deactivate();
     bool isAlive() { return m_alive;  }
 
 private:

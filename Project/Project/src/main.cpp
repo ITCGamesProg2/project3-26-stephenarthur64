@@ -18,6 +18,8 @@ int main(void)
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Evanescent Gloom");
 
+    InitAudioDevice();
+
     game.init();
 
 #if defined(WEB_BUILD)
@@ -30,7 +32,7 @@ int main(void)
         GameLoop();
     }
 #endif
-
+    CloseAudioDevice();
 
     CloseWindow();
 

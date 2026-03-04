@@ -16,7 +16,7 @@ void Game::init()
     m_camera.zoom = 1.0f;
     m_camTarget = m_player.getPosition();
 
-    AssetManager::initSprites();
+    AssetManager::initAssets();
 }
 
 void Game::loadLevel()
@@ -207,6 +207,15 @@ void Game::update()
     }
     else if (m_state == GameState::GAMEPLAY)
     {
+        if (!IsMusicStreamPlaying(AssetManager::getMusic("main")))
+        {
+            PlayMusicStream(AssetManager::getMusic("main"));
+        }
+        else
+        {
+            UpdateMusicStream(AssetManager::getMusic("main"));
+        }
+
         if (!m_timeSkip)
         {
             m_player.setMousePosition(m_camera);
@@ -251,12 +260,14 @@ void Game::update()
 
 void Game::resetGame()
 {
+    StopMusicStream(AssetManager::getMusic("main"));
     m_player.respawn();
     m_enemies.clear();
     m_walls.clear();
     m_goals.clear();
     m_doors.clear();
     Timeline::clearTimeline();
+    PlayMusicStream(AssetManager::getMusic("main"));
 }
 
 void Game::standardUpdate()

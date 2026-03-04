@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "raylib.h"
 #include "raymath.h"
+#include "AssetManager.h"
 #include <list>
 
 class Attack

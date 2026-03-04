@@ -5,6 +5,7 @@ void Attack::execute(Vector2 t_target)
 {
 	if (!m_running && m_cooldown >= m_maxCooldown)
 	{
+		PlaySound(AssetManager::getSound("swing"));
 		m_running = true;
 		m_cooldown = 0.0f;
 		m_windup = 0.0f;

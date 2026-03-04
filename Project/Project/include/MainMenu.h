@@ -1,6 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include "LevelLoader.h"
+#include "AssetManager.h"
 
 class MainMenu
 {
