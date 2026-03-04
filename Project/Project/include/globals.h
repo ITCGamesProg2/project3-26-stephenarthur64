@@ -4,7 +4,7 @@
 struct Time {
 	Vector2 position;
 	Vector2 velocity;
-	float radius;
+	Rectangle spriteRect;
 	int health;
 };
 

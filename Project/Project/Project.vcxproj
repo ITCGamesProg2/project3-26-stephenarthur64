@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\Animation.h" />
     <ClInclude Include="include\AssetManager.h" />
     <ClInclude Include="include\Attack.h" />
     <ClInclude Include="include\Boss.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="include\Wall.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Animation.cpp" />
     <ClCompile Include="src\AssetManager.cpp" />
     <ClCompile Include="src\Attack.cpp" />
     <ClCompile Include="src\Boss.cpp" />

@@ -10,7 +10,7 @@ public:
     {
 		m_running = false;
 		m_startPos = t_start;
-		m_width = 100.0f;
+		m_width = 75.0f;
 		m_height = 75.0f;
 		m_speed = 5.0f;
 		m_maxWindup = 0.1f;

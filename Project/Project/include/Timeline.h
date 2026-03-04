@@ -11,5 +11,6 @@ public:
 	static void drawTimeline();
 	static bool canRewind();
 	static void clearTimeline();
+	static void setSpriteInfo(float t_scale, Texture2D* t_sprite);
 };
 

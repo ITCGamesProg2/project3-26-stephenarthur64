@@ -1,6 +1,7 @@
 #include "GameObject.h"
 
-GameObject::GameObject(Color t_c, float t_r) : m_colour(t_c), m_radius(t_r), m_position({ 100.0f, 100.0f }), m_velocity({0.0f, 0.0f}), m_alive(true), m_invincibilityFrames(0.0f)
+GameObject::GameObject(Color t_c, float t_r) : m_colour(t_c), m_radius(t_r), m_position({ 100.0f, 100.0f }), m_velocity({0.0f, 0.0f}), m_alive(true), m_invincibilityFrames(0.0f),
+												m_animation(4, 32, 32)
 {
 }
 
@@ -10,6 +11,8 @@ void GameObject::update()
 	{
 		m_invincibilityFrames -= GetFrameTime();
 	}
+
+	m_animation.nextFrame(GetFrameTime());
 }
 
 void GameObject::draw()
@@ -19,12 +22,12 @@ void GameObject::draw()
 		if (m_invincibilityFrames > 0.0f)
 		{
 			DrawCircle(m_position.x, m_position.y, m_radius, ORANGE);
-			DrawTexturePro(m_sprite, m_spriteSource, { m_position.x, m_position.y, 100 * m_spriteScale, 100 * m_spriteScale }, { 100 * m_spriteScale / 2.0f, 100 * m_spriteScale / 2.0f }, 0, ORANGE);
+			DrawTexturePro(m_sprite, m_animation.getFrame(), {m_position.x, m_position.y, 100 * m_spriteScale, 100 * m_spriteScale}, {100 * m_spriteScale / 2.0f, 100 * m_spriteScale / 2.0f}, 0, ORANGE);
 		}
 		else
 		{
 			DrawCircle(m_position.x, m_position.y, m_radius, m_colour);
-			DrawTexturePro(m_sprite, m_spriteSource, { m_position.x, m_position.y, 100 * m_spriteScale, 100 * m_spriteScale }, { 100 * m_spriteScale / 2.0f, 100 * m_spriteScale / 2.0f }, 0, WHITE);
+			DrawTexturePro(m_sprite, m_animation.getFrame(), { m_position.x, m_position.y, 100 * m_spriteScale, 100 * m_spriteScale }, { 100 * m_spriteScale / 2.0f, 100 * m_spriteScale / 2.0f }, 0, WHITE);
 		}
 	}
 }

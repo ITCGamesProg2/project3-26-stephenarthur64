@@ -19,6 +19,8 @@ Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MI
 	m_combo.push_back(&m_special);
 
 	m_spriteScale = 1.0f;
+
+	Timeline::setSpriteInfo(m_spriteScale, &m_sprite);
 }
 
 void Player::update()
@@ -78,11 +80,11 @@ void Player::move()
 	m_velocity *= m_friction;
 	if (m_velocity.x > 0)
 	{
-		m_spriteSource.width = m_bufferSourceWidth;
+		m_animation.flipSprite(1);
 	}
 	else
 	{
-		m_spriteSource.width = -m_bufferSourceWidth;
+		m_animation.flipSprite(-1);
 	}
 }
 
@@ -201,7 +203,7 @@ bool Player::rewind()
 Time Player::generateTime()
 {
 	m_newTime.position = m_position;
-	m_newTime.radius = m_radius;
+	m_newTime.spriteRect = m_animation.getFrame();
 	m_newTime.velocity = m_velocity;
 	m_newTime.health = m_health;
 

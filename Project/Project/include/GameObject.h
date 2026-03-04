@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "AssetManager.h"
+#include "Animation.h"
 
 class GameObject
 {
@@ -22,7 +23,7 @@ public:
 	bool isAlive() { return m_alive; }
 	virtual void respawn();
 
-	void setSprite(Texture2D& t_sp) { m_sprite = t_sp; m_spriteSource = { 0, 0, 32, 32 }; m_bufferSourceWidth = m_sprite.width; }
+	void setSprite(Texture2D& t_sp) { m_sprite = t_sp; }
 
 protected:
 	Vector2 m_position;
@@ -37,8 +38,8 @@ protected:
 	bool m_alive;
 	Texture2D m_sprite;
 
-	Rectangle m_spriteSource;
-	int m_bufferSourceWidth;
 	float m_spriteScale;
+
+	Animation m_animation;
 };
 

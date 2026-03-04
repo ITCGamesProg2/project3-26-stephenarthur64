@@ -1,4 +1,5 @@
 #include "AssetManager.h"
+#include "Animation.h"
 static std::map<std::string, Texture2D> m_textures;
 static std::map<std::string, Sound> m_sounds;
 static std::map<std::string, Music> m_music;
@@ -23,6 +24,16 @@ void AssetManager::initAssets()
 	m_music["title"] = LoadMusicStream("audio/music/8_Bit_Nostalgia.mp3");
 	m_music["main"] = LoadMusicStream("audio/music/8_Bit_Adventure.mp3");
 	m_music["boss"] = LoadMusicStream("audio/music/Boss_time.mp3");
+}
+
+void AssetManager::setVolume(float t_volume)
+{
+	std::map<std::string, Music>::iterator it;
+
+	for (it = m_music.begin(); it != m_music.end(); it++)
+	{
+		SetMusicVolume(it->second, t_volume);
+	}
 }
 
 Texture2D& AssetManager::getSprite(std::string t_entity)

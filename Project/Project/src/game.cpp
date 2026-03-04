@@ -17,6 +17,8 @@ void Game::init()
     m_camTarget = m_player.getPosition();
 
     AssetManager::initAssets();
+
+    AssetManager::setVolume(0.3f);
 }
 
 void Game::loadLevel()
@@ -410,12 +412,22 @@ void Game::handleInput()
             if (Timeline::canRewind() && m_player.getMomentum() > 5.0f)
             {
                 m_rewinding = true;
+                for (NPC& e : m_enemies)
+                {
+                    e.surprise();
+                }
+                SetMusicPitch(AssetManager::getMusic("main"), 0.90f);
             }
             return;
         }
         else
         {
             m_rewinding = false;
+            for (NPC& e : m_enemies)
+            {
+                e.unsurprise();
+            }
+            SetMusicPitch(AssetManager::getMusic("main"), 1.0f);
         }
 
         if (IsKeyReleased(KEY_R) && m_player.canUse(TimeAbilities::SKIP) && !m_timestop && !m_timeSkip)

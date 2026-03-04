@@ -11,7 +11,7 @@ public:
         m_attackType = LIGHT;
         m_attack = new LightAttack({-1000, 1000});
         m_attack->setCooldownScale(2.0f);
-        m_attack->setWindupScale(2.0f);
+        m_attack->setWindupScale(2.5f);
         m_spriteScale = 1.0f;
     }
 };
