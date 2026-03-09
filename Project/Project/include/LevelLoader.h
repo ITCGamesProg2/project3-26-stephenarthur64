@@ -18,8 +18,8 @@ public:
 	static void clearProgress();
 	static bool isNextLevelReady();
 	static bool isAtEnd();
-	static void saveFile();
-	static void loadFile();
-	static void clearFile();
+	static void saveFile(int t_file);
+	static void loadFile(int t_file);
+	static void clearFile(int t_file);
 };
 

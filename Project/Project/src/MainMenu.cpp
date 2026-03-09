@@ -1,7 +1,22 @@
 #include "MainMenu.h"
 
-MainMenu::MainMenu() : m_end(false)
+MainMenu::MainMenu() : m_end(false), m_state(MenuState::TITLE)
 {
+	init();
+}
+
+void MainMenu::init()
+{
+	m_playGame.setPosition({ 200.0f, 300.0f });
+	m_playGame.setSize({ 100.0f, 50.0f });
+	m_playGame.setText("Play");
+
+	for (int i = 0; i < 3; i++)
+	{
+		m_saves[i].setPosition({ 200.0f + (120 * i), 500.0f });
+		m_saves[i].setSize({ 100.0f, 50.0f });
+		m_saves[i].setText("Save " + std::to_string(i + 1));
+	}
 }
 
 void MainMenu::update()
@@ -15,27 +30,82 @@ void MainMenu::update()
 		UpdateMusicStream(AssetManager::getMusic("title"));
 	}
 
-	if (IsKeyReleased(KEY_SPACE))
+	switch (m_state)
 	{
-		m_end = true;
-		LevelLoader::clearFile();
-		StopMusicStream(AssetManager::getMusic("title"));
+	case MenuState::TITLE:
+		titleUpdate();
+		break;
+	case MenuState::SAVES:
+		savesUpdate();
+		break;
+	case MenuState::SETTINGS:
+		settingsUpdate();
+		break;
+	default:
+		break;
 	}
-	if (IsKeyReleased(KEY_S))
+}
+
+void MainMenu::titleUpdate()
+{
+	if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
 	{
-		m_end = true;
-		LevelLoader::loadFile();
-		StopMusicStream(AssetManager::getMusic("title"));
+		m_playGame.detectClick(GetMousePosition());
 	}
+
+	if (m_playGame.triggered())
+	{
+		m_state = MenuState::SAVES;
+	}
+}
+
+void MainMenu::savesUpdate()
+{
+	for (int i = 0; i < 3; i++)
+	{
+		if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+		{
+			m_saves[i].detectClick(GetMousePosition());
+		}
+
+		if (m_saves[i].triggered())
+		{
+			startGame(i + 1);
+		}
+	}
+}
+
+void MainMenu::settingsUpdate()
+{
 }
 
 void MainMenu::draw()
 {
-	DrawText("Main Menu", 100, 100, 50, WHITE);
+	if (m_state == MenuState::TITLE)
+	{
+		DrawText("Main Menu", 100, 100, 50, WHITE);
+		m_playGame.draw();
+	}
+	else if (m_state == MenuState::SAVES)
+	{
+		DrawText("Select a save file", 100, 100, 50, WHITE);
+
+		for (int i = 0; i < 3; i++)
+		{
+			m_saves[i].draw();
+		}
+	}
 }
 
 void MainMenu::resetMenu()
 {
 	PlayMusicStream(AssetManager::getMusic("title"));
 	m_end = false;
+}
+
+void MainMenu::startGame(int t_file)
+{
+	m_end = true;
+	LevelLoader::loadFile(t_file);
+	StopMusicStream(AssetManager::getMusic("title"));
 }

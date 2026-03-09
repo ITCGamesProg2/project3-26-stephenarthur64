@@ -25,7 +25,6 @@ void Game::loadLevel()
 {
     resetGame();
 
-    LevelLoader::loadFile();
     LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_supports, m_doors, m_player);
 
     Editor::setWallReference(&m_walls);

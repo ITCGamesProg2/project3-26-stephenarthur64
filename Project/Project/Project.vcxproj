@@ -138,6 +138,7 @@
     <ClInclude Include="include\AssetManager.h" />
     <ClInclude Include="include\Attack.h" />
     <ClInclude Include="include\Boss.h" />
+    <ClInclude Include="include\Button.h" />
     <ClInclude Include="include\CollisionCheck.h" />
     <ClInclude Include="include\Door.h" />
     <ClInclude Include="include\Editor.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="src\AssetManager.cpp" />
     <ClCompile Include="src\Attack.cpp" />
     <ClCompile Include="src\Boss.cpp" />
+    <ClCompile Include="src\Button.cpp" />
     <ClCompile Include="src\CollisionCheck.cpp" />
     <ClCompile Include="src\Door.cpp" />
     <ClCompile Include="src\Editor.cpp" />

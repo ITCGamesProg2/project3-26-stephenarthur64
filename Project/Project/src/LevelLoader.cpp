@@ -5,6 +5,7 @@ static int m_progress = 0;
 static int m_progresLimit = 1;
 static bool m_nextLevelReady = false;
 static bool m_endOfLevels = false;
+static int m_currentFile = 1;
 
 void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, Player& t_p)
 {
@@ -109,7 +110,7 @@ void LevelLoader::addProgress()
         m_progress = 0;
     }
 
-    saveFile();
+    saveFile(m_currentFile);
 }
 
 void LevelLoader::clearProgress()
@@ -130,26 +131,32 @@ bool LevelLoader::isAtEnd()
     return m_endOfLevels;
 }
 
-void LevelLoader::saveFile()
+void LevelLoader::saveFile(int t_file)
 {
-    std::ofstream Save("savefile.txt");
+    m_currentFile = t_file;
+
+    std::ofstream Save("savefile" + std::to_string(t_file) + ".txt");
 
     Save << m_level;
     Save << m_progress;
 }
 
-void LevelLoader::loadFile()
+void LevelLoader::loadFile(int t_file)
 {
+    m_currentFile = t_file;
+
     std::ifstream Load;
-    Load.open("savefile.txt");
+    Load.open("savefile" + std::to_string(t_file) + ".txt");
 
     m_level = Load.get() - '0';
     m_progress = Load.get() - '0';
 }
 
-void LevelLoader::clearFile()
+void LevelLoader::clearFile(int t_file)
 {
-    std::ofstream Save("savefile.txt");
+    m_currentFile = t_file;
+
+    std::ofstream Save("savefile" + std::to_string(t_file) + ".txt");
 
     Save << 1;
     Save << 0;
