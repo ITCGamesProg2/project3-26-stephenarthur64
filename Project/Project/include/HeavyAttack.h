@@ -12,11 +12,11 @@ public:
 		m_width = 100.0f;
 		m_height = 100.0f;
 		m_speed = 7.0f;
-		m_maxWindup = 1.0f;
+		m_maxWindup = 0.5f;
 		m_maxDuration = 0.5f;
-		m_maxCooldown = 1.0f;
+		m_maxCooldown = 0.55f;
 		m_cooldown = m_maxCooldown;
-		m_hitboxOffset = 25.0f;
+		m_hitboxOffset = 75.0f;
 		m_type = HEAVY;
 		m_damage = 2;
     }

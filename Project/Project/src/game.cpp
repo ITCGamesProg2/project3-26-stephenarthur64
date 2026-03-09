@@ -5,8 +5,8 @@
 #include <json.hpp>
 #include <iostream>
 
-Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(GameState::MENU), m_skipCount(0), m_postSkipTimer(0), 
-                m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false)
+Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(GameState::MENU), m_skipCount(0), m_surpriseTimer(0), 
+                m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false), REWIND_MAX(1.0f), STOP_MAX(1.5F)
 {
 }
 
@@ -60,8 +60,7 @@ void Game::loadLevel()
         es.setSprite(AssetManager::getSprite("support"));
     }
 
-    testpickup.setPosition({ 400, 400 });
-    testpickup.setAbility(TimeAbilities::REWIND);
+    testBoss.setPosition({ 100, 400 });
 }
 
 void Game::draw()
@@ -81,7 +80,7 @@ void Game::draw()
         {
             DrawTexture(m_background, 0, 0, GRAY);
         }
-        else if (m_postSkipTimer > 0)
+        else if (m_surpriseTimer > 0)
         {
             DrawTexture(m_background, 0, 0, {255, (unsigned char)m_skipColours,  (unsigned char)m_skipColours, 255});
             m_skipColours += GetFrameTime() * (255 / SKIP_MAX);
@@ -92,7 +91,8 @@ void Game::draw()
             DrawTexturePro(m_background, { 0, 0, 640, 640 }, { -1500, -1500, 5000, 5000 }, { 0,0 }, 0.0f, WHITE);
         }
         m_player.draw();
-        testpickup.draw();
+        m_pickup.draw();
+        testBoss.draw();
 
         for (NPC& e : m_enemies)
         {
@@ -151,7 +151,7 @@ void Game::draw()
 
         if (m_player.canUse(TimeAbilities::SKIP))
         {
-            if (m_postSkipTimer <= 0)
+            if (m_surpriseTimer <= 0)
             {
                 DrawTexturePro(AssetManager::getSprite("powers"), { 32, 0, 32, 32 }, { SCREEN_WIDTH - 160, 10, 70, 70 }, { 0, 0 }, 0.0f, WHITE);
             }
@@ -275,18 +275,17 @@ void Game::standardUpdate()
 {
     m_player.update();
 
-    if (!m_timeSkip)
+    if (m_surpriseTimer > 0)
     {
-        if (m_postSkipTimer > 0)
-        {
-            m_postSkipTimer -= GetFrameTime();
-        }
-        else
+        m_surpriseTimer -= GetFrameTime();
+
+        if (m_surpriseTimer <= 0)
         {
             for (NPC& e : m_enemies)
             {
                 e.unsurprise();
             }
+            testBoss.unsurprise();
         }
     }
 
@@ -298,6 +297,13 @@ void Game::standardUpdate()
         }
         e.update();
     }
+
+    if (!testBoss.isSurprised())
+    {
+        testBoss.setTarget(m_player.getPosition());
+    }
+    testBoss.immuneCheck(m_player.getPosition());
+    testBoss.update();
 
     for (EnemySupport& es : m_supports)
     {
@@ -364,7 +370,7 @@ void Game::timeSkip()
 
     m_timeSkip = false;
 
-    m_postSkipTimer = SKIP_MAX;
+    m_surpriseTimer = SKIP_MAX;
 }
 
 
@@ -399,6 +405,11 @@ void Game::handleInput()
             if (m_player.canTimeStop() && m_timestop == false)
             {
                 m_timestop = true;
+                m_surpriseTimer = STOP_MAX;
+                for (NPC& e : m_enemies)
+                {
+                    e.surprise();
+                }
             }
             else
             {
@@ -415,6 +426,8 @@ void Game::handleInput()
                 {
                     e.surprise();
                 }
+                testBoss.surprise();
+                m_surpriseTimer = REWIND_MAX;
                 SetMusicPitch(AssetManager::getMusic("main"), 0.90f);
             }
             return;
@@ -422,10 +435,6 @@ void Game::handleInput()
         else
         {
             m_rewinding = false;
-            for (NPC& e : m_enemies)
-            {
-                e.unsurprise();
-            }
             SetMusicPitch(AssetManager::getMusic("main"), 1.0f);
         }
 
@@ -550,13 +559,22 @@ void Game::CheckCollisions()
         }
     }
 
-    if (testpickup.isAlive())
+    if (m_pickup.isAlive())
     {
-        if (CollisionCheck::CheckCollisionPickup(m_player, testpickup))
+        if (CollisionCheck::CheckCollisionPickup(m_player, m_pickup))
         {
-            m_player.newAbility(testpickup.getAbility());
-            testpickup.deactivate();
+            m_player.newAbility(m_pickup.getAbility());
+            m_pickup.deactivate();
         }
+    }
+
+    if (testBoss.isAlive())
+    {
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), testBoss);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), testBoss);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), testBoss);
+
+        CollisionCheck::CheckCollisionAttack(testBoss.getAttack(), m_player);
     }
 }
 
@@ -573,12 +591,4 @@ void Game::cameraMove()
     m_camera.target = m_camTarget;
     m_camera.offset.x = SCREEN_WIDTH / 2.0f;
     m_camera.offset.y = SCREEN_HEIGHT / 2.0f;
-
-   /* if (Vector2DistanceSqr(m_camTarget, m_player.getPosition()) < 10000)
-    {
-        Vector2 velocity = GetScreenToWorld2D(GetMousePosition(), m_camera) - m_camTarget;
-        velocity = Vector2Normalize(velocity);
-        velocity *= 5.0f;
-        m_camTarget += velocity;
-    }*/
 }

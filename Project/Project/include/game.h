@@ -15,6 +15,7 @@
 #include "Pickup.h"
 #include "globals.h"
 #include "Editor.h"
+#include "RewindBoss.h"
 
 enum class GameState {
     MENU,
@@ -55,7 +56,8 @@ private:
     std::vector<Goal> m_goals;
     std::vector<Door> m_doors;
 
-    Pickup testpickup;
+    Pickup m_pickup;
+    RewindBoss testBoss;
 
     Time m_tempTime;
     Time m_newTime;
@@ -63,8 +65,10 @@ private:
     bool m_timestop;
     bool m_timeSkip;
     float m_timeCounting;
-    float m_postSkipTimer;
+    float m_surpriseTimer;
     const float SKIP_MAX;
+    const float REWIND_MAX;
+    const float STOP_MAX;
     float m_rewindTimer;
     const float TIME_INTERVAL;
     const float TIME_STOP_MAX;

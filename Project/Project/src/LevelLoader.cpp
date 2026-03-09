@@ -14,11 +14,11 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
     t_e.reserve(25);
     t_es.reserve(25);
 
- //   m_level = 0;
+    m_level = 0;
 
     std::string name;
     std::string filename = "level" + std::to_string(m_level) + ".json";
-    std::string debug = "leveltest.json";
+    std::string debug = "levelclear.json";
 
     if (m_level == 0)
     {
