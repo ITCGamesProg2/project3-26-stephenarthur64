@@ -25,7 +25,10 @@ void Game::loadLevel()
 {
     resetGame();
 
-    LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_supports, m_doors, m_player);
+    Vector2 bossPos;
+    TimeAbilities bossType = TimeAbilities::MAX;
+
+    LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_supports, m_doors, m_player, bossType, bossPos);
 
     Editor::setWallReference(&m_walls);
     Editor::setDoorReference(&m_doors);
@@ -60,7 +63,12 @@ void Game::loadLevel()
         es.setSprite(AssetManager::getSprite("support"));
     }
 
-    testBoss.setPosition({ 100, 400 });
+    selectBoss(bossType);
+
+    if (m_activeBoss)
+    {
+        m_boss.get()->setPosition({ 100, 400 });
+    }
 }
 
 void Game::draw()
@@ -91,7 +99,11 @@ void Game::draw()
             DrawTexturePro(m_background, { 0, 0, 640, 640 }, { -1500, -1500, 5000, 5000 }, { 0,0 }, 0.0f, WHITE);
         }
         m_player.draw();
-        testBoss.draw();
+
+        if (m_activeBoss)
+        {
+            m_boss.get()->draw();
+        }
 
         for (NPC& e : m_enemies)
         {
@@ -284,7 +296,7 @@ void Game::standardUpdate()
             {
                 e.unsurprise();
             }
-            testBoss.unsurprise();
+            m_boss.get()->unsurprise();
         }
     }
 
@@ -297,12 +309,15 @@ void Game::standardUpdate()
         e.update();
     }
 
-    if (!testBoss.isSurprised())
+    if (m_activeBoss)
     {
-        testBoss.setTarget(m_player.getPosition());
+        if (!m_boss.get()->isSurprised())
+        {
+            m_boss.get()->setTarget(m_player.getPosition());
+        }
+        m_boss.get()->immuneCheck(m_player.getPosition());
+        m_boss.get()->update();
     }
-    testBoss.immuneCheck(m_player.getPosition());
-    testBoss.update();
 
     for (EnemySupport& es : m_supports)
     {
@@ -425,7 +440,10 @@ void Game::handleInput()
                 {
                     e.surprise();
                 }
-                testBoss.surprise();
+                if (m_activeBoss)
+                {
+                    m_boss.get()->surprise();
+                }
                 m_surpriseTimer = REWIND_MAX;
                 SetMusicPitch(AssetManager::getMusic("main"), 0.90f);
             }
@@ -558,22 +576,25 @@ void Game::CheckCollisions()
         }
     }
 
-    if (testBoss.getUpgrade().isAlive())
+    if (m_activeBoss)
     {
-        if (CollisionCheck::CheckCollisionPickup(m_player, testBoss.getUpgrade()))
+        if (m_boss.get()->getUpgrade().isAlive())
         {
-            m_player.newAbility(testBoss.getUpgrade().getAbility());
-            testBoss.getUpgrade().deactivate();
+            if (CollisionCheck::CheckCollisionPickup(m_player, m_boss.get()->getUpgrade()))
+            {
+                m_player.newAbility(m_boss.get()->getUpgrade().getAbility());
+                m_boss.get()->getUpgrade().deactivate();
+            }
         }
-    }
 
-    if (testBoss.isAlive())
-    {
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), testBoss);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), testBoss);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), testBoss);
+        if (m_boss.get()->isAlive())
+        {
+            CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), *m_boss.get());
+            CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), *m_boss.get());
+            CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), *m_boss.get());
 
-        CollisionCheck::CheckCollisionAttack(testBoss.getAttack(), m_player);
+            CollisionCheck::CheckCollisionAttack(m_boss.get()->getAttack(), m_player);
+        }
     }
 }
 
@@ -590,4 +611,28 @@ void Game::cameraMove()
     m_camera.target = m_camTarget;
     m_camera.offset.x = SCREEN_WIDTH / 2.0f;
     m_camera.offset.y = SCREEN_HEIGHT / 2.0f;
+}
+
+void Game::selectBoss(TimeAbilities t_boss)
+{
+    switch (t_boss)
+    {
+    case REWIND:
+        m_boss = std::make_shared<Boss>(m_rewindBoss);
+        m_activeBoss = true;
+        break;
+    case SKIP:
+        m_boss = std::make_shared<Boss>(m_rewindBoss);
+        m_activeBoss = true;
+        break;
+    case STOP:
+        m_boss = std::make_shared<Boss>(m_rewindBoss);
+        m_activeBoss = true;
+        break;
+    case MAX:
+        m_activeBoss = false;
+        break;
+    default:
+        break;
+    }
 }

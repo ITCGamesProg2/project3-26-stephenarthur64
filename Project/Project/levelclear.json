@@ -35,6 +35,12 @@
       "2": {
         "enemies": [
           {
+            "boss": [
+              {
+                "position": [ 700, -500 ],
+                "type" :  "rewind"
+              }
+            ]
           }
         ],
         "doors": [

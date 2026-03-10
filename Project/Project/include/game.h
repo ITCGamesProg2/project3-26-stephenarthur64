@@ -43,6 +43,7 @@ public:
     void handleInput();
     void CheckCollisions();
     void cameraMove();
+    void selectBoss(TimeAbilities t_boss);
 
 private:
     GameState m_state;
@@ -56,7 +57,10 @@ private:
     std::vector<Goal> m_goals;
     std::vector<Door> m_doors;
 
-    RewindBoss testBoss;
+    RewindBoss m_rewindBoss;
+
+    std::shared_ptr<Boss> m_boss;
+    bool m_activeBoss;
 
     Time m_tempTime;
     Time m_newTime;

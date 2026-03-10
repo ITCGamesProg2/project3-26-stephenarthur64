@@ -7,7 +7,7 @@ static bool m_nextLevelReady = false;
 static bool m_endOfLevels = false;
 static int m_currentFile = 1;
 
-void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, Player& t_p)
+void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, Player& t_p, TimeAbilities& t_bossType, Vector2& t_bossPos)
 {
     m_nextLevelReady = false;
 
@@ -86,6 +86,15 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
             support.setPosition({ data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["support"][i]["position"][0], data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["support"][i]["position"][1] });
             t_es.push_back(support);
             t_d.at(room - 1 - m_progress).addEnemy(&t_es.back());
+        }
+        for (int i = 0; i < data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["boss"].size(); i++)
+        {
+            t_bossPos = { data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["boss"][i]["position"][0], data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["boss"][i]["position"][1] };
+
+            if (data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["boss"][i]["type"] == "rewind")
+            {
+                t_bossType = TimeAbilities::REWIND;
+            }
         }
     }
 
