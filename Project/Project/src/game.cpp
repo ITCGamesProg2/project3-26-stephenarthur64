@@ -19,6 +19,11 @@ void Game::init()
     AssetManager::initAssets();
 
     AssetManager::setVolume(0.3f);
+
+    test = LoadShader(0, TextFormat("shaders/grayscale.fs", GLSL_VERSION));
+
+    target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
+
 }
 
 void Game::loadLevel()
@@ -74,32 +79,32 @@ void Game::loadLevel()
 
 void Game::draw()
 {
-    BeginMode2D(m_camera);
     if (m_state == GameState::MENU)
     {
         m_menu.draw();
     }
-    else if (m_state == GameState::GAMEPLAY || m_state == GameState::DEATH || m_state == GameState::EDITING)
+
+    if (m_state == GameState::GAMEPLAY || m_state == GameState::DEATH || m_state == GameState::EDITING)
     {
+        
+        BeginTextureMode(target);
+        ClearBackground(WHITE);
+        BeginMode2D(m_camera);
         if (m_rewinding)
         {
             DrawTexturePro(m_background, { 0, 0, 1000, 1000 }, { 0, 0, 100, 100 }, { 0,0 }, 0.0f, WHITE);
         }
-        else if (m_timestop)
-        {
-            DrawTexture(m_background, 0, 0, GRAY);
-        }
-        else if (m_surpriseTimer > 0)
+        /*else if (m_surpriseTimer > 0)
         {
             DrawTexture(m_background, 0, 0, {255, (unsigned char)m_skipColours,  (unsigned char)m_skipColours, 255});
             m_skipColours += GetFrameTime() * (255 / SKIP_MAX);
-        }
+        }*/
         else
         {
-            ClearBackground(WHITE);
+            //ClearBackground(BLACK);
             DrawTexturePro(m_background, { 0, 0, 640, 640 }, { -1500, -1500, 5000, 5000 }, { 0,0 }, 0.0f, WHITE);
         }
-        m_player.draw();
+        
 
         if (m_activeBoss)
         {
@@ -140,8 +145,31 @@ void Game::draw()
         {
             Editor::drawPlacing();
         }
-
         EndMode2D();
+        EndTextureMode();
+
+        if (m_timestop)
+        {
+            Vector2 normPos = GetWorldToScreen2D(m_player.getPosition(), m_camera);
+            normPos.x /= SCREEN_WIDTH;
+            normPos.y /= SCREEN_HEIGHT;
+            float location[2] = { abs(normPos.x), abs(normPos.y)};
+            SetShaderValue(test, GetShaderLocation(test, "circleCentre"), location, SHADER_UNIFORM_VEC2);
+            shaderRadius += 0.01f;
+            SetShaderValue(test, GetShaderLocation(test, "radius"), &shaderRadius, SHADER_UNIFORM_FLOAT);
+            BeginShaderMode(test);
+        }
+
+
+        DrawTexturePro(target.texture, { 0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height }, { 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT }, { 0.0f, 0.0f }, 0.0f, WHITE);
+        BeginMode2D(m_camera);
+        if (m_timestop)
+        {
+            EndShaderMode();
+        }
+        m_player.draw();
+        EndMode2D();
+
 
         DrawRectangle(10, 40, 50, 320, BLACK);
         DrawRectanglePro({ 50, 350, 30, m_player.getMomentumPercentage() * 300 }, { 0, 0 }, 180, LIGHTGRAY);
@@ -185,9 +213,6 @@ void Game::draw()
             }
         }
 
-        DrawFPS(0, 0);
-        
-
         if (m_state == GameState::EDITING)
         {
             DrawText(("Room " + std::to_string(Editor::getRoom())).c_str(), 100, 100, 20, BLUE);
@@ -199,6 +224,8 @@ void Game::draw()
             DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
             DrawText("Player Dead", (SCREEN_WIDTH / 2.0f), SCREEN_HEIGHT / 2.0f, 20, WHITE);
         }
+
+        DrawFPS(0, 0);
     }
     else if (m_state == GameState::END)
     {
@@ -437,6 +464,7 @@ void Game::handleInput()
             if (m_player.canTimeStop() && m_timestop == false)
             {
                 m_timestop = true;
+                shaderRadius = 0.0f;
                 m_surpriseTimer = STOP_MAX;
                 for (NPC& e : m_enemies)
                 {

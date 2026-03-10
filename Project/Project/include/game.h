@@ -1,5 +1,13 @@
 #ifndef GAME_H
 #define GAME_H
+
+#if defined(PLATFORM_DESKTOP)
+#define GLSL_VERSION            330
+#else   // PLATFORM_ANDROID, PLATFORM_WEB
+#define GLSL_VERSION            100
+#endif
+
+
 #include "raylib.h"
 #include "MainMenu.h"
 #include "Player.h"
@@ -90,6 +98,10 @@ private:
     Vector2 m_placePos;
     Vector2 m_placeSize;
     Vector2 m_mousePos;
+
+    Shader test;
+    RenderTexture2D target;
+    float shaderRadius;
 };
 
 #endif // GAME_H
