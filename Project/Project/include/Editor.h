@@ -9,6 +9,7 @@
 #include "Door.h"
 #include "Goal.h"
 #include "GameObject.h"
+#include "Boss.h"
 #include "globals.h"
 
 static class Editor

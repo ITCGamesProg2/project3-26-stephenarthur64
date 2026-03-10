@@ -67,7 +67,8 @@ void Game::loadLevel()
 
     if (m_activeBoss)
     {
-        m_boss.get()->setPosition({ 100, 400 });
+        m_boss.get()->setPosition(bossPos);
+        m_doors.back().addEnemy(m_boss.get());
     }
 }
 
@@ -219,13 +220,27 @@ void Game::update()
     }
     else if (m_state == GameState::GAMEPLAY)
     {
-        if (!IsMusicStreamPlaying(AssetManager::getMusic("main")))
+        if (!m_activeBoss)
         {
-            PlayMusicStream(AssetManager::getMusic("main"));
+            if (!IsMusicStreamPlaying(AssetManager::getMusic("main")))
+            {
+                PlayMusicStream(AssetManager::getMusic("main"));
+            }
+            else
+            {
+                UpdateMusicStream(AssetManager::getMusic("main"));
+            }
         }
         else
         {
-            UpdateMusicStream(AssetManager::getMusic("main"));
+            if (!IsMusicStreamPlaying(AssetManager::getMusic("boss")))
+            {
+                PlayMusicStream(AssetManager::getMusic("boss"));
+            }
+            else
+            {
+                UpdateMusicStream(AssetManager::getMusic("boss"));
+            }
         }
 
         if (!m_timeSkip)
@@ -296,7 +311,10 @@ void Game::standardUpdate()
             {
                 e.unsurprise();
             }
-            m_boss.get()->unsurprise();
+            if (m_activeBoss)
+            {
+                m_boss.get()->unsurprise();
+            }
         }
     }
 

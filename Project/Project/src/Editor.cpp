@@ -12,7 +12,7 @@ static std::vector<Door>* m_doors;
 static std::vector<Goal>* m_goals;
 static int m_currentState = 0;
 static EditState m_allStates[END] = { WALL, LIGHTENEMY, HEAVYENEMY, SUPPORTENEMY, GOAL, DOOR };
-static std::string m_currentLevel = "level2.json";
+static std::string m_currentLevel = "level3.json";
 
 void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
 {

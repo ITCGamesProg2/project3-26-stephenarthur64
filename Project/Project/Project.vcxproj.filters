@@ -205,5 +205,8 @@
     <None Include="leveltest.json">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="level3.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
