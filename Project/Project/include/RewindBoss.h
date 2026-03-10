@@ -8,6 +8,5 @@ class RewindBoss :
 public:
     RewindBoss();
     virtual void draw() override;
-    void immuneCheck(Vector2 t_playerPos);
 };
 

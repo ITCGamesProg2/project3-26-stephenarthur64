@@ -13,14 +13,20 @@ void Boss::draw()
 	if (m_alive)
 	{
 		NPC::draw();
-
-		DrawLine(m_position.x, m_position.y, m_target.x, m_target.y, YELLOW);
+	}
+	else
+	{
+		m_upgrade.draw();
 	}
 }
 
 void Boss::update()
 {
 	NPC::update();
+	if (m_alive)
+	{
+		m_upgrade.setPosition(m_position);
+	}
 }
 
 void Boss::damage(int t_amount)
@@ -28,5 +34,17 @@ void Boss::damage(int t_amount)
 	if (m_canDamage)
 	{
 		GameObject::damage(t_amount);
+	}
+}
+
+void Boss::immuneCheck(Vector2 t_playerPos)
+{
+	if (m_target == t_playerPos)
+	{
+		m_canDamage = false;
+	}
+	else
+	{
+		m_canDamage = true;
 	}
 }

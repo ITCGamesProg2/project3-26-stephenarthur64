@@ -21,6 +21,8 @@ Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MI
 	m_spriteScale = 1.0f;
 
 	Timeline::setSpriteInfo(m_spriteScale, &m_sprite);
+
+	m_abilities[TimeAbilities::REWIND] = true;
 }
 
 void Player::update()

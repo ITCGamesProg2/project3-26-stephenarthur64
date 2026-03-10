@@ -91,7 +91,6 @@ void Game::draw()
             DrawTexturePro(m_background, { 0, 0, 640, 640 }, { -1500, -1500, 5000, 5000 }, { 0,0 }, 0.0f, WHITE);
         }
         m_player.draw();
-        m_pickup.draw();
         testBoss.draw();
 
         for (NPC& e : m_enemies)
@@ -559,12 +558,12 @@ void Game::CheckCollisions()
         }
     }
 
-    if (m_pickup.isAlive())
+    if (testBoss.getUpgrade().isAlive())
     {
-        if (CollisionCheck::CheckCollisionPickup(m_player, m_pickup))
+        if (CollisionCheck::CheckCollisionPickup(m_player, testBoss.getUpgrade()))
         {
-            m_player.newAbility(m_pickup.getAbility());
-            m_pickup.deactivate();
+            m_player.newAbility(testBoss.getUpgrade().getAbility());
+            testBoss.getUpgrade().deactivate();
         }
     }
 

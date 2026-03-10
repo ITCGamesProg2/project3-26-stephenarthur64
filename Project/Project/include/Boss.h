@@ -11,6 +11,9 @@ public:
     virtual void draw() override;
     virtual void update() override;
     virtual void damage(int t_amount) override;
+    void immuneCheck(Vector2 t_playerPos);
+
+    Pickup& getUpgrade() { return m_upgrade; }
 
 protected:
     bool m_canDamage;

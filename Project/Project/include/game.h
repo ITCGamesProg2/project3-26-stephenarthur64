@@ -56,7 +56,6 @@ private:
     std::vector<Goal> m_goals;
     std::vector<Door> m_doors;
 
-    Pickup m_pickup;
     RewindBoss testBoss;
 
     Time m_tempTime;
