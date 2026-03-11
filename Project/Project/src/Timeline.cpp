@@ -40,7 +40,7 @@ void Timeline::drawTimeline()
 			lastpos = t.position;
 			continue;
 		}
-		DrawTexturePro(*m_sprite, t.spriteRect, { t.position.x, t.position.y, 100 * m_spriteScale, 100 * m_spriteScale }, { 100 * m_spriteScale / 2.0f, 100 * m_spriteScale / 2.0f }, 0, { 173, 216, 230, (unsigned char)alpha });
+		DrawTexturePro(*m_sprite, t.spriteRect, { t.position.x, t.position.y, 100 * m_spriteScale, 100 * m_spriteScale }, { 100 * m_spriteScale / 2.0f, 100 * m_spriteScale / 2.0f }, 0, { 100, 100, 230, (unsigned char)alpha });
 
 		lastpos = t.position;
 		alpha -= 5;

@@ -52,6 +52,7 @@ public:
     void CheckCollisions();
     void cameraMove();
     void selectBoss(TimeAbilities t_boss);
+    void processShader();
 
 private:
     GameState m_state;
@@ -81,7 +82,7 @@ private:
     const float REWIND_MAX;
     const float STOP_MAX;
     float m_rewindTimer;
-    const float TIME_INTERVAL;
+    const float REWIND_INTERVAL;
     const float TIME_STOP_MAX;
 
     Texture2D m_background;
@@ -99,9 +100,16 @@ private:
     Vector2 m_placeSize;
     Vector2 m_mousePos;
 
-    Shader test;
+    Shader m_timeStopShader;
+    Shader m_rewindShader;
+    Shader m_skipShader;
+    Shader* m_currentShader;
+    bool m_shaderActive;
     RenderTexture2D target;
-    float shaderRadius;
+    float m_shaderRadius;
+
+    float m_musicPos;
+    bool added;
 };
 
 #endif // GAME_H

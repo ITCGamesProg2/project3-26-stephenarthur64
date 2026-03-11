@@ -25,9 +25,16 @@ void main()
 
     if (distanceSqrd < radius)
     {
-        // Convert texel color to grayscale using NTSC conversion weights
-        gray = dot(texelColor.rgb, vec3(0.1, 0.587, 0.114));
-        gl_FragColor = vec4(gray, gray, gray, texelColor.a);
+        if (distanceSqrd > radius - 0.001)
+        {
+            gl_FragColor = vec4(1.0, 1.0, 0.0, 1.0);
+        }
+        else
+        {
+            // Convert texel color to grayscale using NTSC conversion weights
+            gray = dot(texelColor.rgb, vec3(0.1, 0.587, 0.114));
+            gl_FragColor = vec4(gray, gray, gray, texelColor.a);
+        }
     }
     else
     {

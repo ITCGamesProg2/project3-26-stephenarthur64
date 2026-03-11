@@ -20,6 +20,8 @@ void AssetManager::initAssets()
 	m_sounds["die"] = LoadSound("audio/sfx/Die.wav");
 	m_sounds["bump"] = LoadSound("audio/sfx/Bump.wav");
 	m_sounds["powerup"] = LoadSound("audio/sfx/Powerup.wav");
+	m_sounds["timestop"] = LoadSound("audio/sfx/TimeStop.wav");
+	m_sounds["timestopend"] = LoadSound("audio/sfx/TimeStopEnd.wav");
 
 	m_music["title"] = LoadMusicStream("audio/music/8_Bit_Nostalgia.mp3");
 	m_music["main"] = LoadMusicStream("audio/music/8_Bit_Adventure.mp3");

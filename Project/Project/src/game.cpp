@@ -5,8 +5,8 @@
 #include <json.hpp>
 #include <iostream>
 
-Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), TIME_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(GameState::MENU), m_skipCount(0), m_surpriseTimer(0), 
-                m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false), REWIND_MAX(1.0f), STOP_MAX(1.5F)
+Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), REWIND_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(GameState::MENU), m_skipCount(0), m_surpriseTimer(0), 
+                m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false), REWIND_MAX(1.0f), STOP_MAX(1.5F), m_musicPos(0.0f), added(false)
 {
 }
 
@@ -20,10 +20,11 @@ void Game::init()
 
     AssetManager::setVolume(0.3f);
 
-    test = LoadShader(0, TextFormat("shaders/grayscale.fs", GLSL_VERSION));
+    m_timeStopShader = LoadShader(0, TextFormat("shaders/timestop.fs", GLSL_VERSION));
+    m_rewindShader = LoadShader(0, TextFormat("shaders/rewind.fs", GLSL_VERSION));
+    m_skipShader = LoadShader(0, TextFormat("shaders/skip.fs", GLSL_VERSION));
 
     target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
-
 }
 
 void Game::loadLevel()
@@ -90,21 +91,7 @@ void Game::draw()
         BeginTextureMode(target);
         ClearBackground(WHITE);
         BeginMode2D(m_camera);
-        if (m_rewinding)
-        {
-            DrawTexturePro(m_background, { 0, 0, 1000, 1000 }, { 0, 0, 100, 100 }, { 0,0 }, 0.0f, WHITE);
-        }
-        /*else if (m_surpriseTimer > 0)
-        {
-            DrawTexture(m_background, 0, 0, {255, (unsigned char)m_skipColours,  (unsigned char)m_skipColours, 255});
-            m_skipColours += GetFrameTime() * (255 / SKIP_MAX);
-        }*/
-        else
-        {
-            //ClearBackground(BLACK);
-            DrawTexturePro(m_background, { 0, 0, 640, 640 }, { -1500, -1500, 5000, 5000 }, { 0,0 }, 0.0f, WHITE);
-        }
-        
+        DrawTexturePro(m_background, { 0, 0, 640, 640 }, { -1500, -1500, 5000, 5000 }, { 0,0 }, 0.0f, WHITE);
 
         if (m_activeBoss)
         {
@@ -135,11 +122,6 @@ void Game::draw()
         {
             door.draw();
         }
-        
-        if (m_rewinding)
-        {
-            Timeline::drawTimeline();
-        }
 
         if (m_placing)
         {
@@ -148,26 +130,25 @@ void Game::draw()
         EndMode2D();
         EndTextureMode();
 
-        if (m_timestop)
+        processShader();
+      
+        if (m_shaderActive)
         {
-            Vector2 normPos = GetWorldToScreen2D(m_player.getPosition(), m_camera);
-            normPos.x /= SCREEN_WIDTH;
-            normPos.y /= SCREEN_HEIGHT;
-            float location[2] = { abs(normPos.x), abs(normPos.y)};
-            SetShaderValue(test, GetShaderLocation(test, "circleCentre"), location, SHADER_UNIFORM_VEC2);
-            shaderRadius += 0.01f;
-            SetShaderValue(test, GetShaderLocation(test, "radius"), &shaderRadius, SHADER_UNIFORM_FLOAT);
-            BeginShaderMode(test);
+            BeginShaderMode(*m_currentShader);
         }
-
 
         DrawTexturePro(target.texture, { 0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height }, { 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT }, { 0.0f, 0.0f }, 0.0f, WHITE);
         BeginMode2D(m_camera);
-        if (m_timestop)
+        if (m_shaderActive)
         {
             EndShaderMode();
+            m_shaderActive = false;
         }
         m_player.draw();
+        if (m_rewinding)
+        {
+            Timeline::drawTimeline();
+        }
         EndMode2D();
 
 
@@ -266,7 +247,10 @@ void Game::update()
             }
             else
             {
-                UpdateMusicStream(AssetManager::getMusic("boss"));
+                if (!m_timestop)
+                {
+                    UpdateMusicStream(AssetManager::getMusic("boss"));
+                }
             }
         }
 
@@ -321,7 +305,6 @@ void Game::resetGame()
     m_goals.clear();
     m_doors.clear();
     Timeline::clearTimeline();
-    PlayMusicStream(AssetManager::getMusic("main"));
 }
 
 void Game::standardUpdate()
@@ -375,7 +358,7 @@ void Game::standardUpdate()
         d.update();
     }
 
-    if (m_timeCounting < TIME_INTERVAL)
+    if (m_timeCounting < REWIND_INTERVAL)
     {
         m_timeCounting += GetFrameTime();
     }
@@ -426,6 +409,19 @@ void Game::timeSkip()
         update();
         m_skipCount++;
     }
+    
+    if (IsMusicStreamPlaying(AssetManager::getMusic("main")))
+    {
+        m_musicPos = GetMusicTimePlayed(AssetManager::getMusic("main"));
+        m_musicPos += 1.0f;
+        SeekMusicStream(AssetManager::getMusic("main"), m_musicPos);
+    }
+    else if (IsMusicStreamPlaying(AssetManager::getMusic("boss")))
+    {
+        m_musicPos = GetMusicTimePlayed(AssetManager::getMusic("boss"));
+        m_musicPos += 1.0f;
+        SeekMusicStream(AssetManager::getMusic("boss"), m_musicPos);
+    }
 
     m_timeSkip = false;
 
@@ -440,6 +436,7 @@ void Game::timeStoppedUpdate()
 
     if (m_player.getMomentum() <= 0.0f)
     {
+        PlaySound(AssetManager::getSound("timestopend"));
         m_timestop = false;
     }
 }
@@ -447,7 +444,7 @@ void Game::timeStoppedUpdate()
 
 void Game::rewindingUpdate()
 {
-    if (m_rewindTimer >= TIME_INTERVAL / 8)
+    if (m_rewindTimer >= REWIND_INTERVAL / 6)
     {
         m_rewindTimer = 0.0f;
         m_rewinding = m_player.rewind();
@@ -464,15 +461,17 @@ void Game::handleInput()
             if (m_player.canTimeStop() && m_timestop == false)
             {
                 m_timestop = true;
-                shaderRadius = 0.0f;
+                m_shaderRadius = 0.0f;
                 m_surpriseTimer = STOP_MAX;
                 for (NPC& e : m_enemies)
                 {
                     e.surprise();
                 }
+                PlaySound(AssetManager::getSound("timestop"));
             }
             else
             {
+                PlaySound(AssetManager::getSound("timestopend"));
                 m_timestop = false;
             }
         }
@@ -491,14 +490,32 @@ void Game::handleInput()
                     m_boss.get()->surprise();
                 }
                 m_surpriseTimer = REWIND_MAX;
-                SetMusicPitch(AssetManager::getMusic("main"), 0.90f);
+                if (IsMusicStreamPlaying(AssetManager::getMusic("main")))
+                {
+                    if (!added)
+                    {
+                        AttachAudioStreamProcessor(AssetManager::getMusic("main").stream, AudioProcessEffectLPF);
+                    }
+                    added = true;
+                }
+                if (IsMusicStreamPlaying(AssetManager::getMusic("boss")))
+                {
+                    if (!added)
+                    {
+                        AttachAudioStreamProcessor(AssetManager::getMusic("boss").stream, AudioProcessEffectLPF);
+                    }
+                    added = true;
+                }
             }
             return;
         }
         else
         {
+            DetachAudioStreamProcessor(AssetManager::getMusic("boss").stream, AudioProcessEffectLPF);
+            added = false;
             m_rewinding = false;
             SetMusicPitch(AssetManager::getMusic("main"), 1.0f);
+            SetMusicPitch(AssetManager::getMusic("boss"), 1.0f);
         }
 
         if (IsKeyReleased(KEY_R) && m_player.canUse(TimeAbilities::SKIP) && !m_timestop && !m_timeSkip)
@@ -680,5 +697,47 @@ void Game::selectBoss(TimeAbilities t_boss)
         break;
     default:
         break;
+    }
+}
+
+void Game::processShader()
+{
+    if (m_timestop)
+    {
+        Vector2 normPos = GetWorldToScreen2D(m_player.getPosition(), m_camera);
+        normPos.x /= SCREEN_WIDTH;
+        normPos.y /= SCREEN_HEIGHT;
+        float location[2] = { abs(normPos.x), abs(normPos.y) };
+        SetShaderValue(m_timeStopShader, GetShaderLocation(m_timeStopShader, "circleCentre"), location, SHADER_UNIFORM_VEC2);
+        if (m_shaderRadius < 1.5f)
+        {
+            m_shaderRadius += 0.03f;
+        }
+        SetShaderValue(m_timeStopShader, GetShaderLocation(m_timeStopShader, "radius"), &m_shaderRadius, SHADER_UNIFORM_FLOAT);
+        m_currentShader = &m_timeStopShader;
+        m_shaderActive = true;
+    }
+    else if (m_shaderRadius > 0)
+    {
+        Vector2 normPos = GetWorldToScreen2D(m_player.getPosition(), m_camera);
+        normPos.x /= SCREEN_WIDTH;
+        normPos.y /= SCREEN_HEIGHT;
+        float location[2] = { abs(normPos.x), abs(normPos.y) };
+        SetShaderValue(m_timeStopShader, GetShaderLocation(m_timeStopShader, "circleCentre"), location, SHADER_UNIFORM_VEC2);
+        m_shaderRadius -= 0.05f;
+        SetShaderValue(m_timeStopShader, GetShaderLocation(m_timeStopShader, "radius"), &m_shaderRadius, SHADER_UNIFORM_FLOAT);
+        m_currentShader = &m_timeStopShader;
+        m_shaderActive = true;
+    }
+    else if (m_rewinding)
+    {
+        m_currentShader = &m_rewindShader;
+        m_shaderActive = true;
+    }
+    else if (m_skipCount > 0)
+    {
+        SetShaderValue(m_skipShader, GetShaderLocation(m_skipShader, "timer"), &m_surpriseTimer, SHADER_UNIFORM_FLOAT);
+        m_currentShader = &m_skipShader;
+        m_shaderActive = true;
     }
 }
