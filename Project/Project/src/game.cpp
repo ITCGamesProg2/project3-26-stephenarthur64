@@ -247,7 +247,7 @@ void Game::update()
             }
             else
             {
-                if (!m_timestop)
+                if (!m_timestop && !IsSoundPlaying(AssetManager::getSound("timestopend")))
                 {
                     UpdateMusicStream(AssetManager::getMusic("boss"));
                 }
@@ -714,6 +714,7 @@ void Game::processShader()
             m_shaderRadius += 0.03f;
         }
         SetShaderValue(m_timeStopShader, GetShaderLocation(m_timeStopShader, "radius"), &m_shaderRadius, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(m_timeStopShader, GetShaderLocation(m_timeStopShader, "grayStrength"), &m_shaderRadius, SHADER_UNIFORM_FLOAT);
         m_currentShader = &m_timeStopShader;
         m_shaderActive = true;
     }
@@ -726,6 +727,7 @@ void Game::processShader()
         SetShaderValue(m_timeStopShader, GetShaderLocation(m_timeStopShader, "circleCentre"), location, SHADER_UNIFORM_VEC2);
         m_shaderRadius -= 0.05f;
         SetShaderValue(m_timeStopShader, GetShaderLocation(m_timeStopShader, "radius"), &m_shaderRadius, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(m_timeStopShader, GetShaderLocation(m_timeStopShader, "grayStrength"), &m_shaderRadius, SHADER_UNIFORM_FLOAT);
         m_currentShader = &m_timeStopShader;
         m_shaderActive = true;
     }
@@ -739,5 +741,6 @@ void Game::processShader()
         SetShaderValue(m_skipShader, GetShaderLocation(m_skipShader, "timer"), &m_surpriseTimer, SHADER_UNIFORM_FLOAT);
         m_currentShader = &m_skipShader;
         m_shaderActive = true;
+        m_skipCount--;
     }
 }
