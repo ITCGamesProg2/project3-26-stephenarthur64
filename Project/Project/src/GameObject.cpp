@@ -1,7 +1,7 @@
 #include "GameObject.h"
 
 GameObject::GameObject(Color t_c, float t_r) : m_colour(t_c), m_radius(t_r), m_position({ 100.0f, 100.0f }), m_velocity({0.0f, 0.0f}), m_alive(true), m_invincibilityFrames(0.0f),
-												m_animation(4, 32, 32)
+												m_animation(4, 32, 32, 0.2f)
 {
 }
 

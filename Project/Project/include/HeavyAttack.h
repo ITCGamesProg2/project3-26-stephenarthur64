@@ -19,6 +19,7 @@ public:
 		m_hitboxOffset = 75.0f;
 		m_type = HEAVY;
 		m_damage = 2;
+		m_name = "heavyattack";
     }
 };
 

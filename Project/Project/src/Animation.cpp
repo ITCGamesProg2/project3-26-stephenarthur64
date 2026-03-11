@@ -1,6 +1,6 @@
 #include "Animation.h"
 
-Animation::Animation(int t_max, float t_x, float t_y) : MAX_FRAMES(t_max), MAX_FRAME_TIME(0.2f), m_frame(0), m_sizeX(t_x), m_sizeY(t_y), m_frameTime(0.0f), m_direction(1)
+Animation::Animation(int t_max, float t_x, float t_y, float t_time = 0.2f) : MAX_FRAMES(t_max), MAX_FRAME_TIME(t_time), m_frame(0), m_sizeX(t_x), m_sizeY(t_y), m_frameTime(0.0f), m_direction(1)
 {
 }
 

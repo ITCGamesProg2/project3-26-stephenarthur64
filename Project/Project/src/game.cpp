@@ -578,12 +578,9 @@ void Game::CheckCollisions()
 
     for (NPC& e : m_enemies)
     {
-        if (!e.isSurprised())
-        {
-            CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), e);
-            CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), e);
-            CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), e);
-        }
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), e);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), e);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), e);
 
         if (!m_timestop)
         {

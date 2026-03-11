@@ -3,11 +3,13 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "AssetManager.h"
+#include "Animation.h"
 #include <list>
 
 class Attack
 {
 public:
+	Attack();
 	virtual void execute(Vector2 t_target);
 	virtual void process();
 	virtual void draw();
@@ -49,5 +51,8 @@ protected:
 
 	AttackTypes m_type;
 	int m_damage;
+
+	Animation m_animation;
+	std::string m_name;
 };
 

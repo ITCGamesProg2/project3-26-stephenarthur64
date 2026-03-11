@@ -20,6 +20,7 @@ public:
 		m_hitboxOffset = 50.0f;
 		m_type = LIGHT;
 		m_damage = 1;
+		m_name = "lightattack";
     }
 };
 

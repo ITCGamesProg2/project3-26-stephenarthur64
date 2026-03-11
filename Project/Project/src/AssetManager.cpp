@@ -13,6 +13,8 @@ void AssetManager::initAssets()
 	m_textures["heavy"] = LoadTexture("img/GameObjects/heavyenemy.png");
 	m_textures["support"] = LoadTexture("img/GameObjects/supportenemy.png");
 	m_textures["powers"] = LoadTexture("img/UI/time manip icons.png");
+	m_textures["lightattack"] = LoadTexture("img/Attacks/lightattack.png");
+	m_textures["heavyattack"] = LoadTexture("img/Attacks/heavyattack.png");
 
 	m_sounds["hurt"] = LoadSound("audio/sfx/Hurt.wav");
 	m_sounds["swing"] = LoadSound("audio/sfx/Sword_Slash.wav");

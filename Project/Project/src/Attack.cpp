@@ -1,6 +1,10 @@
 #include "Attack.h"
 #include <iostream>
 
+Attack::Attack() : m_animation(5, 32, 32, 0.10f)
+{
+}
+
 void Attack::execute(Vector2 t_target)
 {
 	if (!m_running && m_cooldown >= m_maxCooldown)
@@ -25,6 +29,7 @@ void Attack::process()
 		if (m_windup >= m_maxWindup)
 		{
 			m_duration += GetFrameTime();
+			m_animation.nextFrame(GetFrameTime());
 
 			if (m_duration < m_maxDuration)
 			{
@@ -35,6 +40,7 @@ void Attack::process()
 			{
 				m_running = false;
 				m_windup = 0.0f;
+				m_animation.resetTime();
 			}
 		}
 	}
@@ -84,6 +90,9 @@ void Attack::draw()
 {
 	if (m_running)
 	{
-		DrawRectanglePro({ m_startPos.x, m_startPos.y,  m_width, m_height }, { m_width / 2.0f, m_height / 2.0f }, 0.0f, YELLOW);
+		float angle = Vector2Angle(m_startPos, m_targetPos) * RAD2DEG;
+		angle -= 90.0f;
+		//DrawRectanglePro({ m_startPos.x, m_startPos.y,  m_width, m_height }, { m_width / 2.0f, m_height / 2.0f }, 0.0f, YELLOW);
+		DrawTexturePro(AssetManager::getSprite(m_name), m_animation.getFrame(), { m_startPos.x, m_startPos.y, 100 * 1.5f, 100 * 1.5f }, { m_width, m_height }, angle, WHITE);
 	}
 }
