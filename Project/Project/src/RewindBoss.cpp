@@ -8,7 +8,7 @@ RewindBoss::RewindBoss() : Boss()
 	m_attack->setWindupScale(1.0f);
 	m_maxHealth = 1;
 	m_health = m_maxHealth;
-	m_upgrade.setAbility(TimeAbilities::STOP);
+	m_upgrade.setAbility(TimeAbilities::SKIP);
 }
 
 void RewindBoss::draw()
@@ -19,7 +19,6 @@ void RewindBoss::draw()
 
 		if (!m_canDamage)
 		{
-			DrawLine(m_position.x, m_position.y, m_target.x, m_target.y, YELLOW);
 			m_shieldPos = Vector2MoveTowards(m_position, m_target, m_radius);
 
 			m_rotateOriginLine = { m_shieldPos.x, m_shieldPos.y * 10 };

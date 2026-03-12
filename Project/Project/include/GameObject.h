@@ -23,7 +23,7 @@ public:
 	bool isAlive() { return m_alive; }
 	virtual void respawn();
 
-	void setSprite(Texture2D& t_sp) { m_sprite = t_sp; }
+	virtual void setSprite(Texture2D& t_sp) { m_sprite = t_sp; }
 
 protected:
 	Vector2 m_position;

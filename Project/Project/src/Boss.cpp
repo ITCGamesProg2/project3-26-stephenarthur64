@@ -27,6 +27,13 @@ void Boss::damage(int t_amount)
 	}
 }
 
+void Boss::setSprite(Texture2D& t_sp)
+{
+	m_sprite = t_sp;
+
+	m_upgrade.setSprite();
+}
+
 void Boss::immuneCheck(Vector2 t_playerPos)
 {
 	if (m_target == t_playerPos)

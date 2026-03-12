@@ -93,7 +93,7 @@ void Game::draw()
         BeginTextureMode(target);
         ClearBackground(WHITE);
         BeginMode2D(m_camera);
-        DrawTexturePro(m_background, { 0, 0, 640, 640 }, { -3000, -3500, 5000, 5000 }, { 0,0 }, 0.0f, WHITE);
+        DrawTexturePro(m_background, { 0, 0, 640, 640 }, { -2000, -3500, 5000, 5000 }, { 0,0 }, 0.0f, WHITE);
 
         if (m_activeBoss)
         {
@@ -514,6 +514,7 @@ void Game::handleInput()
         else
         {
             DetachAudioStreamProcessor(AssetManager::getMusic("boss").stream, AudioProcessEffectLPF);
+            DetachAudioStreamProcessor(AssetManager::getMusic("main").stream, AudioProcessEffectLPF);
             added = false;
             m_rewinding = false;
             SetMusicPitch(AssetManager::getMusic("main"), 1.0f);
