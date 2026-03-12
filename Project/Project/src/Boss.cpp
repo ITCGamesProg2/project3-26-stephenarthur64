@@ -1,23 +1,13 @@
 #include "Boss.h"
 
-Boss::Boss() : NPC(RED, 80.0F)
+Boss::Boss() : NPC(RED, 80.0F), m_canDamage(false)
 {
+	m_animation.setValues(5, 64, 64, 0.2f);
+	m_spriteScale = 2.0f;
 }
 
 void Boss::move()
 {
-}
-
-void Boss::draw()
-{
-	if (m_alive)
-	{
-		NPC::draw();
-	}
-	else
-	{
-		m_upgrade.draw();
-	}
 }
 
 void Boss::update()

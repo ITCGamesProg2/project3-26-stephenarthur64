@@ -68,7 +68,7 @@ private:
 
     RewindBoss m_rewindBoss;
 
-    std::shared_ptr<Boss> m_boss;
+    Boss* m_boss;
     bool m_activeBoss;
 
     Time m_tempTime;

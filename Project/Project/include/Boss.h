@@ -8,7 +8,7 @@ class Boss :
 public:
     Boss();
     virtual void move() override;
-    virtual void draw() override;
+    virtual void draw() = 0;
     virtual void update() override;
     virtual void damage(int t_amount) override;
     void immuneCheck(Vector2 t_playerPos);
