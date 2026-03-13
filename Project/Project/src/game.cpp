@@ -6,7 +6,7 @@
 #include <iostream>
 
 Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), REWIND_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(GameState::MENU), m_skipCount(0), m_surpriseTimer(0), 
-                m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false), REWIND_MAX(1.0f), STOP_MAX(1.5F), m_musicPos(0.0f), added(false)
+                m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false), REWIND_MAX(1.0f), STOP_MAX(1.5F), m_musicPos(0.0f), added(false), m_currentMusic("main")
 {
 }
 
@@ -77,6 +77,11 @@ void Game::loadLevel()
     {
         m_boss->setPosition(bossPos);
         m_doors.back().addEnemy(m_boss);
+        m_currentMusic = "boss";
+    }
+    else
+    {
+        m_currentMusic = "main";
     }
 }
 
@@ -230,29 +235,15 @@ void Game::update()
     }
     else if (m_state == GameState::GAMEPLAY)
     {
-        if (!m_activeBoss)
+        if (!IsMusicStreamPlaying(AssetManager::getMusic(m_currentMusic)))
         {
-            if (!IsMusicStreamPlaying(AssetManager::getMusic("main")))
-            {
-                PlayMusicStream(AssetManager::getMusic("main"));
-            }
-            else
-            {
-                UpdateMusicStream(AssetManager::getMusic("main"));
-            }
+            PlayMusicStream(AssetManager::getMusic(m_currentMusic));
         }
         else
         {
-            if (!IsMusicStreamPlaying(AssetManager::getMusic("boss")))
+            if (!m_timestop && !IsSoundPlaying(AssetManager::getSound("timestopend")))
             {
-                PlayMusicStream(AssetManager::getMusic("boss"));
-            }
-            else
-            {
-                if (!m_timestop && !IsSoundPlaying(AssetManager::getSound("timestopend")))
-                {
-                    UpdateMusicStream(AssetManager::getMusic("boss"));
-                }
+                UpdateMusicStream(AssetManager::getMusic(m_currentMusic));
             }
         }
 
@@ -300,7 +291,10 @@ void Game::update()
 
 void Game::resetGame()
 {
-    StopMusicStream(AssetManager::getMusic("main"));
+    if (IsMusicStreamPlaying(AssetManager::getMusic(m_currentMusic)))
+    {
+        StopMusicStream(AssetManager::getMusic(m_currentMusic));
+    }
     m_player.respawn();
     m_enemies.clear();
     m_walls.clear();
@@ -412,17 +406,11 @@ void Game::timeSkip()
         m_skipCount++;
     }
     
-    if (IsMusicStreamPlaying(AssetManager::getMusic("main")))
+    if (IsMusicStreamPlaying(AssetManager::getMusic(m_currentMusic)))
     {
-        m_musicPos = GetMusicTimePlayed(AssetManager::getMusic("main"));
+        m_musicPos = GetMusicTimePlayed(AssetManager::getMusic(m_currentMusic));
         m_musicPos += 1.0f;
-        SeekMusicStream(AssetManager::getMusic("main"), m_musicPos);
-    }
-    else if (IsMusicStreamPlaying(AssetManager::getMusic("boss")))
-    {
-        m_musicPos = GetMusicTimePlayed(AssetManager::getMusic("boss"));
-        m_musicPos += 1.0f;
-        SeekMusicStream(AssetManager::getMusic("boss"), m_musicPos);
+        SeekMusicStream(AssetManager::getMusic(m_currentMusic), m_musicPos);
     }
 
     m_timeSkip = false;
@@ -492,19 +480,11 @@ void Game::handleInput()
                     m_boss->surprise();
                 }
                 m_surpriseTimer = REWIND_MAX;
-                if (IsMusicStreamPlaying(AssetManager::getMusic("main")))
+                if (IsMusicStreamPlaying(AssetManager::getMusic(m_currentMusic)))
                 {
                     if (!added)
                     {
-                        AttachAudioStreamProcessor(AssetManager::getMusic("main").stream, AudioProcessEffectLPF);
-                    }
-                    added = true;
-                }
-                if (IsMusicStreamPlaying(AssetManager::getMusic("boss")))
-                {
-                    if (!added)
-                    {
-                        AttachAudioStreamProcessor(AssetManager::getMusic("boss").stream, AudioProcessEffectLPF);
+                        AttachAudioStreamProcessor(AssetManager::getMusic(m_currentMusic).stream, AudioProcessEffectLPF);
                     }
                     added = true;
                 }
@@ -513,12 +493,10 @@ void Game::handleInput()
         }
         else
         {
-            DetachAudioStreamProcessor(AssetManager::getMusic("boss").stream, AudioProcessEffectLPF);
-            DetachAudioStreamProcessor(AssetManager::getMusic("main").stream, AudioProcessEffectLPF);
+            DetachAudioStreamProcessor(AssetManager::getMusic(m_currentMusic).stream, AudioProcessEffectLPF);
             added = false;
             m_rewinding = false;
-            SetMusicPitch(AssetManager::getMusic("main"), 1.0f);
-            SetMusicPitch(AssetManager::getMusic("boss"), 1.0f);
+            SetMusicPitch(AssetManager::getMusic(m_currentMusic), 1.0f);
         }
 
         if (IsKeyReleased(KEY_R) && m_player.canUse(TimeAbilities::SKIP) && !m_timestop && !m_timeSkip)

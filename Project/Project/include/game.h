@@ -110,6 +110,7 @@ private:
 
     float m_musicPos;
     bool added;
+    std::string m_currentMusic;
 };
 
 #endif // GAME_H

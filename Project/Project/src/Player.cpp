@@ -23,6 +23,8 @@ Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MI
 	Timeline::setSpriteInfo(m_spriteScale, &m_sprite);
 
 	m_abilities[TimeAbilities::REWIND] = true;
+	m_abilities[TimeAbilities::STOP] = true;
+	m_abilities[TimeAbilities::SKIP] = true;
 }
 
 void Player::update()
