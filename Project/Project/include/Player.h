@@ -28,6 +28,7 @@ public:
     virtual void setSprite(Texture2D* t_sp) override;
     void setMousePosition(Camera2D& t_cam);
     void setPosition(Vector2 t_pos) { m_position = t_pos; }
+    void loadValues(float t_health, float t_momentum, bool t_rewind, bool t_skip, bool t_stop);
 
     float getRadius() { return m_radius; }
     Attack* getAttack(AttackTypes t_type);

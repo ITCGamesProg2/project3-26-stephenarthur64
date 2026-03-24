@@ -6,8 +6,9 @@ static int m_progresLimit = 1;
 static bool m_nextLevelReady = false;
 static bool m_endOfLevels = false;
 static int m_currentFile = 1;
+static Player* m_player;
 
-void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, Player& t_p, TimeAbilities& t_bossType, Vector2& t_bossPos)
+void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, TimeAbilities& t_bossType, Vector2& t_bossPos)
 {
     m_nextLevelReady = false;
 
@@ -17,8 +18,8 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
     //m_level = 0;
 
     std::string name;
-    std::string filename = "level" + std::to_string(m_level) + ".json";
-    std::string debug = "level3.json";
+    std::string filename = "levels/level" + std::to_string(m_level) + ".json";
+    std::string debug = "levels/level3.json";
 
     if (m_level == 0)
     {
@@ -100,11 +101,11 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
 
     if (m_progress == 0)
     {
-        t_p.setPosition({ data["player"]["position"][0], data["player"]["position"][1] });
+        m_player->setPosition({ data["player"]["position"][0], data["player"]["position"][1] });
     }
     else
     {
-        t_p.setPosition({ data["goals"][m_progress - 1]["position"][0] + 50.0f, data["goals"][m_progress - 1]["position"][1] + 50.0f });
+        m_player->setPosition({ data["goals"][m_progress - 1]["position"][0] + 50.0f, data["goals"][m_progress - 1]["position"][1] + 50.0f });
     }
 }
 
@@ -144,30 +145,54 @@ void LevelLoader::saveFile(int t_file)
 {
     m_currentFile = t_file;
 
-    std::ofstream Save("savefile" + std::to_string(t_file) + ".txt");
+    std::ifstream file("saves/savefile" + std::to_string(t_file) + ".json");
+    nlohmann::json data;
+    data = nlohmann::json::parse(file);
 
-    Save << m_level;
-    Save << m_progress;
+    data["health"] = m_player->getHealthPercentage();
+    data["momentum"] = m_player->getMomentumPercentage();
+    data["rewind"] = m_player->canUse(REWIND);
+    data["skip"] = m_player->canUse(SKIP);
+    data["stop"] = m_player->canUse(STOP);
+
+    m_level = data["level"];
+    m_progress = data["progress"];
+
+    file.close();
+
+    std::ofstream write("saves/savefile" + std::to_string(t_file) + ".json");
+
+    write << data.dump(4);
+
+    write.close();
 }
 
 void LevelLoader::loadFile(int t_file)
 {
     m_currentFile = t_file;
 
-    std::ifstream Load;
-    Load.open("savefile" + std::to_string(t_file) + ".txt");
+    std::ifstream file("saves/savefile" + std::to_string(t_file) + ".json");
+    nlohmann::json data;
+    data = nlohmann::json::parse(file);
 
-    m_level = Load.get() - '0';
-    m_progress = Load.get() - '0';
+    m_player->loadValues(data["health"], data["momentum"], data["rewind"], data["skip"], data["stop"]);
+
+    m_level = data["level"];
+    m_progress = data["progress"];
 }
 
 void LevelLoader::clearFile(int t_file)
 {
     m_currentFile = t_file;
 
-    std::ofstream Save("savefile" + std::to_string(t_file) + ".txt");
+    std::ofstream Save("saves/savefile" + std::to_string(t_file) + ".txt");
 
     Save << 1;
     Save << 0;
+}
+
+void LevelLoader::setPlayerRef(Player* t_p)
+{
+    m_player = t_p;
 }
 

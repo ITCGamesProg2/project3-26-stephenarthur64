@@ -3,6 +3,7 @@
 static std::map<std::string, Texture2D> m_textures;
 static std::map<std::string, Sound> m_sounds;
 static std::map<std::string, Music> m_music;
+static std::map<std::string, Shader> m_shaders;
 
 void AssetManager::initAssets()
 {
@@ -29,6 +30,10 @@ void AssetManager::initAssets()
 	m_music["title"] = LoadMusicStream("audio/music/8_Bit_Nostalgia.mp3");
 	m_music["main"] = LoadMusicStream("audio/music/8_Bit_Adventure.mp3");
 	m_music["boss"] = LoadMusicStream("audio/music/Boss_time.mp3");
+
+	m_shaders["stop"] = LoadShader(0, TextFormat("shaders/timestop.fs", GLSL_VERSION));
+	m_shaders["rewind"] = LoadShader(0, TextFormat("shaders/rewind.fs", GLSL_VERSION));
+	m_shaders["skip"] = LoadShader(0, TextFormat("shaders/skip.fs", GLSL_VERSION));
 }
 
 void AssetManager::setVolume(float t_volume)
@@ -62,5 +67,13 @@ Music& AssetManager::getMusic(std::string t_music)
 	if (m_music.count(t_music))
 	{
 		return m_music[t_music];
+	}
+}
+
+Shader& AssetManager::getShader(std::string t_shader)
+{
+	if (m_shaders.count(t_shader))
+	{
+		return m_shaders[t_shader];
 	}
 }

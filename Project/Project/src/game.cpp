@@ -24,11 +24,13 @@ void Game::init()
 
     AssetManager::setVolume(0.3f);
 
-    m_timeStopShader = LoadShader(0, TextFormat("shaders/timestop.fs", GLSL_VERSION));
-    m_rewindShader = LoadShader(0, TextFormat("shaders/rewind.fs", GLSL_VERSION));
-    m_skipShader = LoadShader(0, TextFormat("shaders/skip.fs", GLSL_VERSION));
+    m_timeStopShader = AssetManager::getShader("stop");
+    m_rewindShader = AssetManager::getShader("rewind");
+    m_skipShader = AssetManager::getShader("skip");
 
     target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    LevelLoader::setPlayerRef(&m_player);
 }
 
 void Game::loadLevel()
@@ -38,7 +40,7 @@ void Game::loadLevel()
     Vector2 bossPos;
     TimeAbilities bossType = TimeAbilities::MAX;
 
-    LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_supports, m_doors, m_player, bossType, bossPos);
+    LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_supports, m_doors, bossType, bossPos);
 
     Editor::setWallReference(&m_walls);
     Editor::setDoorReference(&m_doors);
@@ -299,7 +301,6 @@ void Game::resetGame()
             StopMusicStream(*m_currentMusic);
         }
     }
-    m_player.respawn();
     m_enemies.clear();
     m_walls.clear();
     m_goals.clear();
@@ -389,6 +390,7 @@ void Game::deadUpdate()
     {
         m_state = GameState::GAMEPLAY;
         resetGame();
+        m_player.respawn();
         loadLevel();
     }
 }

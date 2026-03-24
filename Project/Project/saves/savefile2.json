@@ -1,0 +1,9 @@
+{
+  "level": 1,
+  "progress": 0,
+  "health": 10,
+  "momentum": 100,
+  "rewind": true,
+  "skip": false,
+  "stop": false
+}

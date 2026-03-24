@@ -173,6 +173,15 @@ void Player::setMousePosition(Camera2D& t_cam)
 	m_mouse = GetScreenToWorld2D(m_mouse, t_cam);
 }
 
+void Player::loadValues(float t_healthPercentage, float t_momentumPercentage, bool t_rewind, bool t_skip, bool t_stop)
+{
+	m_health = t_healthPercentage * m_maxHealth;
+	m_momentum = t_momentumPercentage * m_maxMomentum;
+	m_abilities[TimeAbilities::REWIND] = t_rewind;
+	m_abilities[TimeAbilities::SKIP] = t_skip;
+	m_abilities[TimeAbilities::STOP] = t_stop;
+}
+
 Attack* Player::getAttack(AttackTypes t_type)
 {
 	switch (t_type)
