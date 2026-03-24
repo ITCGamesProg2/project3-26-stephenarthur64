@@ -21,13 +21,17 @@ void MainMenu::init()
 
 void MainMenu::update()
 {
-	if (!IsMusicStreamPlaying(AssetManager::getMusic("title")))
+	if (m_music == nullptr)
 	{
-		PlayMusicStream(AssetManager::getMusic("title"));
+		m_music = &AssetManager::getMusic("title");
+	}
+	if (!IsMusicStreamPlaying(*m_music))
+	{
+		PlayMusicStream(*m_music);
 	}
 	else
 	{
-		UpdateMusicStream(AssetManager::getMusic("title"));
+		UpdateMusicStream(*m_music);
 	}
 
 	switch (m_state)

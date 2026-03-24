@@ -30,7 +30,7 @@ void RewindBoss::draw()
 		}
 
 		
-		DrawTexturePro(m_sprite, { 320, 0, 64, 64 }, { m_shieldPos.x, m_shieldPos.y, 100 * 1.5f, 100 * 1.5f }, { 64, 64}, m_shieldAngle, WHITE);
+		DrawTexturePro(*m_sprite, { 320, 0, 64, 64 }, { m_shieldPos.x, m_shieldPos.y, 100 * 1.5f, 100 * 1.5f }, { 64, 64}, m_shieldAngle, WHITE);
 	}
 	else
 	{

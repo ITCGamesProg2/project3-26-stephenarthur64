@@ -31,5 +31,6 @@ private:
 	Button m_playGame;
 	Button m_saves[3];
 	MenuState m_state;
+	Music* m_music;
 };
 

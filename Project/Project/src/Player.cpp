@@ -20,8 +20,6 @@ Player::Player(Color t_c, float t_r) : GameObject(t_c, t_r), MAX_SPEED(6.0f), MI
 
 	m_spriteScale = 1.0f;
 
-	Timeline::setSpriteInfo(m_spriteScale, &m_sprite);
-
 	m_abilities[TimeAbilities::REWIND] = true;
 	m_abilities[TimeAbilities::STOP] = true;
 	m_abilities[TimeAbilities::SKIP] = true;
@@ -160,6 +158,13 @@ void Player::addMomentum(float t_amount)
 void Player::decreaseMomentum(float t_amount)
 {
 	m_momentum -= t_amount;
+}
+
+void Player::setSprite(Texture2D* t_sp)
+{
+	m_sprite = t_sp;
+
+	Timeline::setSpriteInfo(m_spriteScale, m_sprite);
 }
 
 void Player::setMousePosition(Camera2D& t_cam)

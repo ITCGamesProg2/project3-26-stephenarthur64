@@ -27,7 +27,7 @@ void Boss::damage(int t_amount)
 	}
 }
 
-void Boss::setSprite(Texture2D& t_sp)
+void Boss::setSprite(Texture2D* t_sp)
 {
 	m_sprite = t_sp;
 

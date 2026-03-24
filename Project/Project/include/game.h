@@ -58,6 +58,8 @@ private:
     GameState m_state;
     MainMenu m_menu;
 
+    Vector2 m_playerDirection;
+
     Player m_player;
     std::vector<NPC> m_enemies;
     std::vector<EnemySupport> m_supports;
@@ -110,7 +112,11 @@ private:
 
     float m_musicPos;
     bool added;
-    std::string m_currentMusic;
+
+    Texture2D* m_powersSprite;
+    Sound* m_timeStopSound;
+    Sound* m_timeStopEndSound;
+    Music* m_currentMusic;
 };
 
 #endif // GAME_H

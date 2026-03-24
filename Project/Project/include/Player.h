@@ -25,6 +25,7 @@ public:
     void addMomentum(float t_amount);
     void decreaseMomentum(float t_amount = 1.0f);
 
+    virtual void setSprite(Texture2D* t_sp) override;
     void setMousePosition(Camera2D& t_cam);
     void setPosition(Vector2 t_pos) { m_position = t_pos; }
 

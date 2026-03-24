@@ -6,7 +6,7 @@
 #include <iostream>
 
 Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), REWIND_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(GameState::MENU), m_skipCount(0), m_surpriseTimer(0), 
-                m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false), REWIND_MAX(1.0f), STOP_MAX(1.5F), m_musicPos(0.0f), added(false), m_currentMusic("main")
+                m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false), REWIND_MAX(1.0f), STOP_MAX(1.5F), m_musicPos(0.0f), added(false)
 {
 }
 
@@ -17,6 +17,10 @@ void Game::init()
     m_camTarget = m_player.getPosition();
 
     AssetManager::initAssets();
+
+    m_powersSprite = &AssetManager::getSprite("powers");
+    m_timeStopSound = &AssetManager::getSound("timestop");
+    m_timeStopEndSound = &AssetManager::getSound("timestopend");
 
     AssetManager::setVolume(0.3f);
 
@@ -47,17 +51,17 @@ void Game::loadLevel()
         m_state = GameState::END;
     }
 
-    m_player.setSprite(AssetManager::getSprite("player"));
+    m_player.setSprite(&AssetManager::getSprite("player"));
 
     for (NPC& e : m_enemies)
     {
         switch (e.getType())
         {
         case LIGHT:
-            e.setSprite(AssetManager::getSprite("light"));
+            e.setSprite(&AssetManager::getSprite("light"));
             break;
         case HEAVY:
-            e.setSprite(AssetManager::getSprite("heavy"));
+            e.setSprite(&AssetManager::getSprite("heavy"));
             break;
         default:
             break;
@@ -66,10 +70,10 @@ void Game::loadLevel()
 
     for (EnemySupport& es : m_supports)
     {
-        es.setSprite(AssetManager::getSprite("support"));
+        es.setSprite(&AssetManager::getSprite("support"));
     }
 
-    m_rewindBoss.setSprite(AssetManager::getSprite("rewindboss"));
+    m_rewindBoss.setSprite(&AssetManager::getSprite("rewindboss"));
 
     selectBoss(bossType);
 
@@ -77,11 +81,11 @@ void Game::loadLevel()
     {
         m_boss->setPosition(bossPos);
         m_doors.back().addEnemy(m_boss);
-        m_currentMusic = "boss";
+        m_currentMusic = &AssetManager::getMusic("boss");
     }
     else
     {
-        m_currentMusic = "main";
+        m_currentMusic = &AssetManager::getMusic("main");
     }
 }
 
@@ -169,11 +173,11 @@ void Game::draw()
         {
             if (!m_rewinding)
             {
-                DrawTexturePro(AssetManager::getSprite("powers"), { 0, 0, 32, 32 }, { SCREEN_WIDTH - 240, 10, 70, 70 }, { 0, 0 }, 0.0f, WHITE);
+                DrawTexturePro(*m_powersSprite, { 0, 0, 32, 32 }, { SCREEN_WIDTH - 240, 10, 70, 70 }, { 0, 0 }, 0.0f, WHITE);
             }
             else
             {
-                DrawTexturePro(AssetManager::getSprite("powers"), { 0, 0, 32, 32 }, { SCREEN_WIDTH - 240, 10, 70, 70 }, { 0, 0 }, 0.0f, DARKBLUE);
+                DrawTexturePro(*m_powersSprite, { 0, 0, 32, 32 }, { SCREEN_WIDTH - 240, 10, 70, 70 }, { 0, 0 }, 0.0f, DARKBLUE);
             }
         }
 
@@ -181,11 +185,11 @@ void Game::draw()
         {
             if (m_surpriseTimer <= 0)
             {
-                DrawTexturePro(AssetManager::getSprite("powers"), { 32, 0, 32, 32 }, { SCREEN_WIDTH - 160, 10, 70, 70 }, { 0, 0 }, 0.0f, WHITE);
+                DrawTexturePro(*m_powersSprite, { 32, 0, 32, 32 }, { SCREEN_WIDTH - 160, 10, 70, 70 }, { 0, 0 }, 0.0f, WHITE);
             }
             else
             {
-                DrawTexturePro(AssetManager::getSprite("powers"), { 32, 0, 32, 32 }, { SCREEN_WIDTH - 160, 10, 70, 70 }, { 0, 0 }, 0.0f, RED);
+                DrawTexturePro(*m_powersSprite, { 32, 0, 32, 32 }, { SCREEN_WIDTH - 160, 10, 70, 70 }, { 0, 0 }, 0.0f, RED);
             }
         }
 
@@ -193,11 +197,11 @@ void Game::draw()
         {
             if (!m_timestop)
             {
-                DrawTexturePro(AssetManager::getSprite("powers"), { 64, 0, 32, 32 }, { SCREEN_WIDTH - 80, 10, 70, 70 }, { 0, 0 }, 0.0f, WHITE);
+                DrawTexturePro(*m_powersSprite, { 64, 0, 32, 32 }, { SCREEN_WIDTH - 80, 10, 70, 70 }, { 0, 0 }, 0.0f, WHITE);
             }
             else
             {
-                DrawTexturePro(AssetManager::getSprite("powers"), { 96, 0, 32, 32 }, { SCREEN_WIDTH - 80, 10, 70, 70 }, { 0, 0 }, 0.0f, YELLOW);
+                DrawTexturePro(*m_powersSprite, { 96, 0, 32, 32 }, { SCREEN_WIDTH - 80, 10, 70, 70 }, { 0, 0 }, 0.0f, YELLOW);
             }
         }
 
@@ -235,25 +239,22 @@ void Game::update()
     }
     else if (m_state == GameState::GAMEPLAY)
     {
-        if (!IsMusicStreamPlaying(AssetManager::getMusic(m_currentMusic)))
+        if (!IsMusicStreamPlaying(*m_currentMusic))
         {
-            PlayMusicStream(AssetManager::getMusic(m_currentMusic));
+            PlayMusicStream(*m_currentMusic);
         }
         else
         {
             if (!m_timestop && !IsSoundPlaying(AssetManager::getSound("timestopend")))
             {
-                UpdateMusicStream(AssetManager::getMusic(m_currentMusic));
+                UpdateMusicStream(*m_currentMusic);
             }
         }
 
-        if (!m_timeSkip)
-        {
-            m_player.setMousePosition(m_camera);
-        }
+        m_player.setMousePosition(m_camera);
+
         handleInput();
         cameraMove();
-        CheckCollisions();
 
         if (m_rewinding)
         {
@@ -291,9 +292,12 @@ void Game::update()
 
 void Game::resetGame()
 {
-    if (IsMusicStreamPlaying(AssetManager::getMusic(m_currentMusic)))
+    if (m_currentMusic != nullptr)
     {
-        StopMusicStream(AssetManager::getMusic(m_currentMusic));
+        if (IsMusicStreamPlaying(*m_currentMusic))
+        {
+            StopMusicStream(*m_currentMusic);
+        }
     }
     m_player.respawn();
     m_enemies.clear();
@@ -305,6 +309,13 @@ void Game::resetGame()
 
 void Game::standardUpdate()
 {
+    if (m_timeSkip)
+    {
+        m_player.addForce(m_playerDirection);
+    }
+
+    CheckCollisions();
+
     m_player.update();
 
     if (m_surpriseTimer > 0)
@@ -368,6 +379,8 @@ void Game::standardUpdate()
     {
         loadLevel();
     }
+
+
 }
 
 void Game::deadUpdate()
@@ -402,15 +415,15 @@ void Game::timeSkip()
 
     while (m_skipCount < 60)
     {
-        update();
+        standardUpdate();
         m_skipCount++;
     }
     
-    if (IsMusicStreamPlaying(AssetManager::getMusic(m_currentMusic)))
+    if (IsMusicStreamPlaying(*m_currentMusic))
     {
-        m_musicPos = GetMusicTimePlayed(AssetManager::getMusic(m_currentMusic));
+        m_musicPos = GetMusicTimePlayed(*m_currentMusic);
         m_musicPos += 1.0f;
-        SeekMusicStream(AssetManager::getMusic(m_currentMusic), m_musicPos);
+        SeekMusicStream(*m_currentMusic, m_musicPos);
     }
 
     m_timeSkip = false;
@@ -423,10 +436,11 @@ void Game::timeStoppedUpdate()
 {
     m_player.update();
     m_player.decreaseMomentum();
+    CheckCollisions();
 
     if (m_player.getMomentum() <= 0.0f)
     {
-        PlaySound(AssetManager::getSound("timestopend"));
+        PlaySound(*m_timeStopEndSound);
         m_timestop = false;
     }
 }
@@ -457,11 +471,14 @@ void Game::handleInput()
                 {
                     e.surprise();
                 }
-                PlaySound(AssetManager::getSound("timestop"));
+                PlaySound(*m_timeStopSound);
             }
             else
             {
-                PlaySound(AssetManager::getSound("timestopend"));
+                if (m_timestop)
+                {
+                    PlaySound(*m_timeStopEndSound);
+                }
                 m_timestop = false;
             }
         }
@@ -480,11 +497,11 @@ void Game::handleInput()
                     m_boss->surprise();
                 }
                 m_surpriseTimer = REWIND_MAX;
-                if (IsMusicStreamPlaying(AssetManager::getMusic(m_currentMusic)))
+                if (IsMusicStreamPlaying(*m_currentMusic))
                 {
                     if (!added)
                     {
-                        AttachAudioStreamProcessor(AssetManager::getMusic(m_currentMusic).stream, AudioProcessEffectLPF);
+                        AttachAudioStreamProcessor(m_currentMusic->stream, AudioProcessEffectLPF);
                     }
                     added = true;
                 }
@@ -493,10 +510,10 @@ void Game::handleInput()
         }
         else
         {
-            DetachAudioStreamProcessor(AssetManager::getMusic(m_currentMusic).stream, AudioProcessEffectLPF);
+            DetachAudioStreamProcessor(m_currentMusic->stream, AudioProcessEffectLPF);
             added = false;
             m_rewinding = false;
-            SetMusicPitch(AssetManager::getMusic(m_currentMusic), 1.0f);
+            SetMusicPitch(*m_currentMusic, 1.0f);
         }
 
         if (IsKeyReleased(KEY_R) && m_player.canUse(TimeAbilities::SKIP) && !m_timestop && !m_timeSkip)
@@ -515,25 +532,25 @@ void Game::handleInput()
             m_player.useAttack(AttackTypes::HEAVY);
         }
 
-        Vector2 direction = { 0.0f, 0.0f };
+        m_playerDirection = { 0.0f, 0.0f };
 
-        if (IsKeyDown(KEY_W)) // Up
+        if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) // Up
         {
-            direction.y += -1.0f;
+            m_playerDirection.y += -1.0f;
         }
-        if (IsKeyDown(KEY_S)) // Down
+        if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) // Down
         {
-            direction.y += 1.0f;
+            m_playerDirection.y += 1.0f;
         }
-        if (IsKeyDown(KEY_A)) // Left
+        if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) // Left
         {
-            direction.x += -1.0f;
+            m_playerDirection.x += -1.0f;
         }
-        if (IsKeyDown(KEY_D)) // Right
+        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) // Right
         {
-            direction.x += 1.0f;
+            m_playerDirection.x += 1.0f;
         }
-        m_player.addForce(direction);
+        m_player.addForce(m_playerDirection);
     }
     else if (m_state == GameState::EDITING)
     {
@@ -557,33 +574,6 @@ void Game::CheckCollisions()
 {
     // Refactor later to use spacial partitioning
 
-    for (NPC& e : m_enemies)
-    {
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), e);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), e);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), e);
-
-        if (!m_timestop)
-        {
-            CollisionCheck::CheckCollisionAttack(e.getAttack(), m_player);
-        }
-
-        for (EnemySupport& es : m_supports)
-        {
-            if (CheckCollisionPointCircle(es.getTarget(), e.getPosition(), e.getRadius()))
-            {
-                e.heal();
-            }
-        }
-    }
-
-    for (EnemySupport& es : m_supports)
-    {
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), es);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), es);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), es);
-    }
-    
     for (Wall& wall : m_walls)
     {
         CollisionCheck::CheckCollisionsWall(m_player, wall, true);
@@ -615,6 +605,38 @@ void Game::CheckCollisions()
                 CollisionCheck::CheckCollisionsWall(e, door, true);
             }
         }
+    }
+
+    if (m_timeSkip)
+    {
+        return;
+    }
+
+    for (NPC& e : m_enemies)
+    {
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), e);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), e);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), e);
+
+        if (!m_timestop)
+        {
+            CollisionCheck::CheckCollisionAttack(e.getAttack(), m_player);
+        }
+
+        for (EnemySupport& es : m_supports)
+        {
+            if (CheckCollisionPointCircle(es.getTarget(), e.getPosition(), e.getRadius()))
+            {
+                e.heal();
+            }
+        }
+    }
+
+    for (EnemySupport& es : m_supports)
+    {
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), es);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), es);
+        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), es);
     }
 
     if (m_activeBoss)

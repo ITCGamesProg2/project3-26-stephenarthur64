@@ -23,7 +23,7 @@ public:
 	bool isAlive() { return m_alive; }
 	virtual void respawn();
 
-	virtual void setSprite(Texture2D& t_sp) { m_sprite = t_sp; }
+	virtual void setSprite(Texture2D* t_sp) { m_sprite = t_sp; }
 
 protected:
 	Vector2 m_position;
@@ -36,7 +36,7 @@ protected:
 	float m_invincibilityFrames;
 	float m_maxIFrames;
 	bool m_alive;
-	Texture2D m_sprite;
+	Texture2D* m_sprite;
 
 	float m_spriteScale;
 
