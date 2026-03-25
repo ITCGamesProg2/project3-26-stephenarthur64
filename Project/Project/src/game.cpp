@@ -17,12 +17,11 @@ void Game::init()
     m_camTarget = m_player.getPosition();
 
     AssetManager::initAssets();
+    m_menu.init();
 
     m_powersSprite = &AssetManager::getSprite("powers");
     m_timeStopSound = &AssetManager::getSound("timestop");
     m_timeStopEndSound = &AssetManager::getSound("timestopend");
-
-    AssetManager::setMusicVolume(0.3f);
 
     m_timeStopShader = AssetManager::getShader("stop");
     m_rewindShader = AssetManager::getShader("rewind");

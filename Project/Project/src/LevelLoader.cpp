@@ -8,6 +8,8 @@ static bool m_endOfLevels = false;
 static int m_currentFile = 1;
 static Player* m_player;
 static SaveDetails m_saves[3];
+static float m_music;
+static float m_sfx;
 
 void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, TimeAbilities& t_bossType, Vector2& t_bossPos)
 {
@@ -216,5 +218,43 @@ void LevelLoader::loadSaves()
 void LevelLoader::setPlayerRef(Player* t_p)
 {
     m_player = t_p;
+}
+
+void LevelLoader::saveOptions(float t_music, float t_sfx)
+{
+    std::ifstream file("options.json");
+    nlohmann::json data;
+    data = nlohmann::json::parse(file);
+
+    data["music"] = t_music;
+    data["sfx"] = t_sfx;
+
+    file.close();
+
+    std::ofstream write("options.json");
+
+    write << data.dump(4);
+
+    write.close();
+}
+
+float LevelLoader::getMusicVolume()
+{
+    return m_music;
+}
+
+float LevelLoader::getSFXVolume()
+{
+    return m_sfx;
+}
+
+void LevelLoader::loadOptions()
+{
+    std::ifstream file("options.json");
+    nlohmann::json data;
+    data = nlohmann::json::parse(file);
+
+    m_music = data["music"];
+    m_sfx = data["sfx"];
 }
 

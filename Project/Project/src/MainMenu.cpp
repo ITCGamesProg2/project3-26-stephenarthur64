@@ -2,7 +2,6 @@
 
 MainMenu::MainMenu() : m_end(false), m_state(MenuState::TITLE), m_title("Evanescent Gloom"), m_filesText("Select a save file"), m_bufferMouse({-1, -1})
 {
-	init();
 }
 
 void MainMenu::init()
@@ -35,6 +34,15 @@ void MainMenu::init()
 
 	m_sfxSlider.setSize({ 50.0f, 50.0f });
 	m_sfxSlider.setPosition({ 500.0f, 500.0f });
+
+	LevelLoader::loadOptions();
+	m_newMusicVolume = LevelLoader::getMusicVolume();
+	m_newSFXVolume = LevelLoader::getSFXVolume();
+	AssetManager::setMusicVolume(m_newMusicVolume);
+	AssetManager::setSFXVolume(m_newSFXVolume);
+
+	m_musicSlider.setPosition({ (m_newMusicVolume * (SCREEN_WIDTH - 200.0f)) + 100, 300.0f });
+	m_sfxSlider.setPosition({ (m_newSFXVolume * (SCREEN_WIDTH - 200.0f)) + 100, 500.0f });
 }
 
 void MainMenu::update()
@@ -158,6 +166,7 @@ void MainMenu::settingsUpdate()
 			m_musicSlider.newX(GetMousePosition().x);
 			m_newMusicVolume = (GetMousePosition().x - 100.0f) / (SCREEN_WIDTH - 200.0f);
 			AssetManager::setMusicVolume(m_newMusicVolume);
+			LevelLoader::saveOptions(m_newMusicVolume, m_newSFXVolume);
 		}
 		m_musicSlider.forceHover();
 	}
@@ -169,6 +178,7 @@ void MainMenu::settingsUpdate()
 			m_sfxSlider.newX(GetMousePosition().x);
 			m_newSFXVolume = (GetMousePosition().x - 100.0f) / (SCREEN_WIDTH - 200.0f);
 			AssetManager::setSFXVolume(m_newSFXVolume);
+			LevelLoader::saveOptions(m_newMusicVolume, m_newSFXVolume);
 		}
 		m_sfxSlider.forceHover();
 	}
