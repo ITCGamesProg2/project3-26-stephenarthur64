@@ -26,6 +26,8 @@ void AssetManager::initAssets()
 	m_sounds["powerup"] = LoadSound("audio/sfx/Powerup.wav");
 	m_sounds["timestop"] = LoadSound("audio/sfx/TimeStop.wav");
 	m_sounds["timestopend"] = LoadSound("audio/sfx/TimeStopEnd.wav");
+	m_sounds["click"] = LoadSound("audio/sfx/click.wav");
+	m_sounds["confirm"] = LoadSound("audio/sfx/Confirm.wav");
 
 	m_music["title"] = LoadMusicStream("audio/music/8_Bit_Nostalgia.mp3");
 	m_music["main"] = LoadMusicStream("audio/music/8_Bit_Adventure.mp3");
@@ -36,13 +38,23 @@ void AssetManager::initAssets()
 	m_shaders["skip"] = LoadShader(0, TextFormat("shaders/skip.fs", GLSL_VERSION));
 }
 
-void AssetManager::setVolume(float t_volume)
+void AssetManager::setMusicVolume(float t_volume)
 {
 	std::map<std::string, Music>::iterator it;
 
 	for (it = m_music.begin(); it != m_music.end(); it++)
 	{
 		SetMusicVolume(it->second, t_volume);
+	}
+}
+
+void AssetManager::setSFXVolume(float t_volume)
+{
+	std::map<std::string, Sound>::iterator it;
+
+	for (it = m_sounds.begin(); it != m_sounds.end(); it++)
+	{
+		SetSoundVolume(it->second, t_volume);
 	}
 }
 

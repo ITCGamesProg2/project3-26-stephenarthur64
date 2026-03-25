@@ -3,11 +3,20 @@
 #include "LevelLoader.h"
 #include "AssetManager.h"
 #include "Button.h"
+#include "Exit.h"
+#include "globals.h"
+#include <string>
 
 enum class MenuState {
 	TITLE,
 	SAVES,
-	SETTINGS
+	OPTIONS
+};
+
+enum MainButtons {
+	PLAY,
+	OPTIONS,
+	QUIT
 };
 
 class MainMenu
@@ -28,9 +37,21 @@ public:
 
 private:
 	bool m_end;
-	Button m_playGame;
+	Button m_main[3];
 	Button m_saves[3];
+	Button m_back;
+	Button m_musicSlider;
+	Button m_sfxSlider;
 	MenuState m_state;
 	Music* m_music;
+	std::string m_title;
+	std::string m_filesText;
+	SaveDetails m_tempSave;
+	Texture2D* m_powersSprite;
+	Texture2D* m_backgroundSprite;
+	Vector2 m_saveDetailsPos;
+	Vector2 m_bufferMouse;
+	float m_newMusicVolume;
+	float m_newSFXVolume;
 };
 

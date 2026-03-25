@@ -9,6 +9,7 @@
 #include "Goal.h"
 #include "Door.h"
 #include "Player.h"
+#include "globals.h"
 
 static class LevelLoader
 {
@@ -21,6 +22,8 @@ public:
 	static void saveFile(int t_file);
 	static void loadFile(int t_file);
 	static void clearFile(int t_file);
+	static SaveDetails getSaveDetails(int t_file);
+	static void loadSaves();
 	static void setPlayerRef(Player* t_p);
 };
 

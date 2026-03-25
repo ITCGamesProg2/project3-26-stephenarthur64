@@ -145,6 +145,7 @@
     <ClInclude Include="include\EnemyHeavy.h" />
     <ClInclude Include="include\EnemyLight.h" />
     <ClInclude Include="include\EnemySupport.h" />
+    <ClInclude Include="include\Exit.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\globals.h" />
@@ -174,6 +175,7 @@
     <ClCompile Include="src\EnemyHeavy.cpp" />
     <ClCompile Include="src\EnemyLight.cpp" />
     <ClCompile Include="src\EnemySupport.cpp" />
+    <ClCompile Include="src\Exit.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\Goal.cpp" />

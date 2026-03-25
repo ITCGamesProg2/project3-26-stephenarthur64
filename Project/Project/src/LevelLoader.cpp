@@ -7,6 +7,7 @@ static bool m_nextLevelReady = false;
 static bool m_endOfLevels = false;
 static int m_currentFile = 1;
 static Player* m_player;
+static SaveDetails m_saves[3];
 
 void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, TimeAbilities& t_bossType, Vector2& t_bossPos)
 {
@@ -169,16 +170,13 @@ void LevelLoader::saveFile(int t_file)
 
 void LevelLoader::loadFile(int t_file)
 {
+    t_file--;
     m_currentFile = t_file;
 
-    std::ifstream file("saves/savefile" + std::to_string(t_file) + ".json");
-    nlohmann::json data;
-    data = nlohmann::json::parse(file);
+    m_player->loadValues(m_saves[t_file].healthPercentage, m_saves[t_file].momentumPercentage, m_saves[t_file].rewind, m_saves[t_file].skip, m_saves[t_file].stop);
 
-    m_player->loadValues(data["health"], data["momentum"], data["rewind"], data["skip"], data["stop"]);
-
-    m_level = data["level"];
-    m_progress = data["progress"];
+    m_level = m_saves[t_file].level;
+    m_progress = m_saves[t_file].progress;
 }
 
 void LevelLoader::clearFile(int t_file)
@@ -189,6 +187,30 @@ void LevelLoader::clearFile(int t_file)
 
     Save << 1;
     Save << 0;
+}
+
+SaveDetails LevelLoader::getSaveDetails(int t_file)
+{
+    return m_saves[t_file];
+}
+
+void LevelLoader::loadSaves()
+{
+    for (int i = 0; i < 3; i++)
+    {
+        std::ifstream file("saves/savefile" + std::to_string(i + 1) + ".json");
+        nlohmann::json data;
+        data = nlohmann::json::parse(file);
+
+        m_saves[i].level = data["level"];
+        m_saves[i].progress = data["progress"];
+
+        m_saves[i].healthPercentage = data["health"];
+        m_saves[i].momentumPercentage = data["momentum"];
+        m_saves[i].rewind = data["rewind"];
+        m_saves[i].skip = data["skip"];
+        m_saves[i].stop = data["stop"];
+    }
 }
 
 void LevelLoader::setPlayerRef(Player* t_p)

@@ -8,6 +8,16 @@ struct Time {
 	int health;
 };
 
+struct SaveDetails {
+	int level;
+	int progress;
+	float healthPercentage;
+	float momentumPercentage;
+	bool rewind;
+	bool skip;
+	bool stop;
+};
+
 enum AttackTypes {
 	LIGHT,
 	HEAVY,
@@ -31,6 +41,7 @@ enum EditState {
 	DOOR,
 	END
 };
+
 
 // Function sourced from the Raylib website:
 // https://www.raylib.com/examples/audio/loader.html?name=audio_stream_effects

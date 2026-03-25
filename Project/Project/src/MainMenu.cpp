@@ -1,22 +1,40 @@
 #include "MainMenu.h"
 
-MainMenu::MainMenu() : m_end(false), m_state(MenuState::TITLE)
+MainMenu::MainMenu() : m_end(false), m_state(MenuState::TITLE), m_title("Evanescent Gloom"), m_filesText("Select a save file"), m_bufferMouse({-1, -1})
 {
 	init();
 }
 
 void MainMenu::init()
 {
-	m_playGame.setPosition({ 200.0f, 300.0f });
-	m_playGame.setSize({ 100.0f, 50.0f });
-	m_playGame.setText("Play");
+	for (int i = 0; i < 3; i++)
+	{
+		m_main[i].setSize({ 100.0f, 50.0f });
+		m_main[i].setPosition({ SCREEN_WIDTH / 2.0f, (SCREEN_HEIGHT / 2.0f) + (75.0f * i) });
+	}
+
+	m_main[MainButtons::PLAY].setText("Play");
+
+	m_main[MainButtons::OPTIONS].setText("Options");
+
+	m_main[MainButtons::QUIT].setText("Quit");
 
 	for (int i = 0; i < 3; i++)
 	{
-		m_saves[i].setPosition({ 200.0f + (120 * i), 500.0f });
 		m_saves[i].setSize({ 100.0f, 50.0f });
+		m_saves[i].setPosition({ ((SCREEN_WIDTH / 2.0f) - 200) + (200 * i), 500.0f });
 		m_saves[i].setText("Save " + std::to_string(i + 1));
 	}
+
+	m_back.setSize({ 100.0f, 50.0f });
+	m_back.setPosition({ 200, SCREEN_HEIGHT - 100 });
+	m_back.setText("Back");
+
+	m_musicSlider.setSize({ 50.0f, 50.0f });
+	m_musicSlider.setPosition({ 500.0f, 300.0f });
+
+	m_sfxSlider.setSize({ 50.0f, 50.0f });
+	m_sfxSlider.setPosition({ 500.0f, 500.0f });
 }
 
 void MainMenu::update()
@@ -42,7 +60,7 @@ void MainMenu::update()
 	case MenuState::SAVES:
 		savesUpdate();
 		break;
-	case MenuState::SETTINGS:
+	case MenuState::OPTIONS:
 		settingsUpdate();
 		break;
 	default:
@@ -54,12 +72,33 @@ void MainMenu::titleUpdate()
 {
 	if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
 	{
-		m_playGame.detectClick(GetMousePosition());
+		for (int i = 0; i < 3; i++)
+		{
+			m_main[i].detectClick(GetMousePosition());
+		}
 	}
 
-	if (m_playGame.triggered())
+	for (int i = 0; i < 3; i++)
+	{
+		m_main[i].detectHover(GetMousePosition());
+	}
+
+	if (m_main[MainButtons::PLAY].triggered())
 	{
 		m_state = MenuState::SAVES;
+		m_main[MainButtons::PLAY].resetTrigger();
+		LevelLoader::loadSaves();
+	}
+	else if (m_main[MainButtons::OPTIONS].triggered())
+	{
+		m_state = MenuState::OPTIONS;
+		m_main[MainButtons::OPTIONS].resetTrigger();
+	}
+	else if (m_main[MainButtons::QUIT].triggered())
+	{
+		m_main[MainButtons::QUIT].resetTrigger();
+
+		Exit::closeGame();
 	}
 }
 
@@ -70,34 +109,148 @@ void MainMenu::savesUpdate()
 		if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
 		{
 			m_saves[i].detectClick(GetMousePosition());
+			m_back.detectClick(GetMousePosition());
 		}
+
+		for (int i = 0; i < 3; i++)
+		{
+			m_saves[i].detectHover(GetMousePosition());
+		}
+
+		m_back.detectHover(GetMousePosition());
 
 		if (m_saves[i].triggered())
 		{
 			startGame(i + 1);
+			m_saves[i].resetTrigger();
+		}
+
+		if (m_back.triggered())
+		{
+			m_state = MenuState::TITLE;
+			m_back.resetTrigger();
 		}
 	}
 }
 
 void MainMenu::settingsUpdate()
 {
+	if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+	{
+		m_musicSlider.detectClick(GetMousePosition());
+		m_sfxSlider.detectClick(GetMousePosition());
+	}
+	else if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+	{
+		m_musicSlider.resetTrigger();
+		m_sfxSlider.resetTrigger();
+		m_back.detectClick(GetMousePosition());
+	}
+
+	m_musicSlider.detectHover(GetMousePosition());
+	m_sfxSlider.detectHover(GetMousePosition());
+	m_back.detectHover(GetMousePosition());
+
+	if (m_musicSlider.triggered())
+	{
+		if (GetMousePosition().x > 100.0f && GetMousePosition().x < SCREEN_WIDTH - 150.0f)
+		{
+			m_musicSlider.newX(GetMousePosition().x);
+			m_newMusicVolume = (GetMousePosition().x - 100.0f) / (SCREEN_WIDTH - 200.0f);
+			AssetManager::setMusicVolume(m_newMusicVolume);
+		}
+		m_musicSlider.forceHover();
+	}
+
+	if (m_sfxSlider.triggered())
+	{
+		if (GetMousePosition().x > 100.0f && GetMousePosition().x < SCREEN_WIDTH - 150.0f)
+		{
+			m_sfxSlider.newX(GetMousePosition().x);
+			m_newSFXVolume = (GetMousePosition().x - 100.0f) / (SCREEN_WIDTH - 200.0f);
+			AssetManager::setSFXVolume(m_newSFXVolume);
+		}
+		m_sfxSlider.forceHover();
+	}
+
+	if (m_back.triggered())
+	{
+		m_state = MenuState::TITLE;
+		m_back.resetTrigger();
+	}
 }
 
 void MainMenu::draw()
 {
+	ClearBackground(WHITE);
+
+	if (m_backgroundSprite == nullptr)
+	{
+		m_backgroundSprite = &AssetManager::getSprite("wall");
+	}
+
+	DrawTexturePro(*m_backgroundSprite, { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT }, { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT }, { 0, 0 }, 0.0f, WHITE);
+
 	if (m_state == MenuState::TITLE)
 	{
-		DrawText("Main Menu", 100, 100, 50, WHITE);
-		m_playGame.draw();
+		DrawText(m_title.c_str(), (SCREEN_WIDTH / 2.0f) - (50 * (m_title.size() / 4.0f)), 100, 50, WHITE);
+		
+		for (int i = 0; i < 3; i++)
+		{
+			m_main[i].draw();
+		}
 	}
 	else if (m_state == MenuState::SAVES)
 	{
-		DrawText("Select a save file", 100, 100, 50, WHITE);
+		if (m_powersSprite == nullptr)
+		{
+			m_powersSprite = &AssetManager::getSprite("powers");
+		}
+
+		DrawText(m_filesText.c_str(), (SCREEN_WIDTH / 2.0f) - (50 * (m_filesText.size() / 4.0f)), 100, 50, WHITE);
 
 		for (int i = 0; i < 3; i++)
 		{
+			m_saveDetailsPos.x = (SCREEN_WIDTH / 2.0f) - 250 + (200 * i);
+			m_saveDetailsPos.y = 180;
+
+			DrawRectangle(m_saveDetailsPos.x - 20, m_saveDetailsPos.y - 20, 150, 380, DARKGRAY);
+			DrawRectangleLinesEx({ m_saveDetailsPos.x - 20, m_saveDetailsPos.y - 20, 150, 380 }, 10.0f, BLACK);
+
 			m_saves[i].draw();
+
+			m_tempSave = LevelLoader::getSaveDetails(i);
+
+			DrawText(("Level: " + std::to_string(m_tempSave.level)).c_str(), m_saveDetailsPos.x, m_saveDetailsPos.y, 20, WHITE);
+			DrawText(("Progress: " + std::to_string(m_tempSave.progress)).c_str(), m_saveDetailsPos.x, m_saveDetailsPos.y + 30, 20, WHITE);
+
+			if (m_tempSave.rewind)
+			{
+				DrawTexturePro(*m_powersSprite, { 0, 0, 32, 32 }, { m_saveDetailsPos.x, m_saveDetailsPos.y + 60, 70, 70 }, { 0, 0 }, 0.0f, WHITE);
+			}
+			if (m_tempSave.skip)
+			{
+				DrawTexturePro(*m_powersSprite, { 32, 0, 32, 32 }, { m_saveDetailsPos.x, m_saveDetailsPos.y + 130, 70, 70 }, { 0, 0 }, 0.0f, WHITE);
+			}
+			if (m_tempSave.stop)
+			{
+				DrawTexturePro(*m_powersSprite, { 64, 0, 32, 32 }, { m_saveDetailsPos.x, m_saveDetailsPos.y + 200, 70, 70 }, { 0, 0 }, 0.0f, WHITE);
+			}
 		}
+
+		m_back.draw();
+	}
+	else if (m_state == MenuState::OPTIONS)
+	{
+		DrawText("Music Volume", (SCREEN_WIDTH / 2.0f) - 100, 200.0f, 20, WHITE);
+		DrawRectangle(100.0f, 300.0f, SCREEN_WIDTH - 200.0f, 10.0f, BLACK);
+		m_musicSlider.draw();
+
+		DrawText("SFX Volume", (SCREEN_WIDTH / 2.0f) - 100, 400.0f, 20, WHITE);
+		DrawRectangle(100.0f, 500.0f, SCREEN_WIDTH - 200.0f, 10.0f, BLACK);
+		m_sfxSlider.draw();
+
+		m_back.draw();
 	}
 }
 

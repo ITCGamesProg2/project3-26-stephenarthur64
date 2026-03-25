@@ -22,7 +22,7 @@ void Game::init()
     m_timeStopSound = &AssetManager::getSound("timestop");
     m_timeStopEndSound = &AssetManager::getSound("timestopend");
 
-    AssetManager::setVolume(0.3f);
+    AssetManager::setMusicVolume(0.3f);
 
     m_timeStopShader = AssetManager::getShader("stop");
     m_rewindShader = AssetManager::getShader("rewind");
