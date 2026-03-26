@@ -6,7 +6,7 @@
 #include <iostream>
 
 Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), REWIND_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(GameState::MENU), m_skipCount(0), m_surpriseTimer(0), 
-                m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false), REWIND_MAX(1.0f), STOP_MAX(1.5F), m_musicPos(0.0f), added(false)
+                m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false), REWIND_MAX(1.0f), STOP_MAX(1.5F), m_musicPos(0.0f), added(false), m_paused(false)
 {
 }
 
@@ -30,6 +30,16 @@ void Game::init()
     target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     LevelLoader::setPlayerRef(&m_player);
+
+    for (int i = 0; i < 3; i++)
+    {
+        m_menuButtons[i].setSize({ 100.0f, 50.0f });
+        m_menuButtons[i].setPosition({ SCREEN_WIDTH / 2.0f, (SCREEN_HEIGHT / 2.0f) + (75.0f * i) });
+    }
+
+    m_menuButtons[0].setText("Continue");
+    m_menuButtons[1].setText("Options");
+    m_menuButtons[2].setText("Quit");
 }
 
 void Game::loadLevel()
@@ -50,6 +60,8 @@ void Game::loadLevel()
     if (LevelLoader::isAtEnd())
     {
         m_state = GameState::END;
+        m_camera.target = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
+        endGame();
     }
 
     m_player.setSprite(&AssetManager::getSprite("player"));
@@ -97,7 +109,7 @@ void Game::draw()
         m_menu.draw();
     }
 
-    if (m_state == GameState::GAMEPLAY || m_state == GameState::DEATH || m_state == GameState::EDITING)
+    if (m_state == GameState::GAMEPLAY || m_state == GameState::DEATH || m_state == GameState::EDITING || m_state == GameState::PAUSED)
     {
         
         BeginTextureMode(target);
@@ -212,10 +224,14 @@ void Game::draw()
             DrawText(Editor::getState().c_str(), 100, 50, 30, BLUE);
         }
 
-        if (m_state == GameState::DEATH)
+        if (m_state == GameState::DEATH || m_state == GameState::PAUSED)
         {
             DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
-            DrawText("Player Dead", (SCREEN_WIDTH / 2.0f), SCREEN_HEIGHT / 2.0f, 20, WHITE);
+            
+            for (int i = 0; i < 3; i++)
+            {
+                m_menuButtons[i].draw();
+            }
         }
 
         DrawFPS(0, 0);
@@ -233,9 +249,16 @@ void Game::update()
         m_menu.update();
         if (m_menu.ended())
         {
-            m_state = GameState::GAMEPLAY;
-            resetGame();
-            loadLevel();
+            if (!m_paused)
+            {
+                m_state = GameState::GAMEPLAY;
+                resetGame();
+                loadLevel();
+            }
+            else
+            {
+                m_state = GameState::PAUSED;
+            }
         }
     }
     else if (m_state == GameState::GAMEPLAY)
@@ -284,10 +307,9 @@ void Game::update()
     {
         deadUpdate();
     }
-    else if (m_state == GameState::END)
+    else if (m_state == GameState::PAUSED)
     {
-        m_camera.target = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
-        gameEndUpdate();
+        pausedUpdate();
     }
 }
 
@@ -394,15 +416,53 @@ void Game::deadUpdate()
     }
 }
 
-void Game::gameEndUpdate()
+void Game::pausedUpdate()
 {
-    if (IsKeyReleased(KEY_SPACE))
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            m_menuButtons[i].detectClick(GetMousePosition());
+        }
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+        m_menuButtons[i].detectHover(GetMousePosition());
+    }
+
+    if (m_menuButtons[MainButtons::PLAY].triggered())
+    {
+        m_state = GameState::GAMEPLAY;
+        m_paused = false;
+        m_menuButtons[MainButtons::PLAY].resetTrigger();
+    }
+    else if (m_menuButtons[MainButtons::OPTIONS].triggered() || m_menuButtons[MainButtons::QUIT].triggered())
     {
         m_state = GameState::MENU;
+
         LevelLoader::clearProgress();
         m_menu.resetMenu();
-        m_player.setPosition({ 0.0f, 0.0f });
+        
+        if (m_menuButtons[MainButtons::OPTIONS].triggered())
+        {
+            m_menuButtons[MainButtons::OPTIONS].resetTrigger();
+            m_menu.forceOptions();
+        }
+        else
+        {
+            m_menuButtons[MainButtons::QUIT].resetTrigger();
+        }
     }
+}
+
+void Game::endGame()
+{
+    m_state = GameState::MENU;
+    LevelLoader::clearProgress();
+    m_menu.resetMenu();
+    m_menu.endGame();
+    m_player.setPosition({ 0.0f, 0.0f });
 }
 
 void Game::timeSkip()
@@ -531,6 +591,12 @@ void Game::handleInput()
         else if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
         {
             m_player.useAttack(AttackTypes::HEAVY);
+        }
+
+        if (IsKeyReleased(KEY_ESCAPE))
+        {
+            m_state = GameState::PAUSED;
+            m_paused = true;
         }
 
         m_playerDirection = { 0.0f, 0.0f };

@@ -146,9 +146,9 @@ bool LevelLoader::isAtEnd()
 
 void LevelLoader::saveFile(int t_file)
 {
-    m_currentFile = t_file;
+    m_currentFile = t_file + 1;
 
-    std::ifstream file("saves/savefile" + std::to_string(t_file) + ".json");
+    std::ifstream file("saves/savefile" + std::to_string(m_currentFile) + ".json");
     nlohmann::json data;
     data = nlohmann::json::parse(file);
 
@@ -158,12 +158,12 @@ void LevelLoader::saveFile(int t_file)
     data["skip"] = m_player->canUse(SKIP);
     data["stop"] = m_player->canUse(STOP);
 
-    m_level = data["level"];
-    m_progress = data["progress"];
+    data["level"] = m_level;
+    data["progress"] = m_progress;
 
     file.close();
 
-    std::ofstream write("saves/savefile" + std::to_string(t_file) + ".json");
+    std::ofstream write("saves/savefile" + std::to_string(m_currentFile) + ".json");
 
     write << data.dump(4);
 

@@ -17,12 +17,14 @@
 #include "globals.h"
 #include "Editor.h"
 #include "RewindBoss.h"
+#include "Button.h"
 
 enum class GameState {
     MENU,
     GAMEPLAY,
     EDITING,
     DEATH,
+    PAUSED,
     END
 };
 
@@ -39,7 +41,8 @@ public:
     void rewindingUpdate();
     void standardUpdate();
     void deadUpdate();
-    void gameEndUpdate();
+    void pausedUpdate();
+    void endGame();
     void timeSkip();
     void handleInput();
     void CheckCollisions();
@@ -110,6 +113,11 @@ private:
     Sound* m_timeStopSound;
     Sound* m_timeStopEndSound;
     Music* m_currentMusic;
+
+    Button m_menuButtons[3];
+
+    bool m_paused;
+    Vector2 m_quitBufferPos;
 };
 
 #endif // GAME_H

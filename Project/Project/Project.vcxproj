@@ -197,6 +197,9 @@
     <None Include="level3.json" />
     <None Include="levelclear.json" />
     <None Include="leveltest.json" />
+    <None Include="saves\savefile1.json" />
+    <None Include="saves\savefile2.json" />
+    <None Include="saves\savefile3.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -9,8 +9,12 @@ void Button::draw()
 	if (m_hover)
 	{
 		DrawRectangle(m_position.x - 5, m_position.y - 5, m_size.x + 10, m_size.y + 10, WHITE);
+		DrawRectangle(m_position.x, m_position.y, m_size.x, m_size.y, DARKGRAY);
 	}
-	DrawRectangle(m_position.x, m_position.y, m_size.x, m_size.y, GRAY);
+	else
+	{
+		DrawRectangle(m_position.x, m_position.y, m_size.x, m_size.y, GRAY);
+	}
 	DrawText(m_text.c_str(), m_position.x + (10 * (m_text.size() / 4.0f)), m_position.y + 10, 20, WHITE);
 }
 

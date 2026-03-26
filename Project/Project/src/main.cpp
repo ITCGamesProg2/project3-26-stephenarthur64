@@ -20,6 +20,8 @@ int main(void)
 
     InitAudioDevice();
 
+    SetExitKey(KEY_NULL);
+
     game.init();
 
 #if defined(WEB_BUILD)

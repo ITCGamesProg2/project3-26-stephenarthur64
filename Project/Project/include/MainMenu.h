@@ -10,7 +10,8 @@
 enum class MenuState {
 	TITLE,
 	SAVES,
-	OPTIONS
+	OPTIONS,
+	END
 };
 
 enum MainButtons {
@@ -29,14 +30,18 @@ public:
 	void titleUpdate();
 	void savesUpdate();
 	void settingsUpdate();
+	void creditsUpdate();
 
 	void draw();
 	bool ended() { return m_end; }
 	void resetMenu();
 	void startGame(int t_file);
+	void endGame() { m_state = MenuState::END; }
+	void forceOptions() { m_state = MenuState::OPTIONS; m_forcedOptions = true; }
 
 private:
 	bool m_end;
+	bool m_forcedOptions;
 	Button m_main[3];
 	Button m_saves[3];
 	Button m_back;

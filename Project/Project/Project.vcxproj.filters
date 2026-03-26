@@ -31,6 +31,12 @@
     <Filter Include="Source Files\Static">
       <UniqueIdentifier>{843778e6-3c83-4bc5-8538-86a80274c24b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\levels">
+      <UniqueIdentifier>{fd206810-d29c-41ea-af5c-f0ddc1d2098d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\saves">
+      <UniqueIdentifier>{7b321ccd-97eb-45d2-a17a-6f9e40ca9ef1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game.h">
@@ -199,20 +205,29 @@
     <None Include="combos.json">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="level1.json">
-      <Filter>Resource Files</Filter>
+    <None Include="leveltest.json">
+      <Filter>Resource Files\levels</Filter>
     </None>
-    <None Include="levelclear.json">
-      <Filter>Resource Files</Filter>
+    <None Include="level1.json">
+      <Filter>Resource Files\levels</Filter>
     </None>
     <None Include="level2.json">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="leveltest.json">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\levels</Filter>
     </None>
     <None Include="level3.json">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="levelclear.json">
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="saves\savefile1.json">
+      <Filter>Resource Files\saves</Filter>
+    </None>
+    <None Include="saves\savefile2.json">
+      <Filter>Resource Files\saves</Filter>
+    </None>
+    <None Include="saves\savefile3.json">
+      <Filter>Resource Files\saves</Filter>
     </None>
   </ItemGroup>
 </Project>

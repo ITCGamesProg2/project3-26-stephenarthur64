@@ -1,6 +1,6 @@
 #include "MainMenu.h"
 
-MainMenu::MainMenu() : m_end(false), m_state(MenuState::TITLE), m_title("Evanescent Gloom"), m_filesText("Select a save file"), m_bufferMouse({-1, -1})
+MainMenu::MainMenu() : m_end(false), m_state(MenuState::TITLE), m_title("Evanescent Gloom"), m_filesText("Select a save file"), m_bufferMouse({-1, -1}), m_forcedOptions(false)
 {
 }
 
@@ -60,6 +60,8 @@ void MainMenu::update()
 		UpdateMusicStream(*m_music);
 	}
 
+	m_back.setPosition({ 200, SCREEN_HEIGHT - 100 });
+
 	switch (m_state)
 	{
 	case MenuState::TITLE:
@@ -71,6 +73,8 @@ void MainMenu::update()
 	case MenuState::OPTIONS:
 		settingsUpdate();
 		break;
+	case MenuState::END:
+		creditsUpdate();
 	default:
 		break;
 	}
@@ -185,6 +189,33 @@ void MainMenu::settingsUpdate()
 
 	if (m_back.triggered())
 	{
+		if (m_forcedOptions)
+		{
+			m_forcedOptions = false;
+			m_end = true;
+			m_back.resetTrigger();
+		}
+		else
+		{
+			m_state = MenuState::TITLE;
+			m_back.resetTrigger();
+		}
+	}
+}
+
+void MainMenu::creditsUpdate()
+{
+	m_back.setPosition({ (SCREEN_WIDTH / 2.0f) - 50, SCREEN_HEIGHT - 100 });
+
+	if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+	{
+		m_back.detectClick(GetMousePosition());
+	}
+
+	m_back.detectHover(GetMousePosition());
+
+	if (m_back.triggered())
+	{
 		m_state = MenuState::TITLE;
 		m_back.resetTrigger();
 	}
@@ -262,6 +293,16 @@ void MainMenu::draw()
 
 		m_back.draw();
 	}
+	else if (m_state == MenuState::END)
+	{
+		DrawText(m_title.c_str(), (SCREEN_WIDTH / 2.0f) - (30 * (m_title.size() / 2.0f)), 100, 50, WHITE);
+		DrawText("A Game by Lucy Arthur", (SCREEN_WIDTH / 2.0f) - (30 * (m_title.size() / 2.0f)), 200, 30, WHITE);
+		DrawText("Created with: Raylib", (SCREEN_WIDTH / 2.0f) - (30 * (m_title.size() / 2.0f)), 350, 30, WHITE);
+		DrawText("Sound Effects: Coffee 'Valen' Bat", (SCREEN_WIDTH / 2.0f) - (30 * (m_title.size() / 2.0f)), 400, 30, WHITE);
+		DrawText("Music: FesliyanStudios.com", (SCREEN_WIDTH / 2.0f) - (30 * (m_title.size() / 2.0f)), 450, 30, WHITE);
+
+		m_back.draw();
+	}
 }
 
 void MainMenu::resetMenu()
@@ -275,4 +316,5 @@ void MainMenu::startGame(int t_file)
 	m_end = true;
 	LevelLoader::loadFile(t_file);
 	StopMusicStream(AssetManager::getMusic("title"));
+	m_state = MenuState::TITLE;
 }
