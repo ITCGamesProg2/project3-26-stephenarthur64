@@ -1,21 +1,41 @@
 #include "Editor.h"
 
-Editor::Editor() : m_entityCount(0), m_room(1), m_placePos({INFINITY, 1.0f}), m_currentState(0), m_currentLevel("levels/levelclear.json")
+Editor::Editor() : m_entityCount(0), m_room(1), m_placePos({INFINITY, 1.0f}), m_currentState(0), m_currentLevel("levels/levelclear.json"), m_uiInteract(false)
 {
     EditState m_allStates[END] = { WALL, LIGHTENEMY, HEAVYENEMY, SUPPORTENEMY, GOAL, DOOR };
 
     m_save.setSize({ 100.0f, 50.0f });
     m_save.setPosition({ SCREEN_WIDTH - 200.0f, SCREEN_HEIGHT - 100.0f });
     m_save.setText("Save");
+
+    for (int i = 0; i < EditState::END; i++)
+    {
+        m_objectButtons[i].setSize({ 100.0f, 50.0f });
+        m_objectButtons[i].setPosition({SCREEN_WIDTH - 200.0f, 100.0f + (75 * i)});
+    }
+
+    m_objectButtons[EditState::WALL].setText("Wall");
+    m_objectButtons[EditState::DOOR].setText("Door");
+    m_objectButtons[EditState::LIGHTENEMY].setText("Light");
+    m_objectButtons[EditState::HEAVYENEMY].setText("Heavy");
+    m_objectButtons[EditState::SUPPORTENEMY].setText("Support");
+    m_objectButtons[EditState::GOAL].setText("Goal");
 }
 
 void Editor::drawUI()
 {
     m_save.draw();
+
+    for (int i = 0; i < EditState::END; i++)
+    {
+        m_objectButtons[i].draw();
+    }
 }
 
 void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
 {
+    m_uiInteract = false;
+
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
     {
         t_placing = true;
@@ -26,21 +46,44 @@ void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
 
     m_save.detectHover(GetMousePosition());
 
+    for (int i = 0; i < EditState::END; i++)
+    {
+        m_objectButtons[i].detectHover(GetMousePosition());
+    }
+
     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
     {
         m_save.detectClick(GetMousePosition());
 
+        if (m_save.triggered())
+        {
+            saveFile();
+            m_uiInteract = true;
+            m_save.resetTrigger();
+        }
+
+        for (int i = 0; i < EditState::END; i++)
+        {
+            m_objectButtons[i].detectClick(GetMousePosition());
+            if (m_objectButtons[i].triggered())
+            {
+                m_state = static_cast<EditState>(i);
+                m_uiInteract = true;
+                m_objectButtons[i].resetTrigger();
+            }
+        }
+
         t_placing = false;
 
-        if (!m_save.triggered())
+        if (!m_uiInteract)
         {
             placeObject();
         }
     }
 
-    if (m_save.triggered())
+    for (int i = 0; i < EditState::END; i++)
     {
-        saveFile();
+        m_objectButtons[i].draw();
     }
 
     if (IsKeyReleased(KEY_F1))
@@ -391,7 +434,7 @@ bool Editor::checkPlacing(Vector2 t_pos, float t_x, float t_y)
 
 void Editor::saveFile()
 {
-    std::ofstream write(m_currentLevel);
+    std::ofstream write("levels/leveledit");
 
     write << data.dump(4);
 

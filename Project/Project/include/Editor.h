@@ -59,5 +59,7 @@ private:
 	std::string m_currentLevel = "levels/levelclear.json";
 	nlohmann::json data;
 	Button m_save;
+	Button m_objectButtons[EditState::END];
+	bool m_uiInteract;
 };
 
