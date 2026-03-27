@@ -60,11 +60,11 @@ void Game::loadLevel()
 
     LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_supports, m_doors, bossType, bossPos);
 
-    Editor::setWallReference(&m_walls);
-    Editor::setDoorReference(&m_doors);
-    Editor::setGoalReference(&m_goals);
-    Editor::setNPCReference(&m_enemies);
-    Editor::setSupportReference(&m_supports);
+    m_editor.setWallReference(&m_walls);
+    m_editor.setDoorReference(&m_doors);
+    m_editor.setGoalReference(&m_goals);
+    m_editor.setNPCReference(&m_enemies);
+    m_editor.setSupportReference(&m_supports);
 
     if (LevelLoader::isAtEnd())
     {
@@ -158,7 +158,7 @@ void Game::draw()
 
         if (m_placing)
         {
-            Editor::drawPlacing();
+            m_editor.drawPlacing();
         }
         EndMode2D();
         EndTextureMode();
@@ -229,8 +229,10 @@ void Game::draw()
 
         if (m_state == GameState::EDITING)
         {
-            DrawText(("Room " + std::to_string(Editor::getRoom())).c_str(), 100, 100, 20, BLUE);
-            DrawText(Editor::getState().c_str(), 100, 50, 30, BLUE);
+            DrawText(("Room " + std::to_string(m_editor.getRoom())).c_str(), 100, 100, 20, BLUE);
+            DrawText(m_editor.getState().c_str(), 100, 50, 30, BLUE);
+
+            m_editor.drawUI();
         }
 
         if (m_state == GameState::PAUSED)
@@ -666,7 +668,7 @@ void Game::handleInput()
     }
     else if (m_state == GameState::EDITING)
     {
-        Editor::handleInputs(m_placing, m_camera);
+        m_editor.handleInputs(m_placing, m_camera);
     }
 
     if (IsKeyReleased(KEY_B))

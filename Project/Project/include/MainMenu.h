@@ -44,6 +44,7 @@ private:
 	bool m_forcedOptions;
 	Button m_main[3];
 	Button m_saves[3];
+	Button m_edit;
 	Button m_back;
 	Button m_musicSlider;
 	Button m_sfxSlider;

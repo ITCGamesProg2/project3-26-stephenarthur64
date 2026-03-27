@@ -25,6 +25,10 @@ void MainMenu::init()
 		m_saves[i].setText("Save " + std::to_string(i + 1));
 	}
 
+	m_edit.setSize({ 100.0f, 50.0f });
+	m_edit.setPosition({ SCREEN_WIDTH - 200.0f, 500.0f });
+	m_edit.setText("Edit");
+
 	m_back.setSize({ 100.0f, 50.0f });
 	m_back.setPosition({ 200, SCREEN_HEIGHT - 100 });
 	m_back.setText("Back");
@@ -122,6 +126,7 @@ void MainMenu::savesUpdate()
 		{
 			m_saves[i].detectClick(GetMousePosition());
 			m_back.detectClick(GetMousePosition());
+			m_edit.detectClick(GetMousePosition());
 		}
 
 		for (int i = 0; i < 3; i++)
@@ -130,6 +135,7 @@ void MainMenu::savesUpdate()
 		}
 
 		m_back.detectHover(GetMousePosition());
+		m_edit.detectHover(GetMousePosition());
 
 		if (m_saves[i].triggered())
 		{
@@ -141,6 +147,12 @@ void MainMenu::savesUpdate()
 		{
 			m_state = MenuState::TITLE;
 			m_back.resetTrigger();
+		}
+
+		if (m_edit.triggered())
+		{
+			startGame(0);
+			m_edit.resetTrigger();
 		}
 	}
 }
@@ -280,6 +292,7 @@ void MainMenu::draw()
 		}
 
 		m_back.draw();
+		m_edit.draw();
 	}
 	else if (m_state == MenuState::OPTIONS)
 	{

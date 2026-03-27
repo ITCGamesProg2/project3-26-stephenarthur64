@@ -11,28 +11,53 @@
 #include "GameObject.h"
 #include "Boss.h"
 #include "globals.h"
+#include "Button.h"
 
-static class Editor
+class Editor
 {
 public:
-	static void handleInputs(bool& t_placing, Camera2D& t_cam);
-	static void cycleStates();
-	static void changeRoom(int t_direction);
-	static int getRoom();
-	static std::string getState();
-	static void calculateMouse(Vector2 t_mouse);
-	static void placeObject();
-	static void placeWall();
-	static void placeDoor();
-	static void placeGoal();
-	static void placeLight();
-	static void placeHeavy();
-	static void placeSupport();
-	static void setWallReference(std::vector<Wall>* t_w);
-	static void setNPCReference(std::vector<NPC>* t_e);
-	static void setSupportReference(std::vector<EnemySupport>* t_es);
-	static void setDoorReference(std::vector<Door>* t_d);
-	static void setGoalReference(std::vector<Goal>* t_g);
-	static void drawPlacing();
+	Editor();
+	void initUI();
+	void drawUI();
+	void handleInputs(bool& t_placing, Camera2D& t_cam);
+	void cycleStates();
+	void changeRoom(int t_direction);
+	int getRoom();
+	std::string getState();
+	void calculateMouse(Vector2 t_mouse);
+	void placeObject();
+	void placeWall();
+	void placeDoor();
+	void placeGoal();
+	void placeLight();
+	void placeHeavy();
+	void placeSupport();
+	void setWallReference(std::vector<Wall>* t_w);
+	void setNPCReference(std::vector<NPC>* t_e);
+	void setSupportReference(std::vector<EnemySupport>* t_es);
+	void setDoorReference(std::vector<Door>* t_d);
+	void setGoalReference(std::vector<Goal>* t_g);
+	void drawPlacing();
+	bool checkPlacing(Vector2 t_pos, float t_radius);
+	bool checkPlacing(Vector2 t_pos, float t_x, float t_y);
+	void saveFile();
+
+private:
+	int m_entityCount = 0;
+	int m_room = 1;
+	EditState m_state;
+	Vector2 m_placePos = { INFINITY, 1.0f };
+	Vector2 m_placeSize;
+	Vector2 m_mousePos;
+	std::vector<Wall>* m_walls;
+	std::vector<NPC>* m_enemies;
+	std::vector<EnemySupport>* m_es;
+	std::vector<Door>* m_doors;
+	std::vector<Goal>* m_goals;
+	int m_currentState = 0;
+	EditState m_allStates[END] = { WALL, LIGHTENEMY, HEAVYENEMY, SUPPORTENEMY, GOAL, DOOR };
+	std::string m_currentLevel = "levels/levelclear.json";
+	nlohmann::json data;
+	Button m_save;
 };
 

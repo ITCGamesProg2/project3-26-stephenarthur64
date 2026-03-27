@@ -1,18 +1,18 @@
 #include "Editor.h"
-static int m_entityCount = 0;
-static int m_room = 1;
-static EditState m_state;
-static Vector2 m_placePos = {INFINITY, 1.0f};
-static Vector2 m_placeSize;
-static Vector2 m_mousePos;
-static std::vector<Wall>* m_walls;
-static std::vector<NPC>* m_enemies;
-static std::vector<EnemySupport>* m_es;
-static std::vector<Door>* m_doors;
-static std::vector<Goal>* m_goals;
-static int m_currentState = 0;
-static EditState m_allStates[END] = { WALL, LIGHTENEMY, HEAVYENEMY, SUPPORTENEMY, GOAL, DOOR };
-static std::string m_currentLevel = "level3.json";
+
+Editor::Editor() : m_entityCount(0), m_room(1), m_placePos({INFINITY, 1.0f}), m_currentState(0), m_currentLevel("levels/levelclear.json")
+{
+    EditState m_allStates[END] = { WALL, LIGHTENEMY, HEAVYENEMY, SUPPORTENEMY, GOAL, DOOR };
+
+    m_save.setSize({ 100.0f, 50.0f });
+    m_save.setPosition({ SCREEN_WIDTH - 200.0f, SCREEN_HEIGHT - 100.0f });
+    m_save.setText("Save");
+}
+
+void Editor::drawUI()
+{
+    m_save.draw();
+}
 
 void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
 {
@@ -24,11 +24,23 @@ void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
         calculateMouse(m_mousePos);
     }
 
+    m_save.detectHover(GetMousePosition());
+
     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
     {
+        m_save.detectClick(GetMousePosition());
+
         t_placing = false;
 
-        placeObject();
+        if (!m_save.triggered())
+        {
+            placeObject();
+        }
+    }
+
+    if (m_save.triggered())
+    {
+        saveFile();
     }
 
     if (IsKeyReleased(KEY_F1))
@@ -164,160 +176,144 @@ void Editor::placeWall()
 {
     std::ifstream file(m_currentLevel);
 
-    nlohmann::json data;
     data = nlohmann::json::parse(file);
-
-    m_entityCount = data["walls"][0].size();
-    m_entityCount++;
-    data["walls"][0]["wall" + std::to_string(m_entityCount)] = { (int)m_placePos.x, (int)m_placePos.y, (int)m_placeSize.x, (int)m_placeSize.y };
-
     Wall newWall(BROWN, m_placeSize.x, m_placeSize.y);
-    newWall.setPosition(m_placePos);
 
-    m_walls->push_back(newWall);
+    if (checkPlacing(m_placePos, m_placeSize.x, m_placeSize.y))
+    {
+        m_entityCount = data["walls"][0].size();
+        m_entityCount++;
+        data["walls"][0]["wall" + std::to_string(m_entityCount)] = { (int)m_placePos.x, (int)m_placePos.y, (int)m_placeSize.x, (int)m_placeSize.y };
+
+        newWall.setPosition(m_placePos);
+
+        m_walls->push_back(newWall);
+    }
 
     file.close();
-
-    std::ofstream write(m_currentLevel);
-
-    write << data.dump(4);
-
-    write.close();
 }
 
 void Editor::placeDoor()
 {
     std::ifstream file(m_currentLevel);
 
-    nlohmann::json data;
     data = nlohmann::json::parse(file);
 
-    m_entityCount = data["rooms"].size();
-    m_entityCount++;
+    Door newDoor(BLUE, m_placeSize.x, m_placeSize.y);
 
-    if (m_room < m_entityCount)
+    if (checkPlacing(m_placePos, m_placeSize.x, m_placeSize.y))
     {
-        m_entityCount = m_room;
+        m_entityCount = data["rooms"].size();
+        m_entityCount++;
+
+        if (m_room < m_entityCount)
+        {
+            m_entityCount = m_room;
+        }
+
+        data["rooms"][m_entityCount - 1][std::to_string(m_entityCount)]["doors"][0]["position"] = { (int)m_placePos.x, (int)m_placePos.y, (int)m_placeSize.x, (int)m_placeSize.y };
+
+        newDoor.setPosition(m_placePos);
+
+        m_doors->push_back(newDoor);
     }
 
-    data["rooms"][m_entityCount - 1][std::to_string(m_entityCount)]["doors"][0]["position"] = {(int)m_placePos.x, (int)m_placePos.y, (int)m_placeSize.x, (int)m_placeSize.y};
-
-    Door newDoor(BLUE, m_placeSize.x, m_placeSize.y);
-    newDoor.setPosition(m_placePos);
-
-    m_doors->push_back(newDoor);
-
     file.close();
-
-    std::ofstream write(m_currentLevel);
-
-    write << data.dump(4);
-
-    write.close();
 }
 
 void Editor::placeGoal()
 {
     std::ifstream file(m_currentLevel);
 
-    nlohmann::json data;
     data = nlohmann::json::parse(file);
 
-    m_entityCount = data["goals"].size();
-
-    data["goals"][m_entityCount]["position"] = {(int)m_placePos.x, (int)m_placePos.y};
-    data["goals"][m_entityCount]["size"] = { (int)m_placeSize.x, (int)m_placeSize.y };
-
     Goal newGoal(GREEN, m_placeSize.x, m_placeSize.y);
-    newGoal.setPosition(m_placePos);
 
-    m_goals->push_back(newGoal);
+    if(checkPlacing(m_placePos, m_placeSize.x, m_placeSize.y))
+    {
+        m_entityCount = data["goals"].size();
+
+        data["goals"][m_entityCount]["position"] = { (int)m_placePos.x, (int)m_placePos.y };
+        data["goals"][m_entityCount]["size"] = { (int)m_placeSize.x, (int)m_placeSize.y };
+
+        newGoal.setPosition(m_placePos);
+
+        m_goals->push_back(newGoal);
+    }
 
     file.close();
-
-    std::ofstream write(m_currentLevel);
-
-    write << data.dump(4);
-
-    write.close();
 }
 
 void Editor::placeLight()
 {
     std::ifstream file(m_currentLevel);
 
-    nlohmann::json data;
     data = nlohmann::json::parse(file);
 
-    m_entityCount = data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["light"].size();
-    m_entityCount++;
-
-    data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["light"][m_entityCount - 1]["position"] = { (int)m_mousePos.x, (int)m_mousePos.y};
-
     EnemyLight newLight;
-    newLight.setPosition(m_mousePos);
 
-    m_enemies->push_back(newLight);
+    if (checkPlacing(m_mousePos, newLight.getRadius()))
+    {
+        m_entityCount = data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["light"].size();
+        m_entityCount++;
+
+        data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["light"][m_entityCount - 1]["position"] = { (int)m_mousePos.x, (int)m_mousePos.y };
+
+        newLight.setPosition(m_mousePos);
+        newLight.setSprite(&AssetManager::getSprite("light"));
+
+        m_enemies->push_back(newLight);
+    }
 
     file.close();
-
-    std::ofstream write(m_currentLevel);
-
-    write << data.dump(4);
-
-    write.close();
 }
 
 void Editor::placeHeavy()
 {
     std::ifstream file(m_currentLevel);
 
-    nlohmann::json data;
     data = nlohmann::json::parse(file);
 
-    m_entityCount = data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["heavy"].size();
-    m_entityCount++;
-
-    data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["heavy"][m_entityCount - 1]["position"] = { (int)m_mousePos.x, (int)m_mousePos.y };
-
     EnemyHeavy newHeavy;
-    newHeavy.setPosition(m_mousePos);
 
-    m_enemies->push_back(newHeavy);
+    if (checkPlacing(m_mousePos, newHeavy.getRadius()))
+    {
+        m_entityCount = data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["heavy"].size();
+        m_entityCount++;
+
+        data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["heavy"][m_entityCount - 1]["position"] = { (int)m_mousePos.x, (int)m_mousePos.y };
+
+        newHeavy.setPosition(m_mousePos);
+        newHeavy.setSprite(&AssetManager::getSprite("heavy"));
+
+        m_enemies->push_back(newHeavy);
+    }
 
     file.close();
-
-    std::ofstream write(m_currentLevel);
-
-    write << data.dump(4);
-
-    write.close();
 }
 
 void Editor::placeSupport()
 {
     std::ifstream file(m_currentLevel);
 
-    nlohmann::json data;
     data = nlohmann::json::parse(file);
 
-    m_entityCount = data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["support"].size();
-    m_entityCount++;
-
-    data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["support"][m_entityCount - 1]["position"] = { (int)m_mousePos.x, (int)m_mousePos.y };
-
     EnemySupport newSupport;
-    newSupport.setPosition(m_mousePos);
 
-    m_es->push_back(newSupport);
+    if (checkPlacing(m_mousePos, newSupport.getRadius()))
+    {
+        m_entityCount = data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["support"].size();
+        m_entityCount++;
+
+        data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["support"][m_entityCount - 1]["position"] = { (int)m_mousePos.x, (int)m_mousePos.y };
+
+        newSupport.setPosition(m_mousePos);
+        newSupport.setSprite(&AssetManager::getSprite("support"));
+
+        m_es->push_back(newSupport);
+    }
 
     file.close();
-
-    std::ofstream write(m_currentLevel);
-
-    write << data.dump(4);
-
-    write.close();
 }
 
 void Editor::setWallReference(std::vector<Wall>* t_w)
@@ -366,3 +362,39 @@ void Editor::drawPlacing()
         break;
     }
 }
+
+bool Editor::checkPlacing(Vector2 t_pos, float t_radius)
+{
+    for (Wall& wall : *m_walls)
+    {
+        if (CheckCollisionCircleRec(t_pos, t_radius, wall.GetHitbox()))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool Editor::checkPlacing(Vector2 t_pos, float t_x, float t_y)
+{
+    for (Wall& wall : *m_walls)
+    {
+        if (CheckCollisionRecs(wall.GetHitbox(), { t_pos.x, t_pos.y, t_x, t_y }))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+void Editor::saveFile()
+{
+    std::ofstream write(m_currentLevel);
+
+    write << data.dump(4);
+
+    write.close();
+}
+
