@@ -128,6 +128,7 @@ void Player::damage(int t_amount)
 void Player::respawn()
 {
 	GameObject::respawn();
+	m_momentum = m_maxMomentum;
 }
 
 void Player::addForce(Vector2 t_direction)

@@ -40,6 +40,15 @@ void Game::init()
     m_menuButtons[0].setText("Continue");
     m_menuButtons[1].setText("Options");
     m_menuButtons[2].setText("Quit");
+
+    for (int i = 0; i < 2; i++)
+    {
+        m_deathButtons[i].setSize({ 100.0f, 50.0f });
+        m_deathButtons[i].setPosition({ SCREEN_WIDTH / 2.0f, (SCREEN_HEIGHT / 2.0f) + (75.0f * i) });
+    }
+
+    m_deathButtons[0].setText("Retry");
+    m_deathButtons[1].setText("Quit");
 }
 
 void Game::loadLevel()
@@ -224,13 +233,25 @@ void Game::draw()
             DrawText(Editor::getState().c_str(), 100, 50, 30, BLUE);
         }
 
-        if (m_state == GameState::DEATH || m_state == GameState::PAUSED)
+        if (m_state == GameState::PAUSED)
         {
             DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
             
             for (int i = 0; i < 3; i++)
             {
                 m_menuButtons[i].draw();
+            }
+        }
+
+        if (m_state == GameState::DEATH)
+        {
+            DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
+
+            DrawText("You died", (SCREEN_WIDTH / 2.0f) - 120, 100, 50, WHITE);
+
+            for (int i = 0; i < 2; i++)
+            {
+                m_deathButtons[i].draw();
             }
         }
 
@@ -407,12 +428,36 @@ void Game::standardUpdate()
 
 void Game::deadUpdate()
 {
-    if (IsKeyReleased(KEY_SPACE))
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            m_deathButtons[i].detectClick(GetMousePosition());
+        }
+    }
+
+    for (int i = 0; i < 2; i++)
+    {
+        m_deathButtons[i].detectHover(GetMousePosition());
+    }
+
+    if (m_deathButtons[MainButtons::PLAY].triggered())
     {
         m_state = GameState::GAMEPLAY;
+        m_paused = false;
+        m_deathButtons[MainButtons::PLAY].resetTrigger();
         resetGame();
         m_player.respawn();
         loadLevel();
+    }
+    else if (m_deathButtons[1].triggered())
+    {
+        m_state = GameState::MENU;
+
+        LevelLoader::clearProgress();
+        m_menu.resetMenu();
+
+        m_deathButtons[1].resetTrigger();
     }
 }
 

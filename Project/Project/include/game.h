@@ -115,6 +115,7 @@ private:
     Music* m_currentMusic;
 
     Button m_menuButtons[3];
+    Button m_deathButtons[2];
 
     bool m_paused;
     Vector2 m_quitBufferPos;
