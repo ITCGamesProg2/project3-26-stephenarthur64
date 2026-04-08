@@ -217,9 +217,6 @@
     <None Include="level3.json">
       <Filter>Resource Files\levels</Filter>
     </None>
-    <None Include="levelclear.json">
-      <Filter>Resource Files\levels</Filter>
-    </None>
     <None Include="saves\savefile1.json">
       <Filter>Resource Files\saves</Filter>
     </None>
@@ -228,6 +225,12 @@
     </None>
     <None Include="saves\savefile3.json">
       <Filter>Resource Files\saves</Filter>
+    </None>
+    <None Include="levels\leveledit.json">
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="levels\levelclear.json">
+      <Filter>Resource Files\levels</Filter>
     </None>
   </ItemGroup>
 </Project>

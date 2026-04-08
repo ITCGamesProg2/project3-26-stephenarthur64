@@ -48,6 +48,11 @@ void NPC::move()
 
 void NPC::draw()
 {
+	if (m_selected)
+	{
+		DrawCircle(m_position.x, m_position.y, m_radius + 5.0f, GREEN);
+	}
+
 	GameObject::draw();
 
 	m_attack->draw();

@@ -6,6 +6,11 @@ Button::Button() : m_size({0, 0}), m_text(""), m_position({0, 0}), m_trigger(fal
 
 void Button::draw()
 {
+	if (m_fullSelect)
+	{
+		DrawRectangle(m_position.x - 5, m_position.y - 5, m_size.x + 10, m_size.y + 10, GREEN);
+	}
+
 	if (m_hover)
 	{
 		DrawRectangle(m_position.x - 5, m_position.y - 5, m_size.x + 10, m_size.y + 10, WHITE);

@@ -24,6 +24,8 @@ public:
     void surprise() { m_surprise = true; }
     void unsurprise() { m_surprise = false; }
     void heal();
+    void select() { m_selected = true; }
+    void deselect() { m_selected = false; }
 
 protected:
     Vector2 m_target;
@@ -35,5 +37,6 @@ protected:
     float m_healTimer;
     const float MAX_HEAL_TIMER;
     AttackTypes m_attackType;
+    bool m_selected;
 };
 

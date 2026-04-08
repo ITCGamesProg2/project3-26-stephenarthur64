@@ -49,6 +49,10 @@ void Game::init()
 
     m_deathButtons[0].setText("Retry");
     m_deathButtons[1].setText("Quit");
+
+    m_editButton.setSize({ 100.0f, 50.0f });
+    m_editButton.setPosition({ 100.0f, SCREEN_HEIGHT - 100.0f });
+    m_editButton.setText("Edit");
 }
 
 void Game::loadLevel()
@@ -189,6 +193,7 @@ void Game::draw()
         DrawRectanglePro({ 50, 350, 30, m_player.getMomentumPercentage() * 300 }, { 0, 0 }, 180, LIGHTGRAY);
         DrawRectangle(70, 40, 50, 320, BLACK);
         DrawRectanglePro({ 110, 350, 30, m_player.getHealthPercentage() * 300 }, { 0, 0 }, 180, RED);
+        m_editButton.draw();
 
 
         if (m_player.canUse(TimeAbilities::REWIND))
@@ -229,9 +234,6 @@ void Game::draw()
 
         if (m_state == GameState::EDITING)
         {
-            DrawText(("Room " + std::to_string(m_editor.getRoom())).c_str(), 100, 100, 20, BLUE);
-            DrawText(m_editor.getState().c_str(), 100, 50, 30, BLUE);
-
             m_editor.drawUI();
         }
 
@@ -303,6 +305,14 @@ void Game::update()
         handleInput();
         cameraMove();
 
+        m_editButton.detectHover(GetMousePosition());
+
+        if (m_editButton.triggered())
+        {
+            m_state = GameState::EDITING;
+            m_editButton.resetTrigger();
+        }
+
         if (m_rewinding)
         {
             rewindingUpdate();
@@ -325,6 +335,11 @@ void Game::update()
     {
         handleInput();
         cameraMove();
+        if (m_editor.resumeTriggered())
+        {
+            m_state = GameState::GAMEPLAY;
+            m_editor.resetResume();
+        }
     }
     else if (m_state == GameState::DEATH)
     {
@@ -424,8 +439,6 @@ void Game::standardUpdate()
     {
         loadLevel();
     }
-
-
 }
 
 void Game::deadUpdate()
@@ -568,6 +581,11 @@ void Game::handleInput()
 {
     if (m_state == GameState::GAMEPLAY)
     {
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+        {
+            m_editButton.detectClick(GetMousePosition());
+        }
+
         if (IsKeyReleased(KEY_SPACE) && m_player.canUse(TimeAbilities::STOP))
         {
             if (m_player.canTimeStop() && m_timestop == false)
@@ -669,18 +687,6 @@ void Game::handleInput()
     else if (m_state == GameState::EDITING)
     {
         m_editor.handleInputs(m_placing, m_camera);
-    }
-
-    if (IsKeyReleased(KEY_B))
-    {
-        if (m_state == GameState::GAMEPLAY)
-        {
-            m_state = GameState::EDITING;
-        }
-        else if (m_state == GameState::EDITING)
-        {
-            m_state = GameState::GAMEPLAY;
-        }
     }
 }
 

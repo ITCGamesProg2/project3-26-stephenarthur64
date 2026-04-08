@@ -20,9 +20,7 @@ public:
 	void initUI();
 	void drawUI();
 	void handleInputs(bool& t_placing, Camera2D& t_cam);
-	void cycleStates();
-	void changeRoom(int t_direction);
-	int getRoom();
+	void checkDoorEnemyClick(Vector2 t_mouse);
 	std::string getState();
 	void calculateMouse(Vector2 t_mouse);
 	void placeObject();
@@ -41,6 +39,8 @@ public:
 	bool checkPlacing(Vector2 t_pos, float t_radius);
 	bool checkPlacing(Vector2 t_pos, float t_x, float t_y);
 	void saveFile();
+	bool resumeTriggered() { return m_resume.triggered(); }
+	void resetResume() { m_resume.resetTrigger(); }
 
 private:
 	int m_entityCount = 0;
@@ -60,6 +60,8 @@ private:
 	nlohmann::json data;
 	Button m_save;
 	Button m_objectButtons[EditState::END];
+	Button m_resume;
 	bool m_uiInteract;
+	NPC* m_selectedEnemy;
 };
 

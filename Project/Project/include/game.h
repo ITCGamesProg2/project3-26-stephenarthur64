@@ -116,6 +116,7 @@ private:
 
     Button m_menuButtons[3];
     Button m_deathButtons[2];
+    Button m_editButton;
 
     bool m_paused;
     Vector2 m_quitBufferPos;

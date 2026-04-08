@@ -1,8 +1,8 @@
 #include "Editor.h"
 
-Editor::Editor() : m_entityCount(0), m_room(1), m_placePos({INFINITY, 1.0f}), m_currentState(0), m_currentLevel("levels/levelclear.json"), m_uiInteract(false)
+Editor::Editor() : m_entityCount(0), m_room(1), m_placePos({INFINITY, 1.0f}), m_currentState(0), m_currentLevel("levels/leveledit.json"), m_uiInteract(false)
 {
-    EditState m_allStates[END] = { WALL, LIGHTENEMY, HEAVYENEMY, SUPPORTENEMY, GOAL, DOOR };
+    EditState m_allStates[END] = { SELECT, WALL, LIGHTENEMY, HEAVYENEMY, SUPPORTENEMY, GOAL, DOOR };
 
     m_save.setSize({ 100.0f, 50.0f });
     m_save.setPosition({ SCREEN_WIDTH - 200.0f, SCREEN_HEIGHT - 100.0f });
@@ -11,15 +11,20 @@ Editor::Editor() : m_entityCount(0), m_room(1), m_placePos({INFINITY, 1.0f}), m_
     for (int i = 0; i < EditState::END; i++)
     {
         m_objectButtons[i].setSize({ 100.0f, 50.0f });
-        m_objectButtons[i].setPosition({SCREEN_WIDTH - 200.0f, 100.0f + (75 * i)});
+        m_objectButtons[i].setPosition({SCREEN_WIDTH - 100.0f, 100.0f + (75 * i)});
     }
 
+    m_objectButtons[EditState::SELECT].setText("Select");
     m_objectButtons[EditState::WALL].setText("Wall");
     m_objectButtons[EditState::DOOR].setText("Door");
     m_objectButtons[EditState::LIGHTENEMY].setText("Light");
     m_objectButtons[EditState::HEAVYENEMY].setText("Heavy");
     m_objectButtons[EditState::SUPPORTENEMY].setText("Support");
     m_objectButtons[EditState::GOAL].setText("Goal");
+
+    m_resume.setSize({ 100.0f, 50.0f });
+    m_resume.setPosition({ 100.0f, SCREEN_HEIGHT - 100.0f });
+    m_resume.setText("Resume");
 }
 
 void Editor::drawUI()
@@ -30,6 +35,8 @@ void Editor::drawUI()
     {
         m_objectButtons[i].draw();
     }
+
+    m_resume.draw();
 }
 
 void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
@@ -51,9 +58,15 @@ void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
         m_objectButtons[i].detectHover(GetMousePosition());
     }
 
+    m_resume.detectHover(GetMousePosition());
+
     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
     {
+        checkDoorEnemyClick(GetScreenToWorld2D(GetMousePosition(), t_cam));
+
         m_save.detectClick(GetMousePosition());
+
+        m_resume.detectClick(GetMousePosition());
 
         if (m_save.triggered())
         {
@@ -67,6 +80,11 @@ void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
             m_objectButtons[i].detectClick(GetMousePosition());
             if (m_objectButtons[i].triggered())
             {
+                for (Button& b : m_objectButtons)
+                {
+                    b.fullDeselect();
+                }
+                m_objectButtons[i].fullSelect();
                 m_state = static_cast<EditState>(i);
                 m_uiInteract = true;
                 m_objectButtons[i].resetTrigger();
@@ -75,53 +93,45 @@ void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
 
         t_placing = false;
 
-        if (!m_uiInteract)
+        if (!m_uiInteract && !m_resume.triggered())
         {
             placeObject();
         }
+        m_placePos.x = INFINITY;
     }
 
     for (int i = 0; i < EditState::END; i++)
     {
         m_objectButtons[i].draw();
     }
-
-    if (IsKeyReleased(KEY_F1))
-    {
-        changeRoom(1);
-    }
-    if (IsKeyReleased(KEY_F2))
-    {
-        changeRoom(-1);
-    }
-    if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT))
-    {
-        cycleStates();
-    }
 }
 
-void Editor::cycleStates()
+void Editor::checkDoorEnemyClick(Vector2 t_mouse)
 {
-    if (m_currentState + 1 < END)
+    for (NPC& e : *m_enemies)
     {
-        m_currentState++;
+        if (CheckCollisionPointCircle(t_mouse, e.getPosition(), e.getRadius()))
+        {
+            if (m_selectedEnemy != nullptr)
+            {
+                m_selectedEnemy->deselect();
+            }
+            m_selectedEnemy = &e;
+            m_selectedEnemy->select();
+        }
     }
-    else
+
+    for (Door& d : *m_doors)
     {
-        m_currentState = 0;
+        if (CheckCollisionPointRec(t_mouse, d.GetHitbox()))
+        {
+            if (m_selectedEnemy != nullptr)
+            {
+                d.addEnemy(m_selectedEnemy);
+                m_selectedEnemy->deselect();
+            }
+        }
     }
-
-    m_state = m_allStates[m_currentState];
-}
-
-void Editor::changeRoom(int t_direction)
-{
-    m_room += t_direction;
-}
-
-int Editor::getRoom()
-{
-    return m_room;
 }
 
 std::string Editor::getState()
@@ -166,20 +176,25 @@ void Editor::calculateMouse(Vector2 t_mouse)
 
         if ((int)m_placeSize.x % 100 != 0)
         {
-            m_placeSize.x += 100 - (int)m_placeSize.x % 100;
+            m_placeSize.x -= (int)m_placeSize.x % 100;
         }
         if ((int)m_placeSize.y % 100 != 0)
         {
-            m_placeSize.y += 100 - (int)m_placeSize.y % 100;
+            m_placeSize.y -= (int)m_placeSize.y % 100;
         }
 
-        if (m_placeSize.x < 100)
+        if (m_placeSize.x < 100 && m_placeSize.x > -100)
         {
             m_placeSize.x = 100;
         }
-        if (m_placeSize.y < 100)
+        if (m_placeSize.y < 100 && m_placeSize.y > -100)
         {
             m_placeSize.y = 100;
+        }
+
+        if (m_placeSize.x < 0)
+        {
+            int thing = 0;
         }
     }
 }
@@ -217,6 +232,22 @@ void Editor::placeObject()
 
 void Editor::placeWall()
 {
+    if (m_placeSize.x <= -100)
+    {
+        m_placePos.x += m_placeSize.x;
+        m_placeSize.x *= -1;
+    }
+    if (m_placeSize.y <= -100)
+    {
+        m_placePos.y += m_placeSize.y;
+        m_placeSize.y *= -1;
+    }
+    m_placePos.x = (int)m_placePos.x;
+    m_placePos.y = (int)m_placePos.y;
+
+    m_placeSize.x = (int)m_placeSize.x;
+    m_placeSize.y = (int)m_placeSize.y;
+
     std::ifstream file(m_currentLevel);
 
     data = nlohmann::json::parse(file);
@@ -434,7 +465,7 @@ bool Editor::checkPlacing(Vector2 t_pos, float t_x, float t_y)
 
 void Editor::saveFile()
 {
-    std::ofstream write("levels/leveledit");
+    std::ofstream write("levels/leveledit.json");
 
     write << data.dump(4);
 

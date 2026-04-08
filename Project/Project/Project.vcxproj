@@ -195,7 +195,8 @@
     <None Include="level1.json" />
     <None Include="level2.json" />
     <None Include="level3.json" />
-    <None Include="levelclear.json" />
+    <None Include="levels\levelclear.json" />
+    <None Include="levels\leveledit.json" />
     <None Include="leveltest.json" />
     <None Include="saves\savefile1.json" />
     <None Include="saves\savefile2.json" />

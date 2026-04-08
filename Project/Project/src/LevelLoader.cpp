@@ -20,7 +20,7 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
 
     std::string name;
     std::string filename = "levels/level" + std::to_string(m_level) + ".json";
-    std::string debug = "levels/levelclear.json";
+    std::string debug = "levels/leveledit.json";
 
     if (m_level == 0)
     {

@@ -18,6 +18,8 @@ public:
 	void resetTrigger() { m_trigger = false; }
 	void newX(float t_x) { m_position.x = t_x; }
 	void forceHover() { m_hover = true; }
+	void fullSelect() { m_fullSelect = true; }
+	void fullDeselect() { m_fullSelect = false; }
 
 	Vector2 getPosition() { return m_position; }
 
@@ -28,6 +30,7 @@ private:
 	bool m_trigger;
 	bool m_hover;
 	Sound* m_clickSound;
+	bool m_fullSelect;
 };
 
 class MainMenu;

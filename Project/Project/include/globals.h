@@ -33,6 +33,7 @@ enum TimeAbilities {
 };
 
 enum EditState {
+	SELECT,
 	WALL,
 	LIGHTENEMY,
 	HEAVYENEMY,
