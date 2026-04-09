@@ -30,6 +30,7 @@ public:
 	void placeLight();
 	void placeHeavy();
 	void placeSupport();
+	void writeObjectsToFile();
 	void setWallReference(std::vector<Wall>* t_w);
 	void setNPCReference(std::vector<NPC>* t_e);
 	void setSupportReference(std::vector<EnemySupport>* t_es);
@@ -41,6 +42,7 @@ public:
 	void saveFile();
 	bool resumeTriggered() { return m_resume.triggered(); }
 	void resetResume() { m_resume.resetTrigger(); }
+	void undo();
 
 private:
 	int m_entityCount = 0;
@@ -55,7 +57,7 @@ private:
 	std::vector<Door>* m_doors;
 	std::vector<Goal>* m_goals;
 	int m_currentState = 0;
-	EditState m_allStates[END] = { WALL, LIGHTENEMY, HEAVYENEMY, SUPPORTENEMY, GOAL, DOOR };
+	EditState m_allStates[END] = { EditState::WALL, EditState::LIGHTENEMY, EditState::HEAVYENEMY, EditState::SUPPORTENEMY, EditState::GOAL, EditState::DOOR };
 	std::string m_currentLevel = "levels/levelclear.json";
 	nlohmann::json data;
 	Button m_save;

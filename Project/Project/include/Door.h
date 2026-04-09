@@ -13,6 +13,7 @@ public:
     virtual void update() override;
     void open();
     void addEnemy(NPC* t_e);
+    std::vector<NPC*>& getEnemies() { return m_enemies; }
 
 private:
     std::vector<NPC*> m_enemies;

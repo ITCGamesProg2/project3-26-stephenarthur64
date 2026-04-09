@@ -194,9 +194,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="combos.json" />
-    <None Include="level1.json" />
-    <None Include="level2.json" />
-    <None Include="level3.json" />
+    <None Include="levels\level1.json" />
+    <None Include="levels\level2.json" />
+    <None Include="levels\level3.json" />
     <None Include="levels\levelclear.json" />
     <None Include="levels\leveledit.json" />
     <None Include="leveltest.json" />

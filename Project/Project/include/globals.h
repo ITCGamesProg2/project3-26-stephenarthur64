@@ -43,6 +43,12 @@ enum EditState {
 	END
 };
 
+enum class CellType {
+	WALL,
+	GOAL,
+	EMPTY
+};
+
 
 // Function sourced from the Raylib website:
 // https://www.raylib.com/examples/audio/loader.html?name=audio_stream_effects

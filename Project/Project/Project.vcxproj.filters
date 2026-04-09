@@ -214,15 +214,6 @@
     <None Include="leveltest.json">
       <Filter>Resource Files\levels</Filter>
     </None>
-    <None Include="level1.json">
-      <Filter>Resource Files\levels</Filter>
-    </None>
-    <None Include="level2.json">
-      <Filter>Resource Files\levels</Filter>
-    </None>
-    <None Include="level3.json">
-      <Filter>Resource Files\levels</Filter>
-    </None>
     <None Include="saves\savefile1.json">
       <Filter>Resource Files\saves</Filter>
     </None>
@@ -236,6 +227,15 @@
       <Filter>Resource Files\levels</Filter>
     </None>
     <None Include="levels\levelclear.json">
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="levels\level2.json">
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="levels\level3.json">
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="levels\level1.json">
       <Filter>Resource Files\levels</Filter>
     </None>
   </ItemGroup>

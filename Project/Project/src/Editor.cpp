@@ -121,13 +121,13 @@ void Editor::checkDoorEnemyClick(Vector2 t_mouse)
         }
     }
 
-    for (Door& d : *m_doors)
+    for (int room = 0; room < m_doors->size(); room++)
     {
-        if (CheckCollisionPointRec(t_mouse, d.GetHitbox()))
+        if (CheckCollisionPointRec(t_mouse, m_doors->at(room).GetHitbox()))
         {
             if (m_selectedEnemy != nullptr)
             {
-                d.addEnemy(m_selectedEnemy);
+                m_doors->at(room).addEnemy(m_selectedEnemy);
                 m_selectedEnemy->deselect();
             }
         }
@@ -201,6 +201,11 @@ void Editor::calculateMouse(Vector2 t_mouse)
 
 void Editor::placeObject()
 {
+    if (m_placePos.x < 0 || m_placePos.y < 0 || m_placePos.x > 5000 || m_placePos.y > 5000 || m_placePos.x + m_placeSize.x > 5000 || m_placePos.y + m_placeSize.y > 5000)
+    {
+        return;
+    }
+
     switch (m_state)
     {
     case WALL:
@@ -248,143 +253,145 @@ void Editor::placeWall()
     m_placeSize.x = (int)m_placeSize.x;
     m_placeSize.y = (int)m_placeSize.y;
 
-    std::ifstream file(m_currentLevel);
-
-    data = nlohmann::json::parse(file);
-    Wall newWall(BROWN, m_placeSize.x, m_placeSize.y);
-
     if (checkPlacing(m_placePos, m_placeSize.x, m_placeSize.y))
     {
-        m_entityCount = data["walls"][0].size();
-        m_entityCount++;
-        data["walls"][0]["wall" + std::to_string(m_entityCount)] = { (int)m_placePos.x, (int)m_placePos.y, (int)m_placeSize.x, (int)m_placeSize.y };
-
+        Wall newWall(BROWN, m_placeSize.x, m_placeSize.y);
         newWall.setPosition(m_placePos);
-
         m_walls->push_back(newWall);
     }
 
-    file.close();
 }
 
 void Editor::placeDoor()
 {
-    std::ifstream file(m_currentLevel);
+    if (m_placeSize.x <= -100)
+    {
+        m_placePos.x += m_placeSize.x;
+        m_placeSize.x *= -1;
+    }
+    if (m_placeSize.y <= -100)
+    {
+        m_placePos.y += m_placeSize.y;
+        m_placeSize.y *= -1;
+    }
+    m_placePos.x = (int)m_placePos.x;
+    m_placePos.y = (int)m_placePos.y;
 
-    data = nlohmann::json::parse(file);
-
-    Door newDoor(BLUE, m_placeSize.x, m_placeSize.y);
+    m_placeSize.x = (int)m_placeSize.x;
+    m_placeSize.y = (int)m_placeSize.y;
 
     if (checkPlacing(m_placePos, m_placeSize.x, m_placeSize.y))
     {
-        m_entityCount = data["rooms"].size();
-        m_entityCount++;
-
-        if (m_room < m_entityCount)
-        {
-            m_entityCount = m_room;
-        }
-
-        data["rooms"][m_entityCount - 1][std::to_string(m_entityCount)]["doors"][0]["position"] = { (int)m_placePos.x, (int)m_placePos.y, (int)m_placeSize.x, (int)m_placeSize.y };
-
+        Door newDoor(BLUE, m_placeSize.x, m_placeSize.y);
         newDoor.setPosition(m_placePos);
-
         m_doors->push_back(newDoor);
     }
-
-    file.close();
 }
 
 void Editor::placeGoal()
 {
-    std::ifstream file(m_currentLevel);
+    if (m_placeSize.x <= -100)
+    {
+        m_placePos.x += m_placeSize.x;
+        m_placeSize.x *= -1;
+    }
+    if (m_placeSize.y <= -100)
+    {
+        m_placePos.y += m_placeSize.y;
+        m_placeSize.y *= -1;
+    }
+    m_placePos.x = (int)m_placePos.x;
+    m_placePos.y = (int)m_placePos.y;
 
-    data = nlohmann::json::parse(file);
+    m_placeSize.x = (int)m_placeSize.x;
+    m_placeSize.y = (int)m_placeSize.y;
 
     Goal newGoal(GREEN, m_placeSize.x, m_placeSize.y);
 
     if(checkPlacing(m_placePos, m_placeSize.x, m_placeSize.y))
     {
-        m_entityCount = data["goals"].size();
-
-        data["goals"][m_entityCount]["position"] = { (int)m_placePos.x, (int)m_placePos.y };
-        data["goals"][m_entityCount]["size"] = { (int)m_placeSize.x, (int)m_placeSize.y };
-
         newGoal.setPosition(m_placePos);
 
         m_goals->push_back(newGoal);
     }
-
-    file.close();
 }
 
 void Editor::placeLight()
 {
-    std::ifstream file(m_currentLevel);
-
-    data = nlohmann::json::parse(file);
-
     EnemyLight newLight;
 
     if (checkPlacing(m_mousePos, newLight.getRadius()))
     {
-        m_entityCount = data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["light"].size();
-        m_entityCount++;
-
-        data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["light"][m_entityCount - 1]["position"] = { (int)m_mousePos.x, (int)m_mousePos.y };
-
         newLight.setPosition(m_mousePos);
         newLight.setSprite(&AssetManager::getSprite("light"));
 
         m_enemies->push_back(newLight);
     }
-
-    file.close();
 }
 
 void Editor::placeHeavy()
 {
-    std::ifstream file(m_currentLevel);
-
-    data = nlohmann::json::parse(file);
-
     EnemyHeavy newHeavy;
 
     if (checkPlacing(m_mousePos, newHeavy.getRadius()))
     {
-        m_entityCount = data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["heavy"].size();
-        m_entityCount++;
-
-        data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["heavy"][m_entityCount - 1]["position"] = { (int)m_mousePos.x, (int)m_mousePos.y };
-
         newHeavy.setPosition(m_mousePos);
         newHeavy.setSprite(&AssetManager::getSprite("heavy"));
 
         m_enemies->push_back(newHeavy);
     }
-
-    file.close();
 }
 
 void Editor::placeSupport()
 {
-    std::ifstream file(m_currentLevel);
-
-    data = nlohmann::json::parse(file);
-
     EnemySupport newSupport;
 
     if (checkPlacing(m_mousePos, newSupport.getRadius()))
     {
-        m_entityCount = data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["support"].size();
-        m_entityCount++;
-
-        data["rooms"][m_room - 1][std::to_string(m_room)]["enemies"][0]["support"][m_entityCount - 1]["position"] = { (int)m_mousePos.x, (int)m_mousePos.y };
-
         newSupport.setPosition(m_mousePos);
         newSupport.setSprite(&AssetManager::getSprite("support"));
 
         m_es->push_back(newSupport);
+    }
+}
+
+void Editor::writeObjectsToFile()
+{
+    std::ifstream file(m_currentLevel);
+    data = nlohmann::json::parse(file);
+
+    for (int index = 0; index < m_walls->size(); index++)
+    {
+        data["walls"][0]["wall" + std::to_string(index + 1)] = { (int)m_walls->at(index).GetHitbox().x, (int)m_walls->at(index).GetHitbox().y, (int)m_walls->at(index).GetHitbox().width, (int)m_walls->at(index).GetHitbox().height };
+    }
+
+    for (int room = 0; room < m_doors->size(); room++)
+    {
+        data["rooms"][room][std::to_string(room + 1)]["doors"][0]["position"] = { (int)m_doors->at(room).GetHitbox().x, (int)m_doors->at(room).GetHitbox().y, (int)m_doors->at(room).GetHitbox().width, (int)m_doors->at(room).GetHitbox().height };
+
+        for (int e = 0; e < m_doors->at(room).getEnemies().size(); e++)
+        {
+            switch (m_doors->at(room).getEnemies().at(e)->getType())
+            {
+            case LIGHT:
+                data["rooms"][room][std::to_string(room + 1)]["enemies"][0]["light"][e]["position"] = { m_doors->at(room).getEnemies().at(e)->getPosition().x, m_doors->at(room).getEnemies().at(e)->getPosition().y };
+                break;
+            case HEAVY:
+                data["rooms"][room][std::to_string(room + 1)]["enemies"][0]["heavy"][e]["position"] = { m_doors->at(room).getEnemies().at(e)->getPosition().x, m_doors->at(room).getEnemies().at(e)->getPosition().y };
+                break;
+            case SUPPORT:
+                data["rooms"][room][std::to_string(room + 1)]["enemies"][0]["support"][e]["position"] = { m_doors->at(room).getEnemies().at(e)->getPosition().x, m_doors->at(room).getEnemies().at(e)->getPosition().y };
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    for (int index = 0; index < m_goals->size(); index++)
+    {
+        data["goals"][m_entityCount]["position"] = { m_goals->at(index).getPosition().x, m_goals->at(index).getPosition().y };
+        data["goals"][m_entityCount]["size"] = { m_goals->at(index).GetHitbox().width, m_goals->at(index).GetHitbox().height };
     }
 
     file.close();
@@ -465,10 +472,16 @@ bool Editor::checkPlacing(Vector2 t_pos, float t_x, float t_y)
 
 void Editor::saveFile()
 {
+    writeObjectsToFile();
+
     std::ofstream write("levels/leveledit.json");
 
     write << data.dump(4);
 
     write.close();
+}
+
+void Editor::undo()
+{
 }
 

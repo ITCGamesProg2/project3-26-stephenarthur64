@@ -12,6 +12,8 @@ Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), REWIND_INTERVAL(0.2), 
 
 void Game::init()
 {
+    LevelLoader::initGrid();
+
     m_background = LoadTexture("img/Environment/floor.png");
     m_camera.zoom = 1.0f;
     m_camTarget = m_player.getPosition();
@@ -124,11 +126,10 @@ void Game::draw()
 
     if (m_state == GameState::GAMEPLAY || m_state == GameState::DEATH || m_state == GameState::EDITING || m_state == GameState::PAUSED)
     {
-        
         BeginTextureMode(target);
-        ClearBackground(WHITE);
+        ClearBackground(BLACK);
         BeginMode2D(m_camera);
-        DrawTexturePro(m_background, { 0, 0, 640, 640 }, { -2000, -3500, 5000, 5000 }, { 0,0 }, 0.0f, WHITE);
+        DrawTexturePro(m_background, { 0, 0, 640, 640 }, { 0, 0, 5000, 5000 }, { 0,0 }, 0.0f, WHITE);
 
         if (m_activeBoss)
         {
@@ -235,6 +236,9 @@ void Game::draw()
         if (m_state == GameState::EDITING)
         {
             m_editor.drawUI();
+            BeginMode2D(m_camera);
+            DrawRectangleLinesEx({ 0, 0, 5000, 5000 }, 2.0f, RED);
+            EndMode2D();
         }
 
         if (m_state == GameState::PAUSED)
@@ -687,6 +691,27 @@ void Game::handleInput()
     else if (m_state == GameState::EDITING)
     {
         m_editor.handleInputs(m_placing, m_camera);
+
+        Vector2 pos = { 0, 0 };
+
+        if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) // Up
+        {
+            pos.y = -6.0f;
+        }
+        if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) // Down
+        {
+            pos.y = 6.0f;
+        }
+        if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) // Left
+        {
+            pos.x = -6.0f;
+        }
+        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) // Right
+        {
+            pos.x = 6.0f;
+        }
+
+        m_player.setPosition(m_player.getPosition() + pos);
     }
 }
 

@@ -10,6 +10,7 @@ static Player* m_player;
 static SaveDetails m_saves[3];
 static float m_music;
 static float m_sfx;
+static Cell m_grid[50][50];
 
 void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, TimeAbilities& t_bossType, Vector2& t_bossPos)
 {
@@ -142,6 +143,32 @@ bool LevelLoader::isAtEnd()
     return m_endOfLevels;
 }
 
+void LevelLoader::initGrid()
+{
+    for (int i = 0; i < 50; i++)
+    {
+        for (int j = 0; j < 50; j++)
+        {
+            if (i - 1 >= 0)
+            {
+                m_grid[i][j].addArc(&m_grid[i - 1][j]);
+            }
+            if (i + 1 < 50)
+            {
+                m_grid[i][j].addArc(&m_grid[i + 1][j]);
+            }
+            if (j - 1 >= 0)
+            {
+                m_grid[i][j].addArc(&m_grid[1][j - 1]);
+            }
+            if (j + 1 < 50)
+            {
+                m_grid[i][j].addArc(&m_grid[i][j + 1]);
+            }
+        }
+    }
+}
+
 void LevelLoader::saveFile(int t_file)
 {
     m_currentFile = t_file + 1;
@@ -170,13 +197,22 @@ void LevelLoader::saveFile(int t_file)
 
 void LevelLoader::loadFile(int t_file)
 {
-    t_file--;
-    m_currentFile = t_file;
+    if (t_file == 0)
+    {
+        m_player->loadValues(1.0f, 1.0f, true, true, true);
+        m_level = 0;
+        m_progress = 0;
+    }
+    else
+    {
+        t_file--;
+        m_currentFile = t_file;
 
-    m_player->loadValues(m_saves[t_file].healthPercentage, m_saves[t_file].momentumPercentage, m_saves[t_file].rewind, m_saves[t_file].skip, m_saves[t_file].stop);
+        m_player->loadValues(m_saves[t_file].healthPercentage, m_saves[t_file].momentumPercentage, m_saves[t_file].rewind, m_saves[t_file].skip, m_saves[t_file].stop);
 
-    m_level = m_saves[t_file].level;
-    m_progress = m_saves[t_file].progress;
+        m_level = m_saves[t_file].level;
+        m_progress = m_saves[t_file].progress;
+    }
 }
 
 void LevelLoader::clearFile(int t_file)

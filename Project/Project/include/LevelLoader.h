@@ -10,6 +10,7 @@
 #include "Door.h"
 #include "Player.h"
 #include "globals.h"
+#include "Cell.h"
 
 static class LevelLoader
 {
@@ -19,6 +20,7 @@ public:
 	static void clearProgress();
 	static bool isNextLevelReady();
 	static bool isAtEnd();
+	static void initGrid();
 	static void saveFile(int t_file);
 	static void loadFile(int t_file);
 	static void clearFile(int t_file);
