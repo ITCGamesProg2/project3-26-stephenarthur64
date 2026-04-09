@@ -17,7 +17,8 @@ class Editor
 {
 public:
 	Editor();
-	void initUI();
+	void setSpawn(Vector2 t_spawn) { m_spawnPos = t_spawn; }
+	Vector2 getSpawn() { return m_spawnPos; }
 	void drawUI();
 	void handleInputs(bool& t_placing, Camera2D& t_cam);
 	void checkDoorEnemyClick(Vector2 t_mouse);
@@ -67,5 +68,6 @@ private:
 	bool m_uiInteract;
 	NPC* m_selectedEnemy;
 	std::vector<EditState> m_actionList;
+	Vector2 m_spawnPos;
 };
 

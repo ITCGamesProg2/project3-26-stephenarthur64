@@ -66,6 +66,8 @@ void Game::loadLevel()
 
     LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_supports, m_doors, bossType, bossPos);
 
+    m_editor.setSpawn(m_player.getPosition());
+
     m_editor.setWallReference(&m_walls);
     m_editor.setDoorReference(&m_doors);
     m_editor.setGoalReference(&m_goals);
@@ -238,6 +240,7 @@ void Game::draw()
             m_editor.drawUI();
             BeginMode2D(m_camera);
             DrawRectangleLinesEx({ 0, 0, 5000, 5000 }, 2.0f, RED);
+            DrawCircle(m_editor.getSpawn().x, m_editor.getSpawn().y, 10.0f, BLUE);
             EndMode2D();
         }
 
@@ -711,6 +714,7 @@ void Game::handleInput()
         }
 
         m_player.setPosition(m_player.getPosition() + pos);
+        m_camera.target += pos;
     }
 }
 

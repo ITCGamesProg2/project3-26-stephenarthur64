@@ -48,6 +48,11 @@ void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
 {
     m_uiInteract = false;
 
+    if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT))
+    {
+        m_spawnPos = GetScreenToWorld2D(GetMousePosition(), t_cam);
+    }
+
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
     {
         t_placing = true;
@@ -130,6 +135,19 @@ void Editor::checkDoorEnemyClick(Vector2 t_mouse)
                 m_selectedEnemy->deselect();
             }
             m_selectedEnemy = &e;
+            m_selectedEnemy->select();
+        }
+    }
+
+    for (NPC& es : *m_es)
+    {
+        if (CheckCollisionPointCircle(t_mouse, es.getPosition(), es.getRadius()))
+        {
+            if (m_selectedEnemy != nullptr)
+            {
+                m_selectedEnemy->deselect();
+            }
+            m_selectedEnemy = &es;
             m_selectedEnemy->select();
         }
     }
@@ -385,6 +403,9 @@ void Editor::writeObjectsToFile()
     std::ifstream file(m_currentLevel);
     data = nlohmann::json::parse(file);
 
+    data["player"]["position"][0] = (int)m_spawnPos.x;
+    data["player"]["position"][1] = (int)m_spawnPos.y;
+
     for (int index = 0; index < m_walls->size(); index++)
     {
         data["walls"][0]["wall" + std::to_string(index + 1)] = { (int)m_walls->at(index).GetHitbox().x, (int)m_walls->at(index).GetHitbox().y, (int)m_walls->at(index).GetHitbox().width, (int)m_walls->at(index).GetHitbox().height };
@@ -415,8 +436,8 @@ void Editor::writeObjectsToFile()
 
     for (int index = 0; index < m_goals->size(); index++)
     {
-        data["goals"][m_entityCount]["position"] = { (int)m_goals->at(index).getPosition().x, (int)m_goals->at(index).getPosition().y };
-        data["goals"][m_entityCount]["size"] = { (int)m_goals->at(index).GetHitbox().width, (int)m_goals->at(index).GetHitbox().height };
+        data["goals"][index]["position"] = { (int)m_goals->at(index).getPosition().x, (int)m_goals->at(index).getPosition().y };
+        data["goals"][index]["size"] = { (int)m_goals->at(index).GetHitbox().width, (int)m_goals->at(index).GetHitbox().height };
     }
 
     file.close();
