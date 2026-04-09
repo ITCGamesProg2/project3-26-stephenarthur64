@@ -25,6 +25,10 @@ Editor::Editor() : m_entityCount(0), m_room(1), m_placePos({INFINITY, 1.0f}), m_
     m_resume.setSize({ 100.0f, 50.0f });
     m_resume.setPosition({ 100.0f, SCREEN_HEIGHT - 100.0f });
     m_resume.setText("Resume");
+
+    m_undo.setSize({ 100.0f, 50.0f });
+    m_undo.setPosition({ 100.0f, 100.0f });
+    m_undo.setText("Undo");
 }
 
 void Editor::drawUI()
@@ -37,6 +41,7 @@ void Editor::drawUI()
     }
 
     m_resume.draw();
+    m_undo.draw();
 }
 
 void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
@@ -52,6 +57,7 @@ void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
     }
 
     m_save.detectHover(GetMousePosition());
+    m_undo.detectHover(GetMousePosition());
 
     for (int i = 0; i < EditState::END; i++)
     {
@@ -65,6 +71,7 @@ void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
         checkDoorEnemyClick(GetScreenToWorld2D(GetMousePosition(), t_cam));
 
         m_save.detectClick(GetMousePosition());
+        m_undo.detectClick(GetMousePosition());
 
         m_resume.detectClick(GetMousePosition());
 
@@ -93,11 +100,17 @@ void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
 
         t_placing = false;
 
-        if (!m_uiInteract && !m_resume.triggered())
+        if (!m_uiInteract && !m_resume.triggered() && !m_undo.triggered())
         {
             placeObject();
         }
         m_placePos.x = INFINITY;
+
+        if (m_undo.triggered())
+        {
+            undo();
+            m_undo.resetTrigger();
+        }
     }
 
     for (int i = 0; i < EditState::END; i++)
@@ -255,6 +268,8 @@ void Editor::placeWall()
 
     if (checkPlacing(m_placePos, m_placeSize.x, m_placeSize.y))
     {
+        m_actionList.push_back(m_state);
+
         Wall newWall(BROWN, m_placeSize.x, m_placeSize.y);
         newWall.setPosition(m_placePos);
         m_walls->push_back(newWall);
@@ -282,6 +297,8 @@ void Editor::placeDoor()
 
     if (checkPlacing(m_placePos, m_placeSize.x, m_placeSize.y))
     {
+        m_actionList.push_back(m_state);
+
         Door newDoor(BLUE, m_placeSize.x, m_placeSize.y);
         newDoor.setPosition(m_placePos);
         m_doors->push_back(newDoor);
@@ -310,6 +327,8 @@ void Editor::placeGoal()
 
     if(checkPlacing(m_placePos, m_placeSize.x, m_placeSize.y))
     {
+        m_actionList.push_back(m_state);
+
         newGoal.setPosition(m_placePos);
 
         m_goals->push_back(newGoal);
@@ -322,6 +341,8 @@ void Editor::placeLight()
 
     if (checkPlacing(m_mousePos, newLight.getRadius()))
     {
+        m_actionList.push_back(m_state);
+
         newLight.setPosition(m_mousePos);
         newLight.setSprite(&AssetManager::getSprite("light"));
 
@@ -335,6 +356,8 @@ void Editor::placeHeavy()
 
     if (checkPlacing(m_mousePos, newHeavy.getRadius()))
     {
+        m_actionList.push_back(m_state);
+
         newHeavy.setPosition(m_mousePos);
         newHeavy.setSprite(&AssetManager::getSprite("heavy"));
 
@@ -348,6 +371,8 @@ void Editor::placeSupport()
 
     if (checkPlacing(m_mousePos, newSupport.getRadius()))
     {
+        m_actionList.push_back(m_state);
+
         newSupport.setPosition(m_mousePos);
         newSupport.setSprite(&AssetManager::getSprite("support"));
 
@@ -374,13 +399,13 @@ void Editor::writeObjectsToFile()
             switch (m_doors->at(room).getEnemies().at(e)->getType())
             {
             case LIGHT:
-                data["rooms"][room][std::to_string(room + 1)]["enemies"][0]["light"][e]["position"] = { m_doors->at(room).getEnemies().at(e)->getPosition().x, m_doors->at(room).getEnemies().at(e)->getPosition().y };
+                data["rooms"][room][std::to_string(room + 1)]["enemies"][0]["light"][e]["position"] = { (int)m_doors->at(room).getEnemies().at(e)->getPosition().x, (int)m_doors->at(room).getEnemies().at(e)->getPosition().y };
                 break;
             case HEAVY:
-                data["rooms"][room][std::to_string(room + 1)]["enemies"][0]["heavy"][e]["position"] = { m_doors->at(room).getEnemies().at(e)->getPosition().x, m_doors->at(room).getEnemies().at(e)->getPosition().y };
+                data["rooms"][room][std::to_string(room + 1)]["enemies"][0]["heavy"][e]["position"] = { (int)m_doors->at(room).getEnemies().at(e)->getPosition().x, (int)m_doors->at(room).getEnemies().at(e)->getPosition().y };
                 break;
             case SUPPORT:
-                data["rooms"][room][std::to_string(room + 1)]["enemies"][0]["support"][e]["position"] = { m_doors->at(room).getEnemies().at(e)->getPosition().x, m_doors->at(room).getEnemies().at(e)->getPosition().y };
+                data["rooms"][room][std::to_string(room + 1)]["enemies"][0]["support"][e]["position"] = { (int)m_doors->at(room).getEnemies().at(e)->getPosition().x, (int)m_doors->at(room).getEnemies().at(e)->getPosition().y };
                 break;
             default:
                 break;
@@ -390,8 +415,8 @@ void Editor::writeObjectsToFile()
 
     for (int index = 0; index < m_goals->size(); index++)
     {
-        data["goals"][m_entityCount]["position"] = { m_goals->at(index).getPosition().x, m_goals->at(index).getPosition().y };
-        data["goals"][m_entityCount]["size"] = { m_goals->at(index).GetHitbox().width, m_goals->at(index).GetHitbox().height };
+        data["goals"][m_entityCount]["position"] = { (int)m_goals->at(index).getPosition().x, (int)m_goals->at(index).getPosition().y };
+        data["goals"][m_entityCount]["size"] = { (int)m_goals->at(index).GetHitbox().width, (int)m_goals->at(index).GetHitbox().height };
     }
 
     file.close();
@@ -483,5 +508,31 @@ void Editor::saveFile()
 
 void Editor::undo()
 {
+    if (m_actionList.size() > 0)
+    {
+        switch (m_actionList.back())
+        {
+        case WALL:
+            m_walls->pop_back();
+            break;
+        case GOAL:
+            m_goals->pop_back();
+            break;
+        case DOOR:
+            m_doors->pop_back();
+            break;
+        case LIGHTENEMY:
+        case HEAVYENEMY:
+            m_enemies->pop_back();
+            break;
+        case SUPPORTENEMY:
+            m_es->pop_back();
+            break;
+        default:
+            break;
+        }
+
+        m_actionList.pop_back();
+    }
 }
 

@@ -338,7 +338,6 @@ void Game::update()
     else if (m_state == GameState::EDITING)
     {
         handleInput();
-        cameraMove();
         if (m_editor.resumeTriggered())
         {
             m_state = GameState::GAMEPLAY;

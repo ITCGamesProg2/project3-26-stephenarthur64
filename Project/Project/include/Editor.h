@@ -63,7 +63,9 @@ private:
 	Button m_save;
 	Button m_objectButtons[EditState::END];
 	Button m_resume;
+	Button m_undo;
 	bool m_uiInteract;
 	NPC* m_selectedEnemy;
+	std::vector<EditState> m_actionList;
 };
 
