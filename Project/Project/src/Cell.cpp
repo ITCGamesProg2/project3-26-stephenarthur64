@@ -11,3 +11,19 @@ void Cell::addArc(Cell* t_cell)
 		m_arcs.push_back(t_cell);
 	}
 }
+
+void Cell::visitAllGoalNeighbours()
+{
+	if (!m_visited)
+	{
+		m_visited = true;
+
+		for (Cell* arc : m_arcs)
+		{
+			if (arc->getType() == CellType::GOAL)
+			{
+				arc->visitAllGoalNeighbours();
+			}
+		}
+	}
+}

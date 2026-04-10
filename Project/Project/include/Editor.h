@@ -1,6 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include <vector>
+#include <stack>
 #include <fstream>
 #include <string>
 #include <json.hpp>
@@ -46,6 +47,8 @@ public:
 	bool resumeTriggered() { return m_resume.triggered(); }
 	void resetResume() { m_resume.resetTrigger(); }
 	void undo();
+	void initDFS();
+	void DFSForComplete();
 
 private:
 	int m_entityCount = 0;
@@ -73,5 +76,9 @@ private:
 	Vector2 m_spawnPos;
 
 	bool m_debug;
+
+	std::stack<Cell*> m_stackDFS;
+	int m_goalCount;
+	bool m_endDFS;
 };
 

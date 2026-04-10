@@ -48,13 +48,7 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
         t_w.push_back(Wall(BROWN, data["walls"][0][name][2], data["walls"][0][name][3]));
         t_w.back().setPosition({ data["walls"][0][name][0], data["walls"][0][name][1] });
 
-        for (int x = (data["walls"][0][name][0] / 100); x < (data["walls"][0][name][0] / 100) + (data["walls"][0][name][2] / 100); x++)
-        {
-            for (int y = (data["walls"][0][name][1] / 100); y < (data["walls"][0][name][1] / 100) + (data["walls"][0][name][3] / 100); y++)
-            {
-                m_grid[x][y].setType(CellType::WALL);
-            }
-        }
+        setGridData(data["walls"][0][name][0], data["walls"][0][name][1], data["walls"][0][name][2], data["walls"][0][name][3], CellType::WALL);
     }
 
     for (int i = m_progress; i < data["goals"].size(); i++)
@@ -63,13 +57,7 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
         goal.setPosition({ data["goals"][i]["position"][0], data["goals"][i]["position"][1] });
         t_g.push_back(goal);
 
-        for (int x = (data["goals"][i]["position"][0] / 100); x < (data["goals"][i]["position"][0] / 100) + (data["goals"][i]["size"][0] / 100); x++)
-        {
-            for (int y = (data["goals"][i]["position"][1] / 100); y < (data["goals"][i]["position"][1] / 100) + (data["goals"][i]["size"][1] / 100); y++)
-            {
-                m_grid[x][y].setType(CellType::GOAL);
-            }
-        }
+        setGridData(data["goals"][i]["position"][0], data["goals"][i]["position"][1], data["goals"][i]["size"][0], data["goals"][i]["size"][1], CellType::GOAL);
     }
     
     m_progresLimit = data["goals"].size();
@@ -161,25 +149,27 @@ bool LevelLoader::isAtEnd()
 
 void LevelLoader::initGrid()
 {
-    for (int i = 0; i < 50; i++)
+    for (int x = 0; x < 50; x++)
     {
-        for (int j = 0; j < 50; j++)
+        for (int y = 0; y < 50; y++)
         {
-            if (i - 1 >= 0)
+            m_grid[x][y].setValue(x, y);
+
+            if (x - 1 >= 0)
             {
-                m_grid[i][j].addArc(&m_grid[i - 1][j]);
+                m_grid[x][y].addArc(&m_grid[x - 1][y]);
             }
-            if (i + 1 < 50)
+            if (x + 1 < 50)
             {
-                m_grid[i][j].addArc(&m_grid[i + 1][j]);
+                m_grid[x][y].addArc(&m_grid[x + 1][y]);
             }
-            if (j - 1 >= 0)
+            if (y - 1 >= 0)
             {
-                m_grid[i][j].addArc(&m_grid[1][j - 1]);
+                m_grid[x][y].addArc(&m_grid[x][y - 1]);
             }
-            if (j + 1 < 50)
+            if (y + 1 < 50)
             {
-                m_grid[i][j].addArc(&m_grid[i][j + 1]);
+                m_grid[x][y].addArc(&m_grid[x][y + 1]);
             }
         }
     }
@@ -306,8 +296,24 @@ void LevelLoader::loadOptions()
     m_sfx = data["sfx"];
 }
 
-CellType LevelLoader::getGridData(int t_x, int t_y)
+Cell* LevelLoader::getGridData(int t_x, int t_y)
 {
-    return m_grid[t_x][t_y].getType();
+    return &m_grid[t_x][t_y];
+}
+
+void LevelLoader::setGridData(int t_x, int t_y, int t_sizeX, int t_sizeY, CellType t_type)
+{
+    t_x /= 100;
+    t_y /= 100;
+    t_sizeX /= 100;
+    t_sizeY /= 100;
+
+    for (int x = t_x; x < t_x + t_sizeX; x++)
+    {
+        for (int y = t_y; y < t_y + t_sizeY; y++)
+        {
+            m_grid[x][y].setType(t_type);
+        }
+    }
 }
 

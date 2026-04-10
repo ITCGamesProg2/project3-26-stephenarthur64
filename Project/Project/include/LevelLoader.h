@@ -31,6 +31,7 @@ public:
 	static float getMusicVolume();
 	static float getSFXVolume();
 	static void loadOptions();
-	static CellType getGridData(int t_x, int t_y);
+	static Cell* getGridData(int t_x, int t_y);
+	static void setGridData(int t_x, int t_y, int t_sizeX, int t_sizeY, CellType t_type);
 };
 

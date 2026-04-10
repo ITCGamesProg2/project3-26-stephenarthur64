@@ -1,6 +1,7 @@
 #include "Editor.h"
 
-Editor::Editor() : m_entityCount(0), m_room(1), m_placePos({INFINITY, 1.0f}), m_currentState(0), m_currentLevel("levels/leveledit.json"), m_uiInteract(false), m_debug(false)
+Editor::Editor() : m_entityCount(0), m_room(1), m_placePos({INFINITY, 1.0f}), m_currentState(0), m_currentLevel("levels/leveledit.json"), m_uiInteract(false), m_debug(false), 
+                    m_goalCount(0), m_endDFS(false)
 {
     EditState m_allStates[END] = { SELECT, WALL, LIGHTENEMY, HEAVYENEMY, SUPPORTENEMY, GOAL, DOOR };
 
@@ -52,14 +53,22 @@ void Editor::drawDebug()
         {
             for (int y = 0; y < 50; y++)
             {
-                if (LevelLoader::getGridData(x, y) == CellType::WALL)
+                if (LevelLoader::getGridData(x, y)->getType() == CellType::WALL)
                 {
                     DrawRectangle(x * 100, y * 100, 100, 100, { 160,82,45, 100 });
                 }
-                else if (LevelLoader::getGridData(x, y) == CellType::GOAL)
+                else if (LevelLoader::getGridData(x, y)->getType() == CellType::GOAL)
                 {
                     DrawRectangle(x * 100, y * 100, 100, 100, GREEN);
                 }
+
+                if (LevelLoader::getGridData(x, y)->visited())
+                {
+                    DrawRectangle(x * 100.0f, y * 100.0f, 100, 100 ,{ 0, 0, 255, 100 });
+                }
+                DrawRectangleLinesEx({ x * 100.0f, y * 100.0f, 100, 100 }, 1.0f, { 255, 255, 255, 100 });
+
+                DrawText((std::to_string(LevelLoader::getGridData(x, y)->getX()) + " " + std::to_string(LevelLoader::getGridData(x, y)->getY())).c_str(), (x * 100.0f) + 5.0f, (y * 100.0f) + 5.0f, 7.0f, WHITE);
             }
         }
     }
@@ -310,6 +319,8 @@ void Editor::placeWall()
     m_placeSize.x = (int)m_placeSize.x;
     m_placeSize.y = (int)m_placeSize.y;
 
+    LevelLoader::setGridData(m_placePos.x, m_placePos.y, m_placeSize.x, m_placeSize.y, CellType::WALL);
+
     if (checkPlacing(m_placePos, m_placeSize.x, m_placeSize.y))
     {
         m_actionList.push_back(m_state);
@@ -366,6 +377,8 @@ void Editor::placeGoal()
 
     m_placeSize.x = (int)m_placeSize.x;
     m_placeSize.y = (int)m_placeSize.y;
+
+    LevelLoader::setGridData(m_placePos.x, m_placePos.y, m_placeSize.x, m_placeSize.y, CellType::GOAL);
 
     Goal newGoal(GREEN, m_placeSize.x, m_placeSize.y);
 
@@ -544,13 +557,22 @@ bool Editor::checkPlacing(Vector2 t_pos, float t_x, float t_y)
 
 void Editor::saveFile()
 {
-    writeObjectsToFile();
+    initDFS();
 
-    std::ofstream write("levels/leveledit.json");
+    if (m_endDFS)
+    {
+        /*writeObjectsToFile();
 
-    write << data.dump(4);
+        std::ofstream write("levels/leveledit.json");
 
-    write.close();
+        write << data.dump(4);
+
+        write.close();*/
+    }
+    else
+    {
+        std::cout << "DFS failed\n";
+    }
 }
 
 void Editor::undo()
@@ -580,6 +602,61 @@ void Editor::undo()
         }
 
         m_actionList.pop_back();
+    }
+}
+
+void Editor::initDFS()
+{
+    Vector2 start = { (int)(m_spawnPos.x / 100), (int)(m_spawnPos.y / 100) };
+    m_endDFS = false;
+
+    while (m_stackDFS.size() > 0)
+    {
+        m_stackDFS.pop();
+    }
+
+    for (int x = 0; x < 50; x++)
+    {
+        for (int y = 0; y < 50; y++)
+        {
+            LevelLoader::getGridData(x, y)->unvisit();
+        }
+    }
+
+    m_stackDFS.push(LevelLoader::getGridData(start.x, start.y));
+
+    DFSForComplete();
+}
+
+void Editor::DFSForComplete()
+{
+    while (m_stackDFS.size() > 0 && !m_endDFS)
+    {
+        Cell* current = m_stackDFS.top();
+        m_stackDFS.pop();
+        current->visit();
+
+        for (Cell* arc : current->getArcList())
+        {
+            if (!arc->visited())
+            {
+                if (arc->getType() == CellType::GOAL)
+                {
+                    m_goalCount++;
+                    arc->visitAllGoalNeighbours();
+
+                    if (m_goalCount == m_goals->size())
+                    {
+                        m_endDFS = true;
+                    }
+                }
+                if (arc->getType() != CellType::WALL)
+                {
+                    m_stackDFS.push(arc);
+                    DFSForComplete();
+                }
+            }
+        }
     }
 }
 
