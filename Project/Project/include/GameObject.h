@@ -10,6 +10,7 @@ public:
 	GameObject(Color t_c = RED, float t_radius = 30.0f);
 	virtual void draw();
 	virtual void update();
+	void updateInvincibilityFrames();
 	virtual void move() = 0;
 	virtual void collision (int t_damage, Vector2 t_pos) = 0;
 	virtual void applyKnockback(Vector2 t_collidePos, float t_force = 10.0f);

@@ -571,6 +571,21 @@ void Game::timeStoppedUpdate()
         PlaySound(*m_timeStopEndSound);
         m_timestop = false;
     }
+
+    for (NPC& e : m_enemies)
+    {
+        e.updateInvincibilityFrames();
+    }
+
+    for (NPC& es : m_supports)
+    {
+        es.updateInvincibilityFrames();
+    }
+
+    if (m_activeBoss)
+    {
+        m_boss->updateInvincibilityFrames();
+    }
 }
 
 

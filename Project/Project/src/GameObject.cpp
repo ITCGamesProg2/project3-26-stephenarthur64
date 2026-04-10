@@ -7,12 +7,17 @@ GameObject::GameObject(Color t_c, float t_r) : m_colour(t_c), m_radius(t_r), m_p
 
 void GameObject::update()
 {
+	updateInvincibilityFrames();
+
+	m_animation.nextFrame(GetFrameTime());
+}
+
+void GameObject::updateInvincibilityFrames()
+{
 	if (m_invincibilityFrames > 0.0f)
 	{
 		m_invincibilityFrames -= GetFrameTime();
 	}
-
-	m_animation.nextFrame(GetFrameTime());
 }
 
 void GameObject::draw()
