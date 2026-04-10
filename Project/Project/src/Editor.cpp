@@ -561,13 +561,13 @@ void Editor::saveFile()
 
     if (m_endDFS)
     {
-        /*writeObjectsToFile();
+        writeObjectsToFile();
 
         std::ofstream write("levels/leveledit.json");
 
         write << data.dump(4);
 
-        write.close();*/
+        write.close();
     }
     else
     {
@@ -582,9 +582,11 @@ void Editor::undo()
         switch (m_actionList.back())
         {
         case WALL:
+            LevelLoader::setGridData(m_walls->back().GetHitbox().x, m_walls->back().GetHitbox().y, m_walls->back().GetHitbox().width, m_walls->back().GetHitbox().height, CellType::EMPTY);
             m_walls->pop_back();
             break;
         case GOAL:
+            LevelLoader::setGridData(m_goals->back().GetHitbox().x, m_goals->back().GetHitbox().y, m_goals->back().GetHitbox().width, m_goals->back().GetHitbox().height, CellType::EMPTY);
             m_goals->pop_back();
             break;
         case DOOR:
