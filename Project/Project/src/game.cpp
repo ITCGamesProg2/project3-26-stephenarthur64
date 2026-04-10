@@ -153,11 +153,6 @@ void Game::draw()
             wall.draw();
         }
 
-        for (Goal& goal : m_goals)
-        {
-            goal.draw();
-        }
-
         for (Door& door : m_doors)
         {
             door.draw();
@@ -237,11 +232,16 @@ void Game::draw()
 
         if (m_state == GameState::EDITING)
         {
-            m_editor.drawUI();
             BeginMode2D(m_camera);
             DrawRectangleLinesEx({ 0, 0, 5000, 5000 }, 2.0f, RED);
             DrawCircle(m_editor.getSpawn().x, m_editor.getSpawn().y, 10.0f, BLUE);
+            m_editor.drawDebug();
+            for (Goal& goal : m_goals)
+            {
+                goal.draw();
+            }
             EndMode2D();
+            m_editor.drawUI();
         }
 
         if (m_state == GameState::PAUSED)
@@ -367,6 +367,7 @@ void Game::resetGame()
         }
     }
     m_enemies.clear();
+    m_supports.clear();
     m_walls.clear();
     m_goals.clear();
     m_doors.clear();

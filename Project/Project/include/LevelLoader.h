@@ -31,5 +31,6 @@ public:
 	static float getMusicVolume();
 	static float getSFXVolume();
 	static void loadOptions();
+	static CellType getGridData(int t_x, int t_y);
 };
 

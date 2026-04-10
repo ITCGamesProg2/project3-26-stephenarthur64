@@ -1,6 +1,6 @@
 #include "Editor.h"
 
-Editor::Editor() : m_entityCount(0), m_room(1), m_placePos({INFINITY, 1.0f}), m_currentState(0), m_currentLevel("levels/leveledit.json"), m_uiInteract(false)
+Editor::Editor() : m_entityCount(0), m_room(1), m_placePos({INFINITY, 1.0f}), m_currentState(0), m_currentLevel("levels/leveledit.json"), m_uiInteract(false), m_debug(false)
 {
     EditState m_allStates[END] = { SELECT, WALL, LIGHTENEMY, HEAVYENEMY, SUPPORTENEMY, GOAL, DOOR };
 
@@ -44,9 +44,35 @@ void Editor::drawUI()
     m_undo.draw();
 }
 
+void Editor::drawDebug()
+{
+    if (m_debug)
+    {
+        for (int x = 0; x < 50; x++)
+        {
+            for (int y = 0; y < 50; y++)
+            {
+                if (LevelLoader::getGridData(x, y) == CellType::WALL)
+                {
+                    DrawRectangle(x * 100, y * 100, 100, 100, { 160,82,45, 100 });
+                }
+                else if (LevelLoader::getGridData(x, y) == CellType::GOAL)
+                {
+                    DrawRectangle(x * 100, y * 100, 100, 100, GREEN);
+                }
+            }
+        }
+    }
+}
+
 void Editor::handleInputs(bool& t_placing, Camera2D& t_cam)
 {
     m_uiInteract = false;
+
+    if (IsKeyReleased(KEY_F1))
+    {
+        m_debug = !m_debug;
+    }
 
     if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT))
     {

@@ -9,6 +9,8 @@ public:
 	void addArc(Cell* t_cell);
 
 	CellType getType() { return m_type; }
+	void setType(CellType t_type) { m_type = t_type; }
+
 
 private:
 	CellType m_type;

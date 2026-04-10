@@ -47,13 +47,29 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
         name = "wall" + std::to_string(i + 1);
         t_w.push_back(Wall(BROWN, data["walls"][0][name][2], data["walls"][0][name][3]));
         t_w.back().setPosition({ data["walls"][0][name][0], data["walls"][0][name][1] });
+
+        for (int x = (data["walls"][0][name][0] / 100); x < (data["walls"][0][name][0] / 100) + (data["walls"][0][name][2] / 100); x++)
+        {
+            for (int y = (data["walls"][0][name][1] / 100); y < (data["walls"][0][name][1] / 100) + (data["walls"][0][name][3] / 100); y++)
+            {
+                m_grid[x][y].setType(CellType::WALL);
+            }
+        }
     }
 
     for (int i = m_progress; i < data["goals"].size(); i++)
     {
-        Goal goal(GREEN, data["goals"][i]["size"][0], data["goals"][i]["size"][1]);
+        Goal goal({0, 255, 0, 100}, data["goals"][i]["size"][0], data["goals"][i]["size"][1]);
         goal.setPosition({ data["goals"][i]["position"][0], data["goals"][i]["position"][1] });
         t_g.push_back(goal);
+
+        for (int x = (data["goals"][i]["position"][0] / 100); x < (data["goals"][i]["position"][0] / 100) + (data["goals"][i]["size"][0] / 100); x++)
+        {
+            for (int y = (data["goals"][i]["position"][1] / 100); y < (data["goals"][i]["position"][1] / 100) + (data["goals"][i]["size"][1] / 100); y++)
+            {
+                m_grid[x][y].setType(CellType::GOAL);
+            }
+        }
     }
     
     m_progresLimit = data["goals"].size();
@@ -171,9 +187,7 @@ void LevelLoader::initGrid()
 
 void LevelLoader::saveFile(int t_file)
 {
-    m_currentFile = t_file + 1;
-
-    std::ifstream file("saves/savefile" + std::to_string(m_currentFile) + ".json");
+    std::ifstream file("saves/savefile" + std::to_string(m_currentFile + 1) + ".json");
     nlohmann::json data;
     data = nlohmann::json::parse(file);
 
@@ -188,7 +202,7 @@ void LevelLoader::saveFile(int t_file)
 
     file.close();
 
-    std::ofstream write("saves/savefile" + std::to_string(m_currentFile) + ".json");
+    std::ofstream write("saves/savefile" + std::to_string(m_currentFile + 1) + ".json");
 
     write << data.dump(4);
 
@@ -290,5 +304,10 @@ void LevelLoader::loadOptions()
 
     m_music = data["music"];
     m_sfx = data["sfx"];
+}
+
+CellType LevelLoader::getGridData(int t_x, int t_y)
+{
+    return m_grid[t_x][t_y].getType();
 }
 

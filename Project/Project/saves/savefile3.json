@@ -1,8 +1,8 @@
 {
     "health": 0.6000000238418579,
     "level": 3,
-    "momentum": 0.9100000262260437,
-    "progress": 0,
+    "momentum": 1.0,
+    "progress": 1,
     "rewind": true,
     "skip": true,
     "stop": true

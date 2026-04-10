@@ -12,6 +12,7 @@
 #include "Boss.h"
 #include "globals.h"
 #include "Button.h"
+#include "LevelLoader.h"
 
 class Editor
 {
@@ -20,6 +21,7 @@ public:
 	void setSpawn(Vector2 t_spawn) { m_spawnPos = t_spawn; }
 	Vector2 getSpawn() { return m_spawnPos; }
 	void drawUI();
+	void drawDebug();
 	void handleInputs(bool& t_placing, Camera2D& t_cam);
 	void checkDoorEnemyClick(Vector2 t_mouse);
 	std::string getState();
@@ -69,5 +71,7 @@ private:
 	NPC* m_selectedEnemy;
 	std::vector<EditState> m_actionList;
 	Vector2 m_spawnPos;
+
+	bool m_debug;
 };
 
