@@ -1,6 +1,7 @@
 #include "MainMenu.h"
 
-MainMenu::MainMenu() : m_end(false), m_state(MenuState::TITLE), m_title("Evanescent Gloom"), m_filesText("Select a save file"), m_bufferMouse({-1, -1}), m_forcedOptions(false)
+MainMenu::MainMenu() : m_end(false), m_state(MenuState::TITLE), m_title("Evanescent Gloom"), m_filesText("Select a save file"), m_bufferMouse({-1, -1}), m_forcedOptions(false),
+						m_editSelected(false)
 {
 }
 
@@ -152,6 +153,7 @@ void MainMenu::savesUpdate()
 		if (m_edit.triggered())
 		{
 			startGame(0);
+			m_editSelected = true;
 			m_edit.resetTrigger();
 		}
 	}

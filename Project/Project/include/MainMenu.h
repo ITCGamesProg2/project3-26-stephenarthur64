@@ -39,6 +39,8 @@ public:
 	void endGame() { m_state = MenuState::END; }
 	void forceOptions() { m_state = MenuState::OPTIONS; m_forcedOptions = true; }
 
+	bool isEditing() { return m_editSelected; }
+
 private:
 	bool m_end;
 	bool m_forcedOptions;
@@ -59,5 +61,7 @@ private:
 	Vector2 m_bufferMouse;
 	float m_newMusicVolume;
 	float m_newSFXVolume;
+
+	bool m_editSelected;
 };
 

@@ -6,7 +6,8 @@
 #include <iostream>
 
 Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), REWIND_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(GameState::MENU), m_skipCount(0), m_surpriseTimer(0), 
-                m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false), REWIND_MAX(1.0f), STOP_MAX(1.5F), m_musicPos(0.0f), added(false), m_paused(false)
+                m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false), REWIND_MAX(1.0f), STOP_MAX(1.5F), m_musicPos(0.0f), added(false), m_paused(false),
+                m_editing(false)
 {
 }
 
@@ -191,7 +192,11 @@ void Game::draw()
         DrawRectanglePro({ 50, 350, 30, m_player.getMomentumPercentage() * 300 }, { 0, 0 }, 180, LIGHTGRAY);
         DrawRectangle(70, 40, 50, 320, BLACK);
         DrawRectanglePro({ 110, 350, 30, m_player.getHealthPercentage() * 300 }, { 0, 0 }, 180, RED);
-        m_editButton.draw();
+
+        if (m_editing)
+        {
+            m_editButton.draw();
+        }
 
 
         if (m_player.canUse(TimeAbilities::REWIND))
@@ -281,15 +286,20 @@ void Game::update()
         m_menu.update();
         if (m_menu.ended())
         {
-            if (!m_paused)
+            if (m_paused)
             {
-                m_state = GameState::GAMEPLAY;
-                resetGame();
-                loadLevel();
+                m_state = GameState::PAUSED;
             }
             else
             {
-                m_state = GameState::PAUSED;
+                if (m_menu.isEditing())
+                {
+                    m_editing = true;
+                }
+
+                m_state = GameState::GAMEPLAY;
+                resetGame();
+                loadLevel();
             }
         }
     }
@@ -312,9 +322,12 @@ void Game::update()
         handleInput();
         cameraMove();
 
-        m_editButton.detectHover(GetMousePosition());
+        if (m_editing)
+        {
+            m_editButton.detectHover(GetMousePosition());
+        }
 
-        if (m_editButton.triggered())
+        if (m_editButton.triggered() && m_editing)
         {
             m_state = GameState::EDITING;
             m_editButton.resetTrigger();
@@ -603,7 +616,7 @@ void Game::handleInput()
 {
     if (m_state == GameState::GAMEPLAY)
     {
-        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && m_editing)
         {
             m_editButton.detectClick(GetMousePosition());
         }

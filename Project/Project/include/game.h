@@ -122,6 +122,8 @@ private:
     Vector2 m_quitBufferPos;
 
     Editor m_editor;
+
+    bool m_editing;
 };
 
 #endif // GAME_H
