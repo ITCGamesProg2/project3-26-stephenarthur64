@@ -13,6 +13,17 @@ void Door::draw()
 	}
 }
 
+void Door::drawDebug()
+{
+	for (NPC* e : m_enemies)
+	{
+		if (e->isAlive())
+		{
+			DrawLine(m_position.x, m_position.y, e->getPosition().x, e->getPosition().y, DARKGREEN);
+		}
+	}
+}
+
 void Door::update()
 {
 	m_enemyCount = 0;

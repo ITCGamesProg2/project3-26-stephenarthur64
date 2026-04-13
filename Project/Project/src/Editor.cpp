@@ -71,6 +71,11 @@ void Editor::drawDebug()
                 DrawText((std::to_string(LevelLoader::getGridData(x, y)->getX()) + " " + std::to_string(LevelLoader::getGridData(x, y)->getY())).c_str(), (x * 100.0f) + 5.0f, (y * 100.0f) + 5.0f, 7.0f, WHITE);
             }
         }
+
+        for (Door& door : *m_doors)
+        {
+            door.drawDebug();
+        }
     }
 }
 

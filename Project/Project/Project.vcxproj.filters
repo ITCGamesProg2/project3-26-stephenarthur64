@@ -126,6 +126,12 @@
     <ClInclude Include="include\Cell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Tutorial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Popup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
@@ -206,6 +212,12 @@
     <ClCompile Include="src\Cell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Tutorial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Popup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="combos.json">
@@ -236,6 +248,21 @@
       <Filter>Resource Files\levels</Filter>
     </None>
     <None Include="levels\level1.json">
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="levels\level4.json">
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="levels\level5.json">
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="levels\level7.json">
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="levels\level6.json">
+      <Filter>Resource Files\levels</Filter>
+    </None>
+    <None Include="levels\level8.json">
       <Filter>Resource Files\levels</Filter>
     </None>
   </ItemGroup>

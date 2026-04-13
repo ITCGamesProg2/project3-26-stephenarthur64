@@ -7,7 +7,7 @@
 
 Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), REWIND_INTERVAL(0.2), m_rewindTimer(0.0f), TIME_STOP_MAX(2), m_state(GameState::MENU), m_skipCount(0), m_surpriseTimer(0), 
                 m_skipColours(0), SKIP_MAX(1.0f), m_placePos({INFINITY, 0.0f}), m_placing(false), REWIND_MAX(1.0f), STOP_MAX(1.5F), m_musicPos(0.0f), added(false), m_paused(false),
-                m_editing(false)
+                m_editing(false), m_testTutorial(SKYBLUE, 300, 100)
 {
 }
 
@@ -68,6 +68,8 @@ void Game::loadLevel()
     LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_supports, m_doors, bossType, bossPos);
 
     m_editor.setSpawn(m_player.getPosition());
+    m_testTutorial.setPosition({ m_player.getPosition().x, m_player.getPosition().y + 100.0f });
+    m_testTutorial.setTutorialText("This is test text hehehhehehehehehhe\nI wonder what this looks like");
 
     m_editor.setWallReference(&m_walls);
     m_editor.setDoorReference(&m_doors);
@@ -159,6 +161,8 @@ void Game::draw()
             door.draw();
         }
 
+        m_testTutorial.draw();
+
         if (m_placing)
         {
             m_editor.drawPlacing();
@@ -234,6 +238,8 @@ void Game::draw()
                 DrawTexturePro(*m_powersSprite, { 96, 0, 32, 32 }, { SCREEN_WIDTH - 80, 10, 70, 70 }, { 0, 0 }, 0.0f, YELLOW);
             }
         }
+
+        m_testTutorial.drawPopup();
 
         if (m_state == GameState::EDITING)
         {
@@ -397,6 +403,7 @@ void Game::standardUpdate()
     CheckCollisions();
 
     m_player.update();
+    m_testTutorial.update();
 
     if (m_surpriseTimer > 0)
     {
@@ -783,6 +790,8 @@ void Game::CheckCollisions()
             }
         }
     }
+
+    CollisionCheck::CheckCollisionsGoal(m_player, m_testTutorial);
 
     if (m_timeSkip)
     {

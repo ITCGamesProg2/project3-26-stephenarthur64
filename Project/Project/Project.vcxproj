@@ -158,10 +158,12 @@
     <ClInclude Include="include\NPC.h" />
     <ClInclude Include="include\Pickup.h" />
     <ClInclude Include="include\Player.h" />
+    <ClInclude Include="include\Popup.h" />
     <ClInclude Include="include\RewindBoss.h" />
     <ClInclude Include="include\SpecialAttack.h" />
     <ClInclude Include="include\SupportAttack.h" />
     <ClInclude Include="include\Timeline.h" />
+    <ClInclude Include="include\Tutorial.h" />
     <ClInclude Include="include\Wall.h" />
   </ItemGroup>
   <ItemGroup>
@@ -187,9 +189,11 @@
     <ClCompile Include="src\NPC.cpp" />
     <ClCompile Include="src\Pickup.cpp" />
     <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\Popup.cpp" />
     <ClCompile Include="src\RewindBoss.cpp" />
     <ClCompile Include="src\SupportAttack.cpp" />
     <ClCompile Include="src\Timeline.cpp" />
+    <ClCompile Include="src\Tutorial.cpp" />
     <ClCompile Include="src\Wall.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +201,11 @@
     <None Include="levels\level1.json" />
     <None Include="levels\level2.json" />
     <None Include="levels\level3.json" />
+    <None Include="levels\level4.json" />
+    <None Include="levels\level5.json" />
+    <None Include="levels\level6.json" />
+    <None Include="levels\level7.json" />
+    <None Include="levels\level8.json" />
     <None Include="levels\levelclear.json" />
     <None Include="levels\leveledit.json" />
     <None Include="leveltest.json" />

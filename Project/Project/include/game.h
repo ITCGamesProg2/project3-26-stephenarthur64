@@ -18,6 +18,7 @@
 #include "Editor.h"
 #include "RewindBoss.h"
 #include "Button.h"
+#include "Tutorial.h"
 
 enum class GameState {
     MENU,
@@ -124,6 +125,8 @@ private:
     Editor m_editor;
 
     bool m_editing;
+
+    Tutorial m_testTutorial;
 };
 
 #endif // GAME_H

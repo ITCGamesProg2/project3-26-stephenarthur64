@@ -14,6 +14,7 @@ public:
     void open();
     void addEnemy(NPC* t_e);
     std::vector<NPC*>& getEnemies() { return m_enemies; }
+    void drawDebug();
 
 private:
     std::vector<NPC*> m_enemies;
