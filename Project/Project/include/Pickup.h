@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include "globals.h"
 #include "AssetManager.h"
+#include "Popup.h"
 
 class Pickup
 {
@@ -18,6 +19,12 @@ public:
     void deactivate();
     bool isAlive() { return m_alive;  }
 
+    void drawPopup();
+    void updatePopup() { m_popup.update(); }
+    bool closeTriggered() { return m_popup.closeTriggered(); }
+    bool popupAlive() { return m_popup.isAlive(); }
+    void disablePopup() { m_popup.disable(); }
+
 private:
     TimeAbilities m_ability;
     Vector2 m_position;
@@ -25,5 +32,6 @@ private:
     bool m_alive;
     Texture2D m_sprite;
     int m_frame;
+    Popup m_popup;
 };
 

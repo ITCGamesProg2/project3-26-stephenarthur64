@@ -17,7 +17,7 @@ void Tutorial::collision(int t_damage, Vector2 t_pos)
 {
 	if (m_alive)
 	{
-		m_popup.spawn({ 400.0f, 200.0f }, { 50.0f, 50.0f });
+		m_popup.spawn({ 600.0f, 200.0f }, { 50.0f, 50.0f });
 		m_alive = false;
 	}
 }

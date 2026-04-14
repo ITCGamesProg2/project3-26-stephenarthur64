@@ -13,6 +13,11 @@ void Pickup::draw()
 	}
 }
 
+void Pickup::drawPopup()
+{
+	m_popup.draw();
+}
+
 void Pickup::setPosition(Vector2 t_pos)
 {
 	m_position = t_pos;
@@ -26,12 +31,15 @@ void Pickup::setAbility(TimeAbilities t_a)
 	{
 	case REWIND:
 		m_frame = 0;
+		m_popup.setTutorial("rewind");
 		break;
 	case SKIP:
 		m_frame = 1;
+		m_popup.setTutorial("skip");
 		break;
 	case STOP:
 		m_frame = 2;
+		m_popup.setTutorial("stop");
 	default:
 		break;
 	}
@@ -41,4 +49,5 @@ void Pickup::deactivate()
 {
 	m_alive = false;
 	PlaySound(AssetManager::getSound("powerup"));
+	m_popup.spawn({ 600.0f, 200.0f }, { 50.0f, 50.0f });
 }

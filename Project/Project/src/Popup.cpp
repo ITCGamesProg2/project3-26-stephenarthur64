@@ -2,6 +2,8 @@
 
 Popup::Popup() : m_currentSize({0, 0}), m_increaseSpeed(10.0f), m_alive(false), m_fontSize(20), m_maxed(false)
 {
+	m_tutorials["movement"] = "W/A/S/D or Up/Down/Left/Right to move";
+	m_tutorials["attack"] = "LMB to Light Attack\nRMB to Heavy Attack\nLight attack is faster but does less damage\nHeavy attack is slower but does more damage";
 }
 
 void Popup::spawn(Vector2 t_size, Vector2 t_pos)
@@ -42,11 +44,6 @@ void Popup::update()
 			{
 				m_closeButton.detectClick(GetMousePosition());
 			}
-
-			if (m_closeButton.triggered())
-			{
-				m_alive = false;
-			}
 		}
 	}
 }
@@ -62,5 +59,17 @@ void Popup::draw()
 			DrawText(m_text.c_str(), m_position.x + m_fontSize, m_position.y + m_fontSize, m_fontSize, BLACK);
 			m_closeButton.draw();
 		}
+	}
+}
+
+void Popup::setTutorial(std::string t_key)
+{
+	if (m_tutorials.count(t_key) > 0)
+	{
+		m_text = m_tutorials[t_key];
+	}
+	else
+	{
+		m_text = "No tutorial for " + t_key + " found";
 	}
 }

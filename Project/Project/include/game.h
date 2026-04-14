@@ -127,6 +127,8 @@ private:
     bool m_editing;
 
     Tutorial m_testTutorial;
+
+    bool m_activePopup;
 };
 
 #endif // GAME_H

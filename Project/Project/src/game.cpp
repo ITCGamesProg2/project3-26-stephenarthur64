@@ -69,7 +69,7 @@ void Game::loadLevel()
 
     m_editor.setSpawn(m_player.getPosition());
     m_testTutorial.setPosition({ m_player.getPosition().x, m_player.getPosition().y + 100.0f });
-    m_testTutorial.setTutorialText("This is test text hehehhehehehehehhe\nI wonder what this looks like");
+    m_testTutorial.setTutorialText("attack");
 
     m_editor.setWallReference(&m_walls);
     m_editor.setDoorReference(&m_doors);
@@ -202,6 +202,7 @@ void Game::draw()
             m_editButton.draw();
         }
 
+        m_testTutorial.draw();
 
         if (m_player.canUse(TimeAbilities::REWIND))
         {
@@ -239,8 +240,6 @@ void Game::draw()
             }
         }
 
-        m_testTutorial.drawPopup();
-
         if (m_state == GameState::EDITING)
         {
             BeginMode2D(m_camera);
@@ -259,9 +258,18 @@ void Game::draw()
         {
             DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, { 0, 0, 0, 100 });
             
-            for (int i = 0; i < 3; i++)
+            if (!m_activePopup)
             {
-                m_menuButtons[i].draw();
+                for (int i = 0; i < 3; i++)
+                {
+                    m_menuButtons[i].draw();
+                }
+            }
+            m_testTutorial.drawPopup();
+
+            if (m_activeBoss)
+            {
+                m_boss->getUpgrade().drawPopup();
             }
         }
 
@@ -405,6 +413,23 @@ void Game::standardUpdate()
     m_player.update();
     m_testTutorial.update();
 
+    if (m_activeBoss)
+    {
+        m_boss->getUpgrade().updatePopup();
+
+        if (m_boss->getUpgrade().popupAlive())
+        {
+            m_state = GameState::PAUSED;
+            m_activePopup = true;
+        }
+    }
+
+    if (m_testTutorial.popupAlive())
+    {
+        m_state = GameState::PAUSED;
+        m_activePopup = true;
+    }
+
     if (m_surpriseTimer > 0)
     {
         m_surpriseTimer -= GetFrameTime();
@@ -541,6 +566,27 @@ void Game::pausedUpdate()
             m_menuButtons[MainButtons::QUIT].resetTrigger();
         }
     }
+
+    if (m_activeBoss)
+    {
+        if (m_boss->getUpgrade().closeTriggered())
+        {
+            m_state = GameState::GAMEPLAY;
+            m_activePopup = false;
+            m_boss->getUpgrade().disablePopup();
+        }
+
+        m_boss->getUpgrade().updatePopup();
+    }
+
+    if (m_testTutorial.closeTriggered())
+    {
+        m_state = GameState::GAMEPLAY;
+        m_activePopup = false;
+        m_testTutorial.disable();
+    }
+
+    m_testTutorial.update();
 }
 
 void Game::endGame()
