@@ -308,12 +308,12 @@ void Editor::placeObject()
 
 void Editor::placeWall()
 {
-    if (m_placeSize.x <= -100)
+    if (m_placeSize.x <= -10)
     {
         m_placePos.x += m_placeSize.x;
         m_placeSize.x *= -1;
     }
-    if (m_placeSize.y <= -100)
+    if (m_placeSize.y <= -10)
     {
         m_placePos.y += m_placeSize.y;
         m_placeSize.y *= -1;
@@ -339,12 +339,12 @@ void Editor::placeWall()
 
 void Editor::placeDoor()
 {
-    if (m_placeSize.x <= -100)
+    if (m_placeSize.x <= -10)
     {
         m_placePos.x += m_placeSize.x;
         m_placeSize.x *= -1;
     }
-    if (m_placeSize.y <= -100)
+    if (m_placeSize.y <= -10)
     {
         m_placePos.y += m_placeSize.y;
         m_placeSize.y *= -1;
@@ -367,12 +367,12 @@ void Editor::placeDoor()
 
 void Editor::placeGoal()
 {
-    if (m_placeSize.x <= -100)
+    if (m_placeSize.x <= -10)
     {
         m_placePos.x += m_placeSize.x;
         m_placeSize.x *= -1;
     }
-    if (m_placeSize.y <= -100)
+    if (m_placeSize.y <= -10)
     {
         m_placePos.y += m_placeSize.y;
         m_placeSize.y *= -1;
@@ -514,12 +514,27 @@ void Editor::setGoalReference(std::vector<Goal>* t_g)
 
 void Editor::drawPlacing()
 {
+    Vector2 tempPos = m_placePos;
+
+    if (m_placeSize.x < 0)
+    {
+        tempPos.x -= (m_placeSize.x * -1);
+    }
+    if (m_placeSize.y < 0)
+    {
+        tempPos.y -= (m_placeSize.y * -1);
+    }
+
     switch (m_state)
     {
     case WALL:
+        DrawTexturePro(AssetManager::getSprite("wall"), { 0, 0, 32 * (abs(m_placeSize.x) / 100), 32 * (abs(m_placeSize.y) / 100) }, { tempPos.x, tempPos.y, m_placeSize.x, m_placeSize.y }, { 0, 0 }, 0.0f, { 255, 255, 255, 100 });
+        break;
     case DOOR:
+        DrawTexturePro(AssetManager::getSprite("door"), { 0, 0, 32 * (abs(m_placeSize.x) / 100), 32 * (abs(m_placeSize.y) / 100) }, { tempPos.x, tempPos.y, m_placeSize.x, m_placeSize.y }, { 0, 0 }, 0.0f, { 255, 255, 255, 100 });
+        break;
     case GOAL:
-        DrawRectangleLines(m_placePos.x, m_placePos.y, m_placeSize.x, m_placeSize.y, DARKBLUE);
+        DrawRectangle(tempPos.x, tempPos.y, abs(m_placeSize.x), abs(m_placeSize.y), { 0, 255, 0, 100 });
         break;
     case LIGHTENEMY:
         break;
