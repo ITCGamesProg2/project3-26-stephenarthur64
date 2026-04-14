@@ -126,7 +126,7 @@ private:
 
     bool m_editing;
 
-    Tutorial m_testTutorial;
+    std::vector<Tutorial> m_tutorials;
 
     bool m_activePopup;
 };

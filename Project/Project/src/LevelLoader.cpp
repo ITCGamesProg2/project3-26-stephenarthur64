@@ -11,8 +11,9 @@ static SaveDetails m_saves[3];
 static float m_music;
 static float m_sfx;
 static Cell m_grid[50][50];
+static std::vector<Tutorial> m_tutorials;
 
-void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, TimeAbilities& t_bossType, Vector2& t_bossPos)
+void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, TimeAbilities& t_bossType, Vector2& t_bossPos)// , std::vector<Tutorial>& t_tut);
 {
     m_nextLevelReady = false;
 
@@ -49,6 +50,13 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
         t_w.back().setPosition({ data["walls"][0][name][0], data["walls"][0][name][1] });
 
         setGridData(data["walls"][0][name][0], data["walls"][0][name][1], data["walls"][0][name][2], data["walls"][0][name][3], CellType::WALL);
+    }
+
+    for (int i = m_progress; i < data["tutorials"].size(); i++)
+    {
+        Tutorial tutorial(SKYBLUE, data["tutorials"][i]["size"][0], data["tutorials"][i]["size"][1]);
+        tutorial.setPosition({ data["tutorials"][i]["position"][0], data["tutorials"][i]["position"][1] });
+        m_tutorials.push_back(tutorial);
     }
 
     for (int i = m_progress; i < data["goals"].size(); i++)
@@ -315,5 +323,10 @@ void LevelLoader::setGridData(int t_x, int t_y, int t_sizeX, int t_sizeY, CellTy
             m_grid[x][y].setType(t_type);
         }
     }
+}
+
+Tutorial LevelLoader::getTutorial()
+{
+    return m_tutorials.back();
 }
 

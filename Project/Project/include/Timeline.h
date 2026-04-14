@@ -3,7 +3,7 @@
 #include "globals.h"
 #include <list>
 
-static class Timeline
+class Timeline
 {
 public:
 	static void addTime(Time t_new);
