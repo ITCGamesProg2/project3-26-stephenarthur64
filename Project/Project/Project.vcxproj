@@ -162,6 +162,7 @@
     <ClInclude Include="include\RewindBoss.h" />
     <ClInclude Include="include\SkipBoss.h" />
     <ClInclude Include="include\SpecialAttack.h" />
+    <ClInclude Include="include\StopBoss.h" />
     <ClInclude Include="include\SupportAttack.h" />
     <ClInclude Include="include\Timeline.h" />
     <ClInclude Include="include\Tutorial.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="src\Popup.cpp" />
     <ClCompile Include="src\RewindBoss.cpp" />
     <ClCompile Include="src\SkipBoss.cpp" />
+    <ClCompile Include="src\StopBoss.cpp" />
     <ClCompile Include="src\SupportAttack.cpp" />
     <ClCompile Include="src\Timeline.cpp" />
     <ClCompile Include="src\Tutorial.cpp" />

@@ -14,6 +14,7 @@ public:
 	virtual void move() = 0;
 	virtual void collision (int t_damage, Vector2 t_pos) = 0;
 	virtual void applyKnockback(Vector2 t_collidePos, float t_force = 10.0f);
+	virtual void applyKnockbackWall(int t_x, int t_y);
 	virtual Vector2 nextPositionX();
 	virtual Vector2 nextPositionY();
 	virtual Vector2 nextPositionFull();

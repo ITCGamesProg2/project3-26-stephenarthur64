@@ -23,7 +23,7 @@ public:
 	Vector2 getTarget() { return m_targetPos; }
 
 	bool isRunning() { return m_running; }
-	bool canAttack();
+	virtual bool canAttack();
 	bool isCollided();
 	void collide() { m_collided = true; }
 	int getDamage() { return m_damage; }

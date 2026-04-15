@@ -113,6 +113,7 @@ void Game::loadLevel()
 
     m_rewindBoss.setSprite(&AssetManager::getSprite("rewindboss"));
     m_skipBoss.setSprite(&AssetManager::getSprite("rewindboss"));
+    m_stopBoss.setSprite(&AssetManager::getSprite("rewindboss"));
 
     selectBoss(bossType);
 
@@ -871,6 +872,11 @@ void Game::CheckCollisions()
         {
             CollisionCheck::CheckCollisionsWall(es, wall, true);
         }
+
+        if (m_activeBoss)
+        {
+            CollisionCheck::CheckCollisionAttackSpecialWall(m_boss->getAttack(), wall.GetHitbox(), *m_boss);
+        }
     }
 
     for (Goal& goal : m_goals)
@@ -887,6 +893,11 @@ void Game::CheckCollisions()
             for (NPC& e : m_enemies)
             {
                 CollisionCheck::CheckCollisionsWall(e, door, true);
+            }
+
+            if (m_activeBoss)
+            {
+                CollisionCheck::CheckCollisionAttackSpecialWall(m_boss->getAttack(), door.GetHitbox(), *m_boss);
             }
         }
     }
@@ -905,7 +916,6 @@ void Game::CheckCollisions()
     {
         CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), e);
         CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), e);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), e);
 
         if (!m_timestop)
         {
@@ -925,7 +935,6 @@ void Game::CheckCollisions()
     {
         CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), es);
         CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), es);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), es);
     }
 
     if (m_activeBoss)
@@ -943,9 +952,12 @@ void Game::CheckCollisions()
         {
             CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), *m_boss);
             CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), *m_boss);
-            CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), *m_boss);
 
-            CollisionCheck::CheckCollisionAttack(m_boss->getAttack(), m_player);
+            if (!m_timestop)
+            {
+                CollisionCheck::CheckCollisionAttack(m_boss->getAttack(), m_player);
+                CollisionCheck::CheckCollisionAttackSpecial(m_boss->getAttack(), m_player, *m_boss);
+            }
         }
     }
 
@@ -987,7 +999,7 @@ void Game::selectBoss(TimeAbilities t_boss)
         m_activeBoss = true;
         break;
     case STOP:
-        m_boss = &m_rewindBoss;
+        m_boss = &m_stopBoss;
         m_activeBoss = true;
         break;
     case MAX:

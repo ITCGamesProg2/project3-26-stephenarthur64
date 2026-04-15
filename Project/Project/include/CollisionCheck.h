@@ -14,6 +14,8 @@ public:
 	static void CheckCollisionsWall(GameObject& t_go, Wall& t_wall, bool t_knockback);
 	static void CheckCollisionsGoal(GameObject& t_go, Goal& t_goal);
 	static void CheckCollisionAttack(Attack* t_attack, GameObject& t_go);
+	static void CheckCollisionAttackSpecial(Attack* t_attack, GameObject& t_go, GameObject& t_user);
+	static void CheckCollisionAttackSpecialWall(Attack* t_attack, Rectangle t_hitbox, GameObject& t_user);
 	static void setPlayerReference(GameObject *t_player);
 	static bool CheckCollisionPickup(GameObject& t_go, Pickup& t_p);
 };

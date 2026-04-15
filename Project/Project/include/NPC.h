@@ -17,7 +17,7 @@ public:
     Attack* getAttack() { return m_attack; }
     AttackTypes getType() { return m_attackType; }
 
-    void setTarget(Vector2 t_target) { m_target = t_target; }
+    virtual void setTarget(Vector2 t_target) { m_target = t_target; }
     void setPosition(Vector2 t_pos) { m_position = t_pos; }
 
     void setActive(bool t_active) { m_alive = t_active; }

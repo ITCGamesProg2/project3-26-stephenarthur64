@@ -18,6 +18,7 @@
 #include "Editor.h"
 #include "RewindBoss.h"
 #include "SkipBoss.h"
+#include "StopBoss.h"
 #include "Button.h"
 #include "Tutorial.h"
 
@@ -68,6 +69,7 @@ private:
 
     RewindBoss m_rewindBoss;
     SkipBoss m_skipBoss;
+    StopBoss m_stopBoss;
 
     Boss* m_boss;
     bool m_activeBoss;

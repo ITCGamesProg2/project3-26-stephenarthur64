@@ -60,24 +60,52 @@ void CollisionCheck::CheckCollisionsGoal(GameObject& t_go, Goal& t_goal)
 /// <param name="t_go">The GameObject being checked</param>
 void CollisionCheck::CheckCollisionAttack(Attack* t_attack, GameObject& t_go)
 {
+    if (CheckCollisionCircleRec(t_go.getPosition(), t_go.getRadius(), t_attack->getHitbox()))
+    {
+        t_go.collision(t_attack->getDamage(), t_attack->getPosition()); // Collision will damage GameObject
+        t_attack->collide();
+    }
+}
+
+void CollisionCheck::CheckCollisionAttackSpecial(Attack* t_attack, GameObject& t_go, GameObject& t_user)
+{
     if (t_attack->getType() == SPECIAL)
     {
         if (CheckCollisionCircles(t_go.getPosition(), t_go.getRadius(), t_attack->getPosition(), t_attack->getRadius()))
         {
             t_go.collision(t_attack->getDamage(), t_attack->getPosition());
-            m_player->applyKnockback(t_go.getPosition());
+            t_user.applyKnockback(t_go.getPosition());
             t_attack->collide();
         }
     }
-    else
+}
+
+void CollisionCheck::CheckCollisionAttackSpecialWall(Attack* t_attack, Rectangle t_hitbox, GameObject& t_user)
+{
+    if (t_attack->getType() == SPECIAL)
     {
-        if (CheckCollisionCircleRec(t_go.getPosition(), t_go.getRadius(), t_attack->getHitbox()))
+        if (CheckCollisionCircleRec(t_attack->getPosition(), t_attack->getRadius(), t_hitbox))
         {
-            t_go.collision(t_attack->getDamage(), t_attack->getPosition()); // Collision will damage GameObject
+            if (t_attack->getPosition().x - t_attack->getRadius() > t_hitbox.x + t_hitbox.width)
+            {
+                t_user.applyKnockbackWall(1, 0);
+            }
+            else
+            {
+                t_user.applyKnockbackWall(-1, 0);
+            }
+
+            if (t_attack->getPosition().y - t_attack->getRadius() > t_hitbox.y + t_hitbox.height)
+            {
+                t_user.applyKnockbackWall(0, -1);
+            }
+            else
+            {
+                t_user.applyKnockbackWall(0, 1);
+            }
             t_attack->collide();
         }
     }
- 
 }
 
 void CollisionCheck::setPlayerReference(GameObject *t_player)

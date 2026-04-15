@@ -76,6 +76,18 @@ void GameObject::applyKnockback(Vector2 t_collidePos, float t_force)
 	}
 }
 
+void GameObject::applyKnockbackWall(int t_x, int t_y)
+{
+	if (t_x != 0) // X
+	{
+		m_velocity.x = m_speed * t_x;
+	}
+	else if (t_y != 0) // Y
+	{
+		m_velocity.y = m_speed * t_y;
+	}
+}
+
 Vector2 GameObject::nextPositionX()
 {
 	Vector2 value;

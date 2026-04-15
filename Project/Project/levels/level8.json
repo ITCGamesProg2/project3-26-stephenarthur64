@@ -32,12 +32,13 @@
         ],
         "enemies": [
           {
-            "heavy": [
+            "boss": [
               {
                 "position": [
                   1453,
                   1045
-                ]
+                ],
+                "type": "stop"
               }
             ]
           }
