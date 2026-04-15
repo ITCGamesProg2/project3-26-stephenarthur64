@@ -7,7 +7,9 @@ class RewindBoss :
 {
 public:
     RewindBoss();
+    virtual void move() override {}
     virtual void draw() override;
+    virtual void immuneCheck(Vector2 t_playerPos) override;
 
 private:
     Vector2 m_shieldPos;

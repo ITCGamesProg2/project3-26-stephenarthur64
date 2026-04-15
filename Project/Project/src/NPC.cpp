@@ -8,6 +8,11 @@ NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), m_minDistance(40000), MAX
 	m_alive = true;
 }
 
+NPC::~NPC()
+{
+	//delete m_attack;
+}
+
 void NPC::update()
 {
 	if (!m_alive)

@@ -6,7 +6,7 @@ RewindBoss::RewindBoss() : Boss()
 	m_attack = new HeavyAttack({ -1000, -1000 });
 	m_attack->setCooldownScale(1.0f);
 	m_attack->setWindupScale(1.0f);
-	m_maxHealth = 1;
+	m_maxHealth = 7;
 	m_health = m_maxHealth;
 	m_upgrade.setAbility(TimeAbilities::SKIP);
 }
@@ -35,5 +35,17 @@ void RewindBoss::draw()
 	else
 	{
 		m_upgrade.draw();
+	}
+}
+
+void RewindBoss::immuneCheck(Vector2 t_playerPos)
+{
+	if (m_target == t_playerPos)
+	{
+		m_canDamage = false;
+	}
+	else
+	{
+		m_canDamage = true;
 	}
 }

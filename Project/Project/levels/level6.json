@@ -32,18 +32,13 @@
         ],
         "enemies": [
           {
-            "heavy": [
+            "boss": [
               {
                 "position": [
                   2164,
                   1423
-                ]
-              },
-              {
-                "position": [
-                  2164,
-                  1423
-                ]
+                ],
+                "type" :  "skip"
               }
             ]
           }

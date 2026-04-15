@@ -128,6 +128,10 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
             {
                 t_bossType = TimeAbilities::REWIND;
             }
+            else if (data["rooms"][room - 1][std::to_string(room)]["enemies"][0]["boss"][i]["type"] == "skip")
+            {
+                t_bossType = TimeAbilities::SKIP;
+            }
         }
     }
 

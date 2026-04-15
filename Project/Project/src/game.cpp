@@ -112,6 +112,7 @@ void Game::loadLevel()
     }
 
     m_rewindBoss.setSprite(&AssetManager::getSprite("rewindboss"));
+    m_skipBoss.setSprite(&AssetManager::getSprite("rewindboss"));
 
     selectBoss(bossType);
 
@@ -655,6 +656,11 @@ void Game::timeSkip()
         e.surprise();
     }
 
+    if (m_activeBoss)
+    {
+        m_boss->surprise();
+    }
+
     while (m_skipCount < 60)
     {
         standardUpdate();
@@ -977,7 +983,7 @@ void Game::selectBoss(TimeAbilities t_boss)
         m_activeBoss = true;
         break;
     case SKIP:
-        m_boss = &m_rewindBoss;
+        m_boss = &m_skipBoss;
         m_activeBoss = true;
         break;
     case STOP:

@@ -8,6 +8,7 @@ class NPC :
 {
 public:
     NPC(Color t_c, float t_r);
+    ~NPC();
     virtual void update() override;
     virtual void move() override;
     virtual void draw() override;

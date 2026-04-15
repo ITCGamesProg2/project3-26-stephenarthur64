@@ -17,6 +17,7 @@
 #include "globals.h"
 #include "Editor.h"
 #include "RewindBoss.h"
+#include "SkipBoss.h"
 #include "Button.h"
 #include "Tutorial.h"
 
@@ -66,6 +67,7 @@ private:
     std::vector<Door> m_doors;
 
     RewindBoss m_rewindBoss;
+    SkipBoss m_skipBoss;
 
     Boss* m_boss;
     bool m_activeBoss;
