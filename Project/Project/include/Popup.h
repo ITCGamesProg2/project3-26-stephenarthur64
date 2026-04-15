@@ -16,7 +16,11 @@ public:
 	void setTutorial(std::string t_key);
 	bool closeTriggered() { return m_closeButton.triggered(); }
 	bool isAlive() { return m_alive; }
-	void disable() { m_alive = false; m_closeButton.resetTrigger(); }
+	void disable() 
+	{ 
+		m_alive = false; 
+		m_closeButton.resetTrigger(); 
+	}
 
 private:
 	Vector2 m_position;

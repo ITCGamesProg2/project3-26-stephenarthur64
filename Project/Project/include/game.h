@@ -129,6 +129,8 @@ private:
     std::vector<Tutorial> m_tutorials;
 
     bool m_activePopup;
+
+    Pickup m_startingPickup;
 };
 
 #endif // GAME_H

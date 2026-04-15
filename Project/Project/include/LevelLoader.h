@@ -12,11 +12,14 @@
 #include "Player.h"
 #include "globals.h"
 #include "Cell.h"
+#include "Pickup.h"
+
+class Tutorial;
 
 static class LevelLoader
 {
 public:
-	static void LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, TimeAbilities& t_bossType, Vector2& t_bossPos);// , std::vector<Tutorial>& t_tut);
+	static void LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, TimeAbilities& t_bossType, Vector2& t_bossPos, std::vector<Tutorial>& t_tut, Pickup& t_pickup);
 	static void addProgress();
 	static void clearProgress();
 	static bool isNextLevelReady();
@@ -34,6 +37,5 @@ public:
 	static void loadOptions();
 	static Cell* getGridData(int t_x, int t_y);
 	static void setGridData(int t_x, int t_y, int t_sizeX, int t_sizeY, CellType t_type);
-	static Tutorial getTutorial();
 };
 

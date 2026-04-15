@@ -65,8 +65,14 @@ void Game::loadLevel()
     Vector2 bossPos;
     TimeAbilities bossType = TimeAbilities::MAX;
 
-    LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_supports, m_doors, bossType, bossPos);
-    m_tutorials.push_back(LevelLoader::getTutorial());
+    m_startingPickup.setAbility(TimeAbilities::MAX);
+
+    LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_supports, m_doors, bossType, bossPos, m_tutorials, m_startingPickup);
+
+    if (m_startingPickup.getAbility() != TimeAbilities::MAX)
+    {
+        m_startingPickup.setSprite();
+    }
 
     m_editor.setSpawn(m_player.getPosition());
 
@@ -160,6 +166,16 @@ void Game::draw()
             door.draw();
         }
 
+        for (Tutorial& t : m_tutorials)
+        {
+            t.draw();
+        }
+
+        if (m_startingPickup.getAbility() != TimeAbilities::MAX)
+        {
+            m_startingPickup.draw();
+        }
+
         if (m_placing)
         {
             m_editor.drawPlacing();
@@ -197,11 +213,6 @@ void Game::draw()
         if (m_editing)
         {
             m_editButton.draw();
-        }
-
-        for (Tutorial& t : m_tutorials)
-        {
-            t.draw();
         }
 
         if (m_player.canUse(TimeAbilities::REWIND))
@@ -273,6 +284,11 @@ void Game::draw()
             if (m_activeBoss)
             {
                 m_boss->getUpgrade().drawPopup();
+            }
+
+            if (m_startingPickup.getAbility() != TimeAbilities::MAX)
+            {
+                m_startingPickup.drawPopup();
             }
         }
 
@@ -435,6 +451,17 @@ void Game::standardUpdate()
         }
     }
 
+    if (m_startingPickup.getAbility() != TimeAbilities::MAX)
+    {
+        m_startingPickup.updatePopup();
+
+        if (m_startingPickup.popupAlive())
+        {
+            m_state = GameState::PAUSED;
+            m_activePopup = true;
+        }
+    }
+
     if (m_surpriseTimer > 0)
     {
         m_surpriseTimer -= GetFrameTime();
@@ -582,6 +609,18 @@ void Game::pausedUpdate()
         }
 
         m_boss->getUpgrade().updatePopup();
+    }
+
+    if (m_startingPickup.getAbility() != TimeAbilities::MAX)
+    {
+        if (m_startingPickup.closeTriggered())
+        {
+            m_state = GameState::GAMEPLAY;
+            m_activePopup = false;
+            m_startingPickup.disablePopup();
+        }
+
+        m_startingPickup.updatePopup();
     }
 
     for (Tutorial& t : m_tutorials)
@@ -901,6 +940,15 @@ void Game::CheckCollisions()
             CollisionCheck::CheckCollisionAttack(m_player.getAttack(SPECIAL), *m_boss);
 
             CollisionCheck::CheckCollisionAttack(m_boss->getAttack(), m_player);
+        }
+    }
+
+    if (m_startingPickup.getAbility() != TimeAbilities::MAX && m_startingPickup.isAlive())
+    {
+        if (CollisionCheck::CheckCollisionPickup(m_player, m_startingPickup))
+        {
+            m_player.newAbility(m_startingPickup.getAbility());
+            m_startingPickup.deactivate();
         }
     }
 }

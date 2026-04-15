@@ -1,9 +1,25 @@
 {
   "tutorials": [
     {
-      "position": [ 100, 100 ],
+      "position": [ 400, 3400 ],
       "size": [ 100, 100 ],
-      "type" :  "movement"
+      "type": "movement"
+    },
+    {
+      "position": [ 300, 3000 ],
+      "size": [ 300, 100 ],
+      "type": "health and momentum"
+    },
+    {
+      "position": [ 300, 2800 ],
+      "size": [ 300, 100 ],
+      "type": "attack"
+    }
+  ],
+  "pickups": [
+    {
+      "position": [ 400, 3200 ],
+      "type": "rewind"
     }
   ],
   "goals": [
@@ -40,8 +56,8 @@
   ],
   "player": {
     "position": [
-      452,
-      3275
+      450,
+      3450
     ]
   },
   "rooms": [

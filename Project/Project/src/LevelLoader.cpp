@@ -11,9 +11,8 @@ static SaveDetails m_saves[3];
 static float m_music;
 static float m_sfx;
 static Cell m_grid[50][50];
-static std::vector<Tutorial> m_tutorials;
 
-void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, TimeAbilities& t_bossType, Vector2& t_bossPos)// , std::vector<Tutorial>& t_tut);
+void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, TimeAbilities& t_bossType, Vector2& t_bossPos, std::vector<Tutorial>& t_tut, Pickup& t_pickup)
 {
     m_nextLevelReady = false;
 
@@ -56,7 +55,26 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
     {
         Tutorial tutorial(SKYBLUE, data["tutorials"][i]["size"][0], data["tutorials"][i]["size"][1]);
         tutorial.setPosition({ data["tutorials"][i]["position"][0], data["tutorials"][i]["position"][1] });
-        m_tutorials.push_back(tutorial);
+        tutorial.setTutorialText(data["tutorials"][i]["type"]);
+        t_tut.push_back(tutorial);
+    }
+
+    for (int i = 0; i < data["pickups"].size(); i++)
+    {
+        t_pickup.setPosition({ data["pickups"][i]["position"][0], data["pickups"][i]["position"][1] });
+
+        if (data["pickups"][i]["type"] == "rewind")
+        {
+            t_pickup.setAbility(TimeAbilities::REWIND);
+        }
+        else if (data["pickups"][i]["type"] == "skip")
+        {
+            t_pickup.setAbility(TimeAbilities::SKIP);
+        }
+        else if (data["pickups"][i]["type"] == "stop")
+        {
+            t_pickup.setAbility(TimeAbilities::STOP);
+        }
     }
 
     for (int i = m_progress; i < data["goals"].size(); i++)
@@ -324,9 +342,3 @@ void LevelLoader::setGridData(int t_x, int t_y, int t_sizeX, int t_sizeY, CellTy
         }
     }
 }
-
-Tutorial LevelLoader::getTutorial()
-{
-    return m_tutorials.back();
-}
-

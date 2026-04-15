@@ -4,6 +4,7 @@ Popup::Popup() : m_currentSize({0, 0}), m_increaseSpeed(10.0f), m_alive(false), 
 {
 	m_tutorials["movement"] = "W/A/S/D or Up/Down/Left/Right to move";
 	m_tutorials["attack"] = "LMB to Light Attack\nRMB to Heavy Attack\nLight attack is faster but does less damage\nHeavy attack is slower but does more damage";
+	m_tutorials["health and momentum"] = "The red bar is health. When it runs out, you die\nThe gray bar is Momentum. This powers your\nTime Abilities and increases by attacking enemies";
 }
 
 void Popup::spawn(Vector2 t_size, Vector2 t_pos)
