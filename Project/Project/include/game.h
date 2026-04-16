@@ -21,6 +21,7 @@
 #include "StopBoss.h"
 #include "Button.h"
 #include "Tutorial.h"
+#include "Breadcrumb.h"
 
 enum class GameState {
     MENU,
@@ -135,6 +136,8 @@ private:
     bool m_activePopup;
 
     Pickup m_startingPickup;
+
+    Breadcrumb m_breadcrumb;
 };
 
 #endif // GAME_H

@@ -138,6 +138,7 @@
     <ClInclude Include="include\AssetManager.h" />
     <ClInclude Include="include\Attack.h" />
     <ClInclude Include="include\Boss.h" />
+    <ClInclude Include="include\Breadcrumb.h" />
     <ClInclude Include="include\Button.h" />
     <ClInclude Include="include\Cell.h" />
     <ClInclude Include="include\CollisionCheck.h" />
@@ -173,6 +174,7 @@
     <ClCompile Include="src\AssetManager.cpp" />
     <ClCompile Include="src\Attack.cpp" />
     <ClCompile Include="src\Boss.cpp" />
+    <ClCompile Include="src\Breadcrumb.cpp" />
     <ClCompile Include="src\Button.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CollisionCheck.cpp" />

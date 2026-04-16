@@ -24,13 +24,39 @@ void NPC::update()
 
 	GameObject::update();
 
-	if (Vector2DistanceSqr(m_target, m_position) < 200000)
+	if (m_targetCrumb == nullptr)
 	{
-		if (Vector2DistanceSqr(m_target, m_position) > m_minDistance)
+		decideTarget();
+	}
+
+	if (m_distToTarget < 200000)
+	{
+		if (m_target == m_playerTarget)
 		{
-			addForce(m_speed);
+			if (m_distToTarget > m_minDistance)
+			{
+				addForce(m_speed);
+			}
 		}
 		else
+		{
+			addForce(m_speed);
+			if (m_distToTarget <= m_minDistance)
+			{
+				if (m_targetCrumb != nullptr)
+				{
+					std::cout << "next\n";
+					if (m_targetCrumb->m_next != nullptr)
+					{
+						m_targetCrumb = m_targetCrumb->m_next;
+						m_target = m_targetCrumb->m_position;
+						m_distToTarget = Vector2DistanceSqr(m_targetCrumb->m_position, m_position);
+					}
+				}
+			}
+		}
+
+		if (Vector2DistanceSqr(m_position, m_playerTarget) < m_minDistance)
 		{
 			if (m_attack->canAttack())
 			{
@@ -38,11 +64,11 @@ void NPC::update()
 			}
 		}
 
-		m_attack->setStart(m_position);
-		m_attack->process();
-
 		move();
 	}
+
+	m_attack->setStart(m_position);
+	m_attack->process();
 }
 
 void NPC::move()
@@ -78,6 +104,26 @@ void NPC::addForce(float t_amount)
 	Vector2 direction = m_target - m_position;
 	direction = Vector2Normalize(direction) * t_amount;
 	m_velocity += direction;
+}
+
+void NPC::decideTarget()
+{
+	if (m_breadcrumb != nullptr && m_breadcrumb->size() > 0)
+	{
+		m_distToTarget = Vector2DistanceSqr(m_breadcrumb->front().m_position, m_position);
+		m_target = m_breadcrumb->front().m_position;
+		m_targetCrumb = &m_breadcrumb->front();
+
+		for (Crumb& b : *m_breadcrumb)
+		{
+			if (Vector2DistanceSqr(b.m_position, m_position) < m_distToTarget && Vector2DistanceSqr(b.m_position, m_position) > 1000)
+			{
+				m_distToTarget = Vector2DistanceSqr(b.m_position, m_position);
+				m_target = b.m_position;
+				m_targetCrumb = &b;
+			}
+		}
+	}
 }
 
 void NPC::heal()

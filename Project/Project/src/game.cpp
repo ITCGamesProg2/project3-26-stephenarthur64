@@ -148,6 +148,11 @@ void Game::draw()
             m_boss->draw();
         }
 
+        for (Crumb& bc : m_breadcrumb.getCrumbs())
+        {
+            DrawCircle(bc.m_position.x, bc.m_position.y, 20.0f, BLUE);
+        }
+
         for (NPC& e : m_enemies)
         {
             e.draw();
@@ -432,6 +437,10 @@ void Game::standardUpdate()
     CheckCollisions();
 
     m_player.update();
+
+    m_breadcrumb.spawn(m_player.getPosition());
+    m_breadcrumb.timerUpdate();
+
     for (Tutorial& t : m_tutorials)
     {
         t.update();
@@ -485,7 +494,8 @@ void Game::standardUpdate()
     {
         if (!e.isSurprised())
         {
-            e.setTarget(m_player.getPosition());
+            e.setBreadcrumbsTarget(m_breadcrumb.getCrumbs());
+            e.setPlayerTarget(m_player.getPosition());
         }
         e.update();
     }
@@ -494,7 +504,7 @@ void Game::standardUpdate()
     {
         if (!m_boss->isSurprised())
         {
-            m_boss->setTarget(m_player.getPosition());
+            m_boss->setPlayerTarget(m_player.getPosition());
         }
         m_boss->immuneCheck(m_player.getPosition());
         m_boss->update();

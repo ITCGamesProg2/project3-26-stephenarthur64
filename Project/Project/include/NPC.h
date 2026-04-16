@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "Attack.h"
+#include "Breadcrumb.h"
 #include <iostream>
 
 class NPC :
@@ -17,7 +18,9 @@ public:
     Attack* getAttack() { return m_attack; }
     AttackTypes getType() { return m_attackType; }
 
-    virtual void setTarget(Vector2 t_target) { m_target = t_target; }
+    void decideTarget();
+    virtual void setPlayerTarget(Vector2 t_target) { m_playerTarget = t_target; }
+    void setBreadcrumbsTarget(std::list<Crumb>& t_bc) { if (m_breadcrumb == nullptr) { m_breadcrumb = &t_bc; } }
     void setPosition(Vector2 t_pos) { m_position = t_pos; }
 
     void setActive(bool t_active) { m_alive = t_active; }
@@ -29,7 +32,9 @@ public:
     void deselect() { m_selected = false; }
 
 protected:
+    Vector2 m_playerTarget;
     Vector2 m_target;
+    float m_distToTarget;
     float m_minDistance;
     const float MAX_SPEED;
     const float MIN_SPEED;
@@ -39,5 +44,7 @@ protected:
     const float MAX_HEAL_TIMER;
     AttackTypes m_attackType;
     bool m_selected;
+    std::list<Crumb>* m_breadcrumb;
+    Crumb* m_targetCrumb;
 };
 
