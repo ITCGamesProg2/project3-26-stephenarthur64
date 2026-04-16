@@ -86,22 +86,26 @@ void CollisionCheck::CheckCollisionAttackSpecialWall(Attack* t_attack, Rectangle
     {
         if (CheckCollisionCircleRec(t_attack->getPosition(), t_attack->getRadius(), t_hitbox))
         {
-            if (t_attack->getPosition().x - t_attack->getRadius() > t_hitbox.x + t_hitbox.width)
+            if (t_attack->getPosition().x >= t_hitbox.x + t_hitbox.width)
             {
                 t_user.applyKnockbackWall(1, 0);
+                std::cout << "Right\n";
             }
-            else
+            else if (t_attack->getPosition().x < t_hitbox.x)
             {
                 t_user.applyKnockbackWall(-1, 0);
+                std::cout << "Left\n";
             }
 
-            if (t_attack->getPosition().y - t_attack->getRadius() > t_hitbox.y + t_hitbox.height)
-            {
-                t_user.applyKnockbackWall(0, -1);
-            }
-            else
+            if (t_attack->getPosition().y >= t_hitbox.y + t_hitbox.height)
             {
                 t_user.applyKnockbackWall(0, 1);
+                std::cout << "Bottom\n";
+            }
+            else if (t_attack->getPosition().y < t_hitbox.y)
+            {
+                t_user.applyKnockbackWall(0, -1);
+                std::cout << "Top\n";
             }
             t_attack->collide();
         }

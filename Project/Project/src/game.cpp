@@ -691,6 +691,7 @@ void Game::timeStoppedUpdate()
     {
         PlaySound(*m_timeStopEndSound);
         m_timestop = false;
+        m_player.timeResume();
     }
 
     for (NPC& e : m_enemies)
@@ -734,6 +735,7 @@ void Game::handleInput()
             if (m_player.canTimeStop() && m_timestop == false)
             {
                 m_timestop = true;
+                m_player.timeStopped();
                 m_shaderRadius = 0.0f;
                 m_surpriseTimer = STOP_MAX;
                 for (NPC& e : m_enemies)
@@ -747,6 +749,7 @@ void Game::handleInput()
                 if (m_timestop)
                 {
                     PlaySound(*m_timeStopEndSound);
+                    m_player.timeResume();
                 }
                 m_timestop = false;
             }
@@ -859,6 +862,30 @@ void Game::CheckCollisions()
 {
     // Refactor later to use spacial partitioning
 
+    if (m_activeBoss && !m_timeSkip)
+    {
+        if (m_boss->getUpgrade().isAlive())
+        {
+            if (CollisionCheck::CheckCollisionPickup(m_player, m_boss->getUpgrade()))
+            {
+                m_player.newAbility(m_boss->getUpgrade().getAbility());
+                m_boss->getUpgrade().deactivate();
+            }
+        }
+
+        if (m_boss->isAlive())
+        {
+            CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), *m_boss);
+            CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), *m_boss);
+
+            if (!m_timestop)
+            {
+                CollisionCheck::CheckCollisionAttack(m_boss->getAttack(), m_player);
+                CollisionCheck::CheckCollisionAttackSpecial(m_boss->getAttack(), m_player, *m_boss);
+            }
+        }
+    }
+
     for (Wall& wall : m_walls)
     {
         CollisionCheck::CheckCollisionsWall(m_player, wall, true);
@@ -937,29 +964,6 @@ void Game::CheckCollisions()
         CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), es);
     }
 
-    if (m_activeBoss)
-    {
-        if (m_boss->getUpgrade().isAlive())
-        {
-            if (CollisionCheck::CheckCollisionPickup(m_player, m_boss->getUpgrade()))
-            {
-                m_player.newAbility(m_boss->getUpgrade().getAbility());
-                m_boss->getUpgrade().deactivate();
-            }
-        }
-
-        if (m_boss->isAlive())
-        {
-            CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), *m_boss);
-            CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), *m_boss);
-
-            if (!m_timestop)
-            {
-                CollisionCheck::CheckCollisionAttack(m_boss->getAttack(), m_player);
-                CollisionCheck::CheckCollisionAttackSpecial(m_boss->getAttack(), m_player, *m_boss);
-            }
-        }
-    }
 
     if (m_startingPickup.getAbility() != TimeAbilities::MAX && m_startingPickup.isAlive())
     {

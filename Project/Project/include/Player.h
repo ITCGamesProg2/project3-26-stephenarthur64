@@ -47,6 +47,9 @@ public:
     void newAbility(TimeAbilities t_a);
     bool canUse(TimeAbilities t_a);
 
+    void timeStopped() { m_timestop = true; }
+    void timeResume() { m_timestop = false; }
+
 private:
     Time m_newTime;
     const float MAX_SPEED;
@@ -75,6 +78,8 @@ private:
     float m_baseRadius;
 
     bool m_abilities[TimeAbilities::MAX] = {};
+
+    bool m_timestop;
 };
 
 #include "CollisionCheck.h"

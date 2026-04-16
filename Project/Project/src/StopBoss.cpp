@@ -2,12 +2,12 @@
 
 StopBoss::StopBoss()
 {
-	m_speed = 0.3f;
+	m_speed = 0.5f;
 	m_attackType = HEAVY;
 	m_attack = new SpecialAttack({ -1000, -1000 });
 	m_attack->setWindupScale(0.1f);
 	m_attack->setCooldownScale(0.5f);
-	m_maxHealth = 7;
+	m_maxHealth = 10;
 	m_health = m_maxHealth;
 	m_upgrade.setAbility(TimeAbilities::MAX);
 
@@ -31,6 +31,16 @@ void StopBoss::update()
 		return;
 	}
 
+	if (m_health <= m_maxHealth / 2)
+	{
+		m_speed = 1.0f;
+	}
+
+	if (m_health == 1)
+	{
+		m_speed = 1.5f;
+	}
+
 	GameObject::update();
 
 	if (Vector2DistanceSqr(m_target, m_position) > m_minDistance && m_attack->isRunning())
@@ -46,6 +56,11 @@ void StopBoss::update()
 	m_attack->setStart(m_position);
 	m_attack->process();
 
+	if (m_position.x < -1000)
+	{
+		int thing = 0;
+	}
+
 	if (m_attack->isRunning())
 	{
 		move();
@@ -54,7 +69,6 @@ void StopBoss::update()
 	if (m_attack->isCollided())
 	{
 		m_target = m_velocity * 10000;
-		std::cout << "bounced\n";
 	}
 }
 

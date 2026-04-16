@@ -80,11 +80,11 @@ void GameObject::applyKnockbackWall(int t_x, int t_y)
 {
 	if (t_x != 0) // X
 	{
-		m_velocity.x = m_speed * t_x;
+		m_velocity.x = m_speed * t_x * 10;
 	}
 	else if (t_y != 0) // Y
 	{
-		m_velocity.y = m_speed * t_y;
+		m_velocity.y = m_speed * t_y * 10;
 	}
 }
 

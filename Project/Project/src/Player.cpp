@@ -53,11 +53,25 @@ void Player::update()
 
 	if (m_light.isCollided())
 	{
-		addMomentum(5.0f);
+		if (!m_timestop)
+		{
+			addMomentum(5.0f);
+		}
+		else
+		{
+			//addMomentum(0.7f);
+		}
 	}
 	if (m_heavy.isCollided())
 	{
-		addMomentum(10.0f);
+		if (!m_timestop)
+		{
+			addMomentum(10.0f);
+		}
+		else
+		{
+			//addMomentum(2.0f);
+		}
 	}
 	if (m_special.isCollided())
 	{
