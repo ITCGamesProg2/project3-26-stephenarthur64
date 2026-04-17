@@ -1,6 +1,6 @@
 #include "NPC.h"
 
-NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), m_minDistance(40000), MAX_SPEED(0.4f), MIN_SPEED(0.1f), m_surprise(false), MAX_HEAL_TIMER(1.0f), m_healTimer(0.0f)
+NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), m_minDistance(40000), MAX_SPEED(0.4f), MIN_SPEED(0.1f), m_surprise(false), MAX_HEAL_TIMER(1.0f), m_healTimer(0.0f), MAX_DIST(200000)
 {
 	m_speed = 0.3f;
 	m_health = 3;
@@ -26,46 +26,34 @@ void NPC::update()
 
 	if (m_targetCrumb == nullptr)
 	{
-		decideTarget();
 	}
 
-	if (m_distToTarget < 200000)
+	decideTarget();
+
+	if (m_distToTarget < MAX_DIST && m_targetCrumb != nullptr)
 	{
-		if (m_target == m_playerTarget)
+		if (m_distToTarget > 10000)
 		{
-			if (m_distToTarget > m_minDistance)
-			{
-				addForce(m_speed);
-			}
+			addForce(m_speed);
 		}
 		else
 		{
+			crumbFound(*m_targetCrumb);
+
+			decideTarget();
 			addForce(m_speed);
-			if (m_distToTarget <= m_minDistance)
-			{
-				if (m_targetCrumb != nullptr)
-				{
-					std::cout << "next\n";
-					if (m_targetCrumb->m_next != nullptr)
-					{
-						m_targetCrumb = m_targetCrumb->m_next;
-						m_target = m_targetCrumb->m_position;
-						m_distToTarget = Vector2DistanceSqr(m_targetCrumb->m_position, m_position);
-					}
-				}
-			}
 		}
-
-		if (Vector2DistanceSqr(m_position, m_playerTarget) < m_minDistance)
-		{
-			if (m_attack->canAttack())
-			{
-				m_attack->execute(m_target);
-			}
-		}
-
-		move();
 	}
+
+	if (Vector2DistanceSqr(m_position, m_playerTarget) < m_minDistance)
+	{
+		if (m_attack->canAttack())
+		{
+			m_attack->execute(m_target);
+		}
+	}
+
+	move();
 
 	m_attack->setStart(m_position);
 	m_attack->process();
@@ -110,20 +98,37 @@ void NPC::decideTarget()
 {
 	if (m_breadcrumb != nullptr && m_breadcrumb->size() > 0)
 	{
-		m_distToTarget = Vector2DistanceSqr(m_breadcrumb->front().m_position, m_position);
-		m_target = m_breadcrumb->front().m_position;
-		m_targetCrumb = &m_breadcrumb->front();
-
-		for (Crumb& b : *m_breadcrumb)
+		if (!m_targetCrumb || std::find(m_foundCrumbs.begin(), m_foundCrumbs.end(), m_targetCrumb->m_position) != m_foundCrumbs.end())
 		{
-			if (Vector2DistanceSqr(b.m_position, m_position) < m_distToTarget && Vector2DistanceSqr(b.m_position, m_position) > 1000)
+			m_targetCrumb = std::make_shared<Crumb>(m_breadcrumb->front());
+			m_target = m_targetCrumb->m_position;
+		}
+		
+		m_distToTarget = Vector2DistanceSqr(m_position, m_target);
+
+		for (Crumb& c : *m_breadcrumb)
+		{
+			if (std::find(m_foundCrumbs.begin(), m_foundCrumbs.end(), c.m_position) == m_foundCrumbs.end())
 			{
-				m_distToTarget = Vector2DistanceSqr(b.m_position, m_position);
-				m_target = b.m_position;
-				m_targetCrumb = &b;
+				if (Vector2DistanceSqr(m_position, c.m_position) < m_distToTarget && Vector2DistanceSqr(m_position, c.m_position) > 1000)
+				{
+					m_targetCrumb = std::make_shared<Crumb>(c);
+					m_target = m_targetCrumb->m_position;
+					m_distToTarget = Vector2DistanceSqr(m_position, m_target);
+				}
 			}
 		}
 	}
+}
+
+void NPC::crumbFound(Crumb& t_c)
+{
+	std::cout << "next\n" + std::to_string(m_targetCrumb->m_position.x) + "" + std::to_string(m_targetCrumb->m_position.y) + "\n";
+	if (m_foundCrumbs.size() >= 10)
+	{
+		m_foundCrumbs.pop_front();
+	}
+	m_foundCrumbs.push_back(t_c.m_position);
 }
 
 void NPC::heal()

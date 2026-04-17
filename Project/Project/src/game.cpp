@@ -494,7 +494,7 @@ void Game::standardUpdate()
     {
         if (!e.isSurprised())
         {
-            e.setBreadcrumbsTarget(m_breadcrumb.getCrumbs());
+            e.setBreadcrumbsTarget(&m_breadcrumb.getCrumbs());
             e.setPlayerTarget(m_player.getPosition());
         }
         e.update();

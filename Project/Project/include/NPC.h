@@ -3,6 +3,7 @@
 #include "Attack.h"
 #include "Breadcrumb.h"
 #include <iostream>
+#include <algorithm>
 
 class NPC :
     public GameObject
@@ -20,8 +21,10 @@ public:
 
     void decideTarget();
     virtual void setPlayerTarget(Vector2 t_target) { m_playerTarget = t_target; }
-    void setBreadcrumbsTarget(std::list<Crumb>& t_bc) { if (m_breadcrumb == nullptr) { m_breadcrumb = &t_bc; } }
+    void setBreadcrumbsTarget(std::list<Crumb>* t_bc) { if (m_breadcrumb == nullptr) { m_breadcrumb = t_bc; } }
     void setPosition(Vector2 t_pos) { m_position = t_pos; }
+
+    void crumbFound(Crumb& t_c);
 
     void setActive(bool t_active) { m_alive = t_active; }
     bool isSurprised() { return m_surprise; }
@@ -36,6 +39,7 @@ protected:
     Vector2 m_target;
     float m_distToTarget;
     float m_minDistance;
+    float const MAX_DIST;
     const float MAX_SPEED;
     const float MIN_SPEED;
     Attack *m_attack;
@@ -45,6 +49,7 @@ protected:
     AttackTypes m_attackType;
     bool m_selected;
     std::list<Crumb>* m_breadcrumb;
-    Crumb* m_targetCrumb;
+    std::shared_ptr<Crumb> m_targetCrumb;
+    std::list<Vector2> m_foundCrumbs;
 };
 
