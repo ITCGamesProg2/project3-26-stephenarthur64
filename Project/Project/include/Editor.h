@@ -1,7 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include <vector>
-#include <stack>
+#include <queue>
 #include <fstream>
 #include <string>
 #include <json.hpp>
@@ -14,6 +14,13 @@
 #include "globals.h"
 #include "Button.h"
 #include "LevelLoader.h"
+
+struct Comparitor {
+	bool operator()(const Cell* t_lhs, const Cell* t_rhs) const
+	{
+		return t_lhs->m_estimatedCost > t_rhs->m_estimatedCost;
+	}
+};
 
 class Editor
 {
@@ -47,8 +54,8 @@ public:
 	bool resumeTriggered() { return m_resume.triggered(); }
 	void resetResume() { m_resume.resetTrigger(); }
 	void undo();
-	void initDFS();
-	void DFSForComplete();
+	void initAStar(Vector2 t_startPos, Vector2 t_goalPos, bool t_start);
+	void AStarForComplete();
 
 private:
 	int m_entityCount = 0;
@@ -77,8 +84,10 @@ private:
 
 	bool m_debug;
 
-	std::stack<Cell*> m_stackDFS;
+	std::priority_queue<Cell*, std::vector<Cell*>, Comparitor> m_queueAStar;
 	int m_goalCount;
-	bool m_endDFS;
+	bool m_endAStar;
+
+	Cell* m_goalCell;
 };
 

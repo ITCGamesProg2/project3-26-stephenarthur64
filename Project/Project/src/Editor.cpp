@@ -1,7 +1,7 @@
 #include "Editor.h"
 
 Editor::Editor() : m_entityCount(0), m_room(1), m_placePos({INFINITY, 1.0f}), m_currentState(0), m_currentLevel("levels/leveledit.json"), m_uiInteract(false), m_debug(false), 
-                    m_goalCount(0), m_endDFS(false)
+                    m_goalCount(0), m_endAStar(false)
 {
     EditState m_allStates[END] = { SELECT, WALL, LIGHTENEMY, HEAVYENEMY, SUPPORTENEMY, GOAL, DOOR };
 
@@ -53,22 +53,40 @@ void Editor::drawDebug()
         {
             for (int y = 0; y < 50; y++)
             {
-                if (LevelLoader::getGridData(x, y)->getType() == CellType::WALL)
+                Cell* current = LevelLoader::getGridData(x, y);
+
+                if (current->getType() == CellType::WALL)
                 {
                     DrawRectangle(x * 100, y * 100, 100, 100, { 160,82,45, 100 });
                 }
-                else if (LevelLoader::getGridData(x, y)->getType() == CellType::GOAL)
+                else if (current->getType() == CellType::GOAL)
                 {
                     DrawRectangle(x * 100, y * 100, 100, 100, GREEN);
                 }
 
-                if (LevelLoader::getGridData(x, y)->visited())
+                if (current->visited() && !current->marked())
                 {
                     DrawRectangle(x * 100.0f, y * 100.0f, 100, 100 ,{ 0, 0, 255, 100 });
                 }
+                else if (current->marked())
+                {
+                    DrawRectangle(x * 100.0f, y * 100.0f, 100, 100, { 0, 255, 0, 100 });
+                }
                 DrawRectangleLinesEx({ x * 100.0f, y * 100.0f, 100, 100 }, 1.0f, { 255, 255, 255, 100 });
 
-                DrawText((std::to_string(LevelLoader::getGridData(x, y)->getX()) + " " + std::to_string(LevelLoader::getGridData(x, y)->getY())).c_str(), (x * 100.0f) + 5.0f, (y * 100.0f) + 5.0f, 7.0f, WHITE);
+                DrawText((std::to_string(current->getX()) + " " + std::to_string(current->getY())).c_str(), (x * 100.0f) + 5.0f, (y * 100.0f) + 5.0f, 10.0f, WHITE);
+
+                if (current->visited() || current->marked())
+                {
+                    if (current->m_g == INFINITY)
+                    {
+                        DrawText(("Cost: " + std::to_string((int)current->m_cost) + "\nHeuristic: " + std::to_string((int)current->m_heuristic) + "\nDistance: inf").c_str(), (x * 100.0f) + 5.0f, (y * 100.0f) + 40.0f, 10.0f, WHITE);
+                    }
+                    else
+                    {
+                        DrawText(("Cost: " + std::to_string((int)current->m_cost) + "\nHeuristic: " + std::to_string((int)current->m_heuristic) + "\nDistance: " + std::to_string((int)current->m_g)).c_str(), (x * 100.0f) + 5.0f, (y * 100.0f) + 40.0f, 10.0f, WHITE);
+                    }
+                }
             }
         }
 
@@ -577,9 +595,29 @@ bool Editor::checkPlacing(Vector2 t_pos, float t_x, float t_y)
 
 void Editor::saveFile()
 {
-    initDFS();
+    m_goalCount = 0;
 
-    if (m_endDFS)
+    for (int x = 0; x < 50; x++)
+    {
+        for (int y = 0; y < 50; y++)
+        {
+            LevelLoader::getGridData(x, y)->unmark();
+        }
+    }
+
+    for (int i = 0; i < m_goals->size(); i++)
+    {
+        if (i == 0)
+        {
+            initAStar(m_spawnPos, m_goals->at(i).getPosition(), true);
+        }
+        else
+        {
+            initAStar(m_goals->at(i - 1).getPosition(), m_goals->at(i).getPosition(), false);
+        }
+    }
+
+    if (m_goalCount == m_goals->size())
     {
         writeObjectsToFile();
 
@@ -627,58 +665,95 @@ void Editor::undo()
     }
 }
 
-void Editor::initDFS()
+void Editor::initAStar(Vector2 t_startPos, Vector2 t_goalPos, bool t_start)
 {
-    Vector2 start = { (int)(m_spawnPos.x / 100), (int)(m_spawnPos.y / 100) };
-    m_endDFS = false;
+    t_goalPos.x /= 100;
+    t_goalPos.y /= 100;
 
-    while (m_stackDFS.size() > 0)
+    t_startPos.x /= 100;
+    t_startPos.y /= 100;
+
+    m_endAStar = false;
+
+    while (m_queueAStar.size() > 0)
     {
-        m_stackDFS.pop();
+        m_queueAStar.pop();
     }
 
     for (int x = 0; x < 50; x++)
     {
         for (int y = 0; y < 50; y++)
         {
-            LevelLoader::getGridData(x, y)->unvisit();
+            if (t_start)
+            {
+                LevelLoader::getGridData(x, y)->unvisit();
+            }
+            LevelLoader::getGridData(x, y)->setAStarValues(t_goalPos);
         }
     }
 
-    m_stackDFS.push(LevelLoader::getGridData(start.x, start.y));
+    m_queueAStar.push(LevelLoader::getGridData(t_startPos.x, t_startPos.y));
+    m_queueAStar.top()->visit();
+    m_queueAStar.top()->m_g = 0;
 
-    DFSForComplete();
+    m_goalCell = LevelLoader::getGridData(t_goalPos.x, t_goalPos.y);
+
+    AStarForComplete();
 }
 
-void Editor::DFSForComplete()
+void Editor::AStarForComplete()
 {
-    while (m_stackDFS.size() > 0 && !m_endDFS)
+    float estimatedCost = 0.0f;
+    Cell* current;
+
+    while (!m_queueAStar.empty() && !m_endAStar)
     {
-        Cell* current = m_stackDFS.top();
-        m_stackDFS.pop();
-        current->visit();
-
-        for (Cell* arc : current->getArcList())
+        current = m_queueAStar.top();
+        
+        for (Cell* child : current->getArcList())
         {
-            if (!arc->visited())
+            if (current->m_previous != child)
             {
-                if (arc->getType() == CellType::GOAL)
+                if (child->getType() == CellType::WALL)
                 {
-                    m_goalCount++;
-                    arc->visitAllGoalNeighbours();
-
-                    if (m_goalCount == m_goals->size())
-                    {
-                        m_endDFS = true;
-                    }
+                    continue;
                 }
-                if (arc->getType() != CellType::WALL)
+
+                estimatedCost = child->m_heuristic + (current->m_g + child->m_cost);
+
+                if (estimatedCost < child->m_estimatedCost || child->m_estimatedCost == -1)
                 {
-                    m_stackDFS.push(arc);
-                    DFSForComplete();
+                    child->m_estimatedCost = estimatedCost;
+                    child->m_previous = current;
+                    child->m_g = current->m_g + child->m_cost;
+                }
+
+                if (!child->visited())
+                {
+                    if (child == m_goalCell)
+                    {
+                        m_goalCount++;
+                        m_endAStar = true;
+                        child->visitAllGoalNeighbours();
+                    }
+                    else
+                    {
+                        m_queueAStar.push(child);
+                        child->visit();
+                    }
                 }
             }
         }
+
+        m_queueAStar.pop();
+    }
+
+    Cell* marking = m_goalCell;
+
+    while (marking->m_previous != nullptr)
+    {
+        marking->mark();
+        marking = marking->m_previous;
     }
 }
 

@@ -27,3 +27,15 @@ void Cell::visitAllGoalNeighbours()
 		}
 	}
 }
+
+void Cell::setAStarValues(Vector2 t_goalPos)
+{
+	m_g = INFINITY;
+	m_cost = 1.0f;
+
+	m_heuristic = Vector2Distance({ (float)m_x, (float)m_y }, t_goalPos);
+
+	m_estimatedCost = -1;
+
+	m_previous = nullptr;
+}

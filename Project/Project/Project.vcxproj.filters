@@ -42,9 +42,6 @@
     <ClInclude Include="include\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Timeline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -105,9 +102,6 @@
     <ClInclude Include="include\Wall.h">
       <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="include\Editor.h">
-      <Filter>Header Files\Static</Filter>
-    </ClInclude>
     <ClInclude Include="include\AssetManager.h">
       <Filter>Header Files\Static</Filter>
     </ClInclude>
@@ -139,6 +133,12 @@
       <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="include\Breadcrumb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Timeline.h">
+      <Filter>Header Files\Static</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Editor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

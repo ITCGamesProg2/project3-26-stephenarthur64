@@ -1,6 +1,7 @@
 #include "NPC.h"
 
-NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), m_minDistance(40000), MAX_SPEED(0.4f), MIN_SPEED(0.1f), m_surprise(false), MAX_HEAL_TIMER(1.0f), m_healTimer(0.0f), MAX_DIST(200000)
+NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), m_minDistance(40000), MAX_SPEED(0.4f), MIN_SPEED(0.1f), m_surprise(false), MAX_HEAL_TIMER(1.0f), m_healTimer(0.0f), 
+									MAX_DIST(200000)
 {
 	m_speed = 0.3f;
 	m_health = 3;
@@ -23,10 +24,6 @@ void NPC::update()
 	}
 
 	GameObject::update();
-
-	if (m_targetCrumb == nullptr)
-	{
-	}
 
 	decideTarget();
 
@@ -103,7 +100,7 @@ void NPC::decideTarget()
 			m_targetCrumb = std::make_shared<Crumb>(m_breadcrumb->front());
 			m_target = m_targetCrumb->m_position;
 		}
-		
+
 		m_distToTarget = Vector2DistanceSqr(m_position, m_target);
 
 		for (Crumb& c : *m_breadcrumb)
