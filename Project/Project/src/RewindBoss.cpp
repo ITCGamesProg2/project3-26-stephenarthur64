@@ -19,12 +19,12 @@ void RewindBoss::draw()
 
 		if (!m_canDamage)
 		{
-			m_shieldPos = Vector2MoveTowards(m_position, m_target, m_radius);
+			m_shieldPos = Vector2MoveTowards(m_position, m_playerTarget, m_radius);
 
 			m_rotateOriginLine = { m_shieldPos.x, m_shieldPos.y * 10 };
 
 			m_normLineToShield = Vector2Normalize(Vector2Subtract(m_rotateOriginLine, m_shieldPos));
-			m_normTargetToShield = Vector2Normalize(Vector2Subtract(m_target, m_shieldPos));
+			m_normTargetToShield = Vector2Normalize(Vector2Subtract(m_playerTarget, m_shieldPos));
 
 			m_shieldAngle = Vector2Angle(m_normLineToShield, m_normTargetToShield) * RAD2DEG;
 		}
@@ -40,7 +40,7 @@ void RewindBoss::draw()
 
 void RewindBoss::immuneCheck(Vector2 t_playerPos)
 {
-	if (m_target == t_playerPos)
+	if (m_playerTarget == t_playerPos)
 	{
 		m_canDamage = false;
 	}

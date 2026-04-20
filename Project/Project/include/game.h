@@ -22,6 +22,7 @@
 #include "Button.h"
 #include "Tutorial.h"
 #include "Breadcrumb.h"
+#include "Grid.h"
 
 enum class GameState {
     MENU,

@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Attack.h"
 #include "Breadcrumb.h"
+#include "Grid.h"
 #include <iostream>
 #include <algorithm>
 
@@ -20,6 +21,7 @@ public:
     AttackTypes getType() { return m_attackType; }
 
     void decideTarget();
+    bool checkValidPlayerTarget();
     virtual void setPlayerTarget(Vector2 t_target) { m_playerTarget = t_target; }
     void setBreadcrumbsTarget(std::list<Crumb>* t_bc) { if (m_breadcrumb == nullptr) { m_breadcrumb = t_bc; } }
     void setPosition(Vector2 t_pos) { m_position = t_pos; }
@@ -51,5 +53,7 @@ protected:
     std::list<Crumb>* m_breadcrumb;
     std::shared_ptr<Crumb> m_targetCrumb;
     std::list<Vector2> m_foundCrumbs;
+    Vector2 m_tempTarget;
 };
+
 

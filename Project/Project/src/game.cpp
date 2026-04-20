@@ -13,7 +13,7 @@ Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), REWIND_INTERVAL(0.2), 
 
 void Game::init()
 {
-    LevelLoader::initGrid();
+    Grid::initGrid();
 
     m_background = LoadTexture("img/Environment/floor.png");
     m_camera.zoom = 1.0f;

@@ -53,7 +53,7 @@ void Editor::drawDebug()
         {
             for (int y = 0; y < 50; y++)
             {
-                Cell* current = LevelLoader::getGridData(x, y);
+                Cell* current = Grid::getGridData(x, y);
 
                 if (current->getType() == CellType::WALL)
                 {
@@ -342,7 +342,7 @@ void Editor::placeWall()
     m_placeSize.x = (int)m_placeSize.x;
     m_placeSize.y = (int)m_placeSize.y;
 
-    LevelLoader::setGridData(m_placePos.x, m_placePos.y, m_placeSize.x, m_placeSize.y, CellType::WALL);
+    Grid::setGridData(m_placePos.x, m_placePos.y, m_placeSize.x, m_placeSize.y, CellType::WALL);
 
     if (checkPlacing(m_placePos, m_placeSize.x, m_placeSize.y))
     {
@@ -401,7 +401,7 @@ void Editor::placeGoal()
     m_placeSize.x = (int)m_placeSize.x;
     m_placeSize.y = (int)m_placeSize.y;
 
-    LevelLoader::setGridData(m_placePos.x, m_placePos.y, m_placeSize.x, m_placeSize.y, CellType::GOAL);
+    Grid::setGridData(m_placePos.x, m_placePos.y, m_placeSize.x, m_placeSize.y, CellType::GOAL);
 
     Goal newGoal(GREEN, m_placeSize.x, m_placeSize.y);
 
@@ -601,7 +601,7 @@ void Editor::saveFile()
     {
         for (int y = 0; y < 50; y++)
         {
-            LevelLoader::getGridData(x, y)->unmark();
+            Grid::getGridData(x, y)->unmark();
         }
     }
 
@@ -640,11 +640,11 @@ void Editor::undo()
         switch (m_actionList.back())
         {
         case WALL:
-            LevelLoader::setGridData(m_walls->back().GetHitbox().x, m_walls->back().GetHitbox().y, m_walls->back().GetHitbox().width, m_walls->back().GetHitbox().height, CellType::EMPTY);
+            Grid::setGridData(m_walls->back().GetHitbox().x, m_walls->back().GetHitbox().y, m_walls->back().GetHitbox().width, m_walls->back().GetHitbox().height, CellType::EMPTY);
             m_walls->pop_back();
             break;
         case GOAL:
-            LevelLoader::setGridData(m_goals->back().GetHitbox().x, m_goals->back().GetHitbox().y, m_goals->back().GetHitbox().width, m_goals->back().GetHitbox().height, CellType::EMPTY);
+            Grid::setGridData(m_goals->back().GetHitbox().x, m_goals->back().GetHitbox().y, m_goals->back().GetHitbox().width, m_goals->back().GetHitbox().height, CellType::EMPTY);
             m_goals->pop_back();
             break;
         case DOOR:
@@ -686,17 +686,17 @@ void Editor::initAStar(Vector2 t_startPos, Vector2 t_goalPos, bool t_start)
         {
             if (t_start)
             {
-                LevelLoader::getGridData(x, y)->unvisit();
+                Grid::getGridData(x, y)->unvisit();
             }
-            LevelLoader::getGridData(x, y)->setAStarValues(t_goalPos);
+            Grid::getGridData(x, y)->setAStarValues(t_goalPos);
         }
     }
 
-    m_queueAStar.push(LevelLoader::getGridData(t_startPos.x, t_startPos.y));
+    m_queueAStar.push(Grid::getGridData(t_startPos.x, t_startPos.y));
     m_queueAStar.top()->visit();
     m_queueAStar.top()->m_g = 0;
 
-    m_goalCell = LevelLoader::getGridData(t_goalPos.x, t_goalPos.y);
+    m_goalCell = Grid::getGridData(t_goalPos.x, t_goalPos.y);
 
     AStarForComplete();
 }

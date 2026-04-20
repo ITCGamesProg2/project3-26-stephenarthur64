@@ -13,6 +13,7 @@
 #include "globals.h"
 #include "Cell.h"
 #include "Pickup.h"
+#include "Grid.h"
 
 class Tutorial;
 
@@ -24,7 +25,6 @@ public:
 	static void clearProgress();
 	static bool isNextLevelReady();
 	static bool isAtEnd();
-	static void initGrid();
 	static void saveFile(int t_file);
 	static void loadFile(int t_file);
 	static void clearFile(int t_file);
@@ -35,7 +35,5 @@ public:
 	static float getMusicVolume();
 	static float getSFXVolume();
 	static void loadOptions();
-	static Cell* getGridData(int t_x, int t_y);
-	static void setGridData(int t_x, int t_y, int t_sizeX, int t_sizeY, CellType t_type);
 };
 

@@ -29,7 +29,11 @@ void NPC::update()
 	{
 		decideTarget();
 
-		if (m_distToTarget < MAX_DIST && m_targetCrumb != nullptr)
+		if (m_target == m_playerTarget && m_distToTarget < MAX_DIST)
+		{
+			addForce(m_speed);
+		}
+		else if (m_distToTarget < MAX_DIST && m_targetCrumb != nullptr)
 		{
 			if (m_distToTarget > 10000)
 			{
@@ -73,6 +77,8 @@ void NPC::draw()
 	GameObject::draw();
 
 	m_attack->draw();
+
+	DrawLine(m_tempTarget.x, m_tempTarget.y, m_position.x, m_position.y, RED);
 }
 
 void NPC::collision(int t_damage, Vector2 t_pos)
@@ -94,34 +100,71 @@ void NPC::addForce(float t_amount)
 
 void NPC::decideTarget()
 {
-	if (m_breadcrumb != nullptr && m_breadcrumb->size() > 0)
+	if (checkValidPlayerTarget())
 	{
-		if (!m_targetCrumb || std::find(m_foundCrumbs.begin(), m_foundCrumbs.end(), m_targetCrumb->m_position) != m_foundCrumbs.end())
-		{
-			m_targetCrumb = std::make_shared<Crumb>(m_breadcrumb->front());
-			m_target = m_targetCrumb->m_position;
-		}
-
+		m_target = m_playerTarget;
 		m_distToTarget = Vector2DistanceSqr(m_position, m_target);
-
-		for (Crumb& c : *m_breadcrumb)
+		m_targetCrumb = nullptr;
+	}
+	else
+	{
+		if (m_breadcrumb != nullptr && m_breadcrumb->size() > 0)
 		{
-			if (std::find(m_foundCrumbs.begin(), m_foundCrumbs.end(), c.m_position) == m_foundCrumbs.end())
+			if (!m_targetCrumb || std::find(m_foundCrumbs.begin(), m_foundCrumbs.end(), m_targetCrumb->m_position) != m_foundCrumbs.end())
 			{
-				if (Vector2DistanceSqr(m_position, c.m_position) < m_distToTarget && Vector2DistanceSqr(m_position, c.m_position) > 1000)
+				m_targetCrumb = std::make_shared<Crumb>(m_breadcrumb->front());
+				m_target = m_targetCrumb->m_position;
+			}
+
+			m_distToTarget = Vector2DistanceSqr(m_position, m_target);
+
+			for (Crumb& c : *m_breadcrumb)
+			{
+				if (std::find(m_foundCrumbs.begin(), m_foundCrumbs.end(), c.m_position) == m_foundCrumbs.end())
 				{
-					m_targetCrumb = std::make_shared<Crumb>(c);
-					m_target = m_targetCrumb->m_position;
-					m_distToTarget = Vector2DistanceSqr(m_position, m_target);
+					if (Vector2DistanceSqr(m_position, c.m_position) < m_distToTarget && Vector2DistanceSqr(m_position, c.m_position) > 1000)
+					{
+						m_targetCrumb = std::make_shared<Crumb>(c);
+						m_target = m_targetCrumb->m_position;
+						m_distToTarget = Vector2DistanceSqr(m_position, m_target);
+					}
 				}
 			}
 		}
 	}
 }
 
+bool NPC::checkValidPlayerTarget()
+{
+	bool finish = false;
+	Vector2 towardsPlayer = m_playerTarget - m_position;
+	towardsPlayer = Vector2Normalize(towardsPlayer);
+	towardsPlayer *= 100;
+	m_tempTarget = m_position;
+
+	Vector2 playerCell = { m_playerTarget.x / 100, m_playerTarget.y / 100 };
+
+	while (!finish)
+	{
+		m_tempTarget += towardsPlayer;
+
+		if (Grid::getGridData(m_tempTarget.x / 100, m_tempTarget.y / 100)->getType() == CellType::WALL)
+		{
+			finish = true;
+			return false;
+		}
+
+		if ((int)(m_tempTarget.x / 100) == (int)playerCell.x && (int)(m_tempTarget.y / 100) == (int)playerCell.y)
+		{
+			finish = true;
+		}
+	}
+
+	return true;
+}
+
 void NPC::crumbFound(Crumb& t_c)
 {
-	std::cout << "next\n" + std::to_string(m_targetCrumb->m_position.x) + "" + std::to_string(m_targetCrumb->m_position.y) + "\n";
 	if (m_foundCrumbs.size() >= 10)
 	{
 		m_foundCrumbs.pop_front();

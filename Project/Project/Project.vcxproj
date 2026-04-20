@@ -152,6 +152,7 @@
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\globals.h" />
     <ClInclude Include="include\Goal.h" />
+    <ClInclude Include="include\Grid.h" />
     <ClInclude Include="include\HeavyAttack.h" />
     <ClInclude Include="include\LevelLoader.h" />
     <ClInclude Include="include\LightAttack.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="include\Wall.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\Grid.cpp" />
     <ClCompile Include="src\Animation.cpp" />
     <ClCompile Include="src\AssetManager.cpp" />
     <ClCompile Include="src\Attack.cpp" />

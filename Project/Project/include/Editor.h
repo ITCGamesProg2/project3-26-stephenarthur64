@@ -13,7 +13,7 @@
 #include "Boss.h"
 #include "globals.h"
 #include "Button.h"
-#include "LevelLoader.h"
+#include "Grid.h"
 
 struct Comparitor {
 	bool operator()(const Cell* t_lhs, const Cell* t_rhs) const

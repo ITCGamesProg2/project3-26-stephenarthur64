@@ -170,15 +170,19 @@ void GameObject::stopVelocity(int t_direction)
 	}
 	else
 	{
-		if (m_velocity.x != 0.0f && m_velocity.y != 0.0f)
+		/*if (m_velocity.x != 0.0f && m_velocity.y != 0.0f)
 		{
 			if (!IsSoundPlaying(AssetManager::getSound("bump")))
 			{
 				PlaySound(AssetManager::getSound("bump"));
 			}
 		}
-		m_velocity.x = 0.0f;
-		m_velocity.y = 0.0f;
+
+		if (m_velocity.x < 0)
+		{
+			m_velocity.x = -m_velocity.x * 1.5f;
+		}
+		m_velocity.y = -m_velocity.y * 1.5f;*/
 	}
 }
 
