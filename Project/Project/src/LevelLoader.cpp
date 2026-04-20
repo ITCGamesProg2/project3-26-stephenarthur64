@@ -13,6 +13,14 @@ static float m_sfx;
 
 void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, TimeAbilities& t_bossType, Vector2& t_bossPos, std::vector<Tutorial>& t_tut, Pickup& t_pickup)
 {
+    for (int x = 0; x < 50; x++)
+    {
+        for (int y = 0; y < 50; y++)
+        {
+            Grid::setGridData(x * 100, y * 100, 100, 100, CellType::EMPTY);
+        }
+    }
+
     m_nextLevelReady = false;
 
     t_e.reserve(25);
@@ -141,10 +149,12 @@ void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std:
     if (m_progress == 0)
     {
         m_player->setPosition({ data["player"]["position"][0], data["player"]["position"][1] });
+        Grid::setGridData(data["player"]["position"][0], data["player"]["position"][1], 100, 100, CellType::SPAWN);
     }
     else
     {
         m_player->setPosition({ data["goals"][m_progress - 1]["position"][0] + 50.0f, data["goals"][m_progress - 1]["position"][1] + 50.0f });
+        Grid::setGridData(data["player"]["position"][0] + 50, data["player"]["position"][1] + 50, 100, 100, CellType::SPAWN);
     }
 }
 

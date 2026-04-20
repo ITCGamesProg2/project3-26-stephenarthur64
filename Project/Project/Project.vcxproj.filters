@@ -142,7 +142,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Grid.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Static</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -240,7 +240,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\Grid.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Static</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

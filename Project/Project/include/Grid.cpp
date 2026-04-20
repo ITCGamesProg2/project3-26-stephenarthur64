@@ -42,6 +42,7 @@ void Grid::setGridData(int t_x, int t_y, int t_sizeX, int t_sizeY, CellType t_ty
         for (int y = t_y; y < t_y + t_sizeY; y++)
         {
             m_grid[x][y].setType(t_type);
+            m_grid[x][y].unmark();
         }
     }
 }
@@ -49,4 +50,47 @@ void Grid::setGridData(int t_x, int t_y, int t_sizeX, int t_sizeY, CellType t_ty
 Cell* Grid::getGridData(int t_x, int t_y)
 {
     return &m_grid[t_x][t_y];
+}
+
+void Grid::bfsAssignFloor()
+{
+    std::queue<Cell*> queue;
+
+    for (int x = 0; x < 50; x++)
+    {
+        for (int y = 0; y < 50; y++)
+        {
+            if (Grid::getGridData(x, y)->getType() == CellType::SPAWN)
+            {
+                queue.push(Grid::getGridData(x, y));
+                break;
+            }
+        }
+    }
+
+    while (!queue.empty())
+    {
+        if (queue.size() > 100000)
+        {
+            int yeah = 0;
+        }
+        Cell* current = queue.front();
+        queue.pop();
+        if (current->getType() == CellType::EMPTY)
+        {
+            current->setType(CellType::FLOOR);
+        }
+
+        for (Cell* child : current->getArcList())
+        {
+            if (child->getType() != CellType::FLOOR && child->getType() != CellType::WALL)
+            {
+                if (!child->marked())
+                {
+                    queue.push(child);
+                    child->mark();
+                }
+            }
+        }
+    }
 }

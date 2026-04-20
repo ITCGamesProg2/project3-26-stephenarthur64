@@ -68,6 +68,7 @@ void Game::loadLevel()
     m_startingPickup.setAbility(TimeAbilities::MAX);
 
     LevelLoader::LoadLevel(m_walls, m_goals, m_enemies, m_supports, m_doors, bossType, bossPos, m_tutorials, m_startingPickup);
+    Grid::bfsAssignFloor();
 
     if (m_startingPickup.getAbility() != TimeAbilities::MAX)
     {
@@ -141,7 +142,17 @@ void Game::draw()
         BeginTextureMode(target);
         ClearBackground(BLACK);
         BeginMode2D(m_camera);
-        DrawTexturePro(m_background, { 0, 0, 640, 640 }, { 0, 0, 5000, 5000 }, { 0,0 }, 0.0f, WHITE);
+
+        for (int x = 0; x < 50; x++)
+        {
+            for (int y = 0; y < 50; y++)
+            {
+                if (Grid::getGridData(x, y)->getType() != CellType::EMPTY)
+                {
+                    DrawTexturePro(m_background, { 0, 0, 32, 32 }, { x * 100.0f, y * 100.0f, 100.0f, 100.0f }, { 0.0f, 0.0f }, 0.0f, WHITE);
+                }
+            }
+        }
 
         if (m_activeBoss)
         {

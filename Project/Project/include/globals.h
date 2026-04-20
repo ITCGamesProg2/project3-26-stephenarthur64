@@ -46,6 +46,8 @@ enum EditState {
 enum class CellType {
 	WALL,
 	GOAL,
+	SPAWN,
+	FLOOR,
 	EMPTY
 };
 
