@@ -18,7 +18,7 @@ public:
 	Rectangle getHitbox();
 	Vector2 getPosition() { return m_startPos; }
 	void setStart(Vector2 t_start);
-	float getRadius() { if (m_running) { return m_radius; } return 0.0f; }
+	virtual float getRadius() { if (m_running) { return m_radius; } return 0.0f; }
 	AttackTypes getType() { return m_type; }
 	Vector2 getTarget() { return m_targetPos; }
 

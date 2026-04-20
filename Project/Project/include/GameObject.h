@@ -22,7 +22,7 @@ public:
 	void stopVelocity(int t_direction);
 	virtual void damage(int t_amount);
 	Vector2 getPosition() { return m_position; }
-	float getRadius() { return m_radius; }
+	virtual float getRadius() { return m_radius; }
 	bool isAlive() { return m_alive; }
 	virtual void respawn();
 
