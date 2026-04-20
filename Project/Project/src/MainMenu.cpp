@@ -1,7 +1,7 @@
 #include "MainMenu.h"
 
 MainMenu::MainMenu() : m_end(false), m_state(MenuState::TITLE), m_title("Evanescent Gloom"), m_filesText("Select a save file"), m_bufferMouse({-1, -1}), m_forcedOptions(false),
-						m_editSelected(false)
+						m_editSelected(false), m_startingGame(false)
 {
 }
 
@@ -207,6 +207,7 @@ void MainMenu::settingsUpdate()
 		{
 			m_forcedOptions = false;
 			m_end = true;
+			m_state = MenuState::TITLE;
 			m_back.resetTrigger();
 		}
 		else
@@ -324,11 +325,13 @@ void MainMenu::resetMenu()
 {
 	PlayMusicStream(AssetManager::getMusic("title"));
 	m_end = false;
+	m_startingGame = false;
 }
 
 void MainMenu::startGame(int t_file)
 {
 	m_end = true;
+	m_startingGame = true;
 	LevelLoader::loadFile(t_file);
 	StopMusicStream(AssetManager::getMusic("title"));
 	m_state = MenuState::TITLE;

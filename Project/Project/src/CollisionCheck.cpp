@@ -27,7 +27,7 @@ void CollisionCheck::CheckCollisionsGameObject(GameObject& t_go1, GameObject& t_
 /// <param name="t_go2">Wall</param>
 void CollisionCheck::CheckCollisionsWall(GameObject& t_go, Wall& t_wall, bool t_knockback)
 {
-    if (CheckCollisionPointRec(t_go.nextPositionX(), t_wall.GetHitbox()))
+    if (CheckCollisionCircleRec(t_go.nextPositionX(), t_go.getRadius() / 2.0f, t_wall.GetHitbox()))
     {
         t_go.stopVelocity(0);
     }
@@ -35,7 +35,7 @@ void CollisionCheck::CheckCollisionsWall(GameObject& t_go, Wall& t_wall, bool t_
     {
         t_go.stopVelocity(2);
     }
-    if (CheckCollisionPointRec(t_go.nextPositionY(), t_wall.GetHitbox()))
+    if (CheckCollisionCircleRec(t_go.nextPositionY(), t_go.getRadius() / 2.0f, t_wall.GetHitbox()))
     {
         t_go.stopVelocity(1);
     }

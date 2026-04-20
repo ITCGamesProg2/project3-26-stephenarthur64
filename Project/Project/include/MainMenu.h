@@ -34,6 +34,7 @@ public:
 
 	void draw();
 	bool ended() { return m_end; }
+	bool startingGame() { return m_startingGame; }
 	void resetMenu();
 	void startGame(int t_file);
 	void endGame() { m_state = MenuState::END; }
@@ -43,6 +44,7 @@ public:
 
 private:
 	bool m_end;
+	bool m_startingGame;
 	bool m_forcedOptions;
 	Button m_main[3];
 	Button m_saves[3];

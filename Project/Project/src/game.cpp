@@ -330,7 +330,8 @@ void Game::update()
             {
                 m_state = GameState::PAUSED;
             }
-            else
+            
+            if (m_menu.startingGame())
             {
                 if (m_menu.isEditing())
                 {
@@ -434,12 +435,13 @@ void Game::standardUpdate()
         m_player.addForce(m_playerDirection);
     }
 
-    CheckCollisions();
-
     m_player.update();
 
-    m_breadcrumb.spawn(m_player.getPosition());
-    m_breadcrumb.timerUpdate();
+    if (!m_timeSkip)
+    {
+        m_breadcrumb.spawn(m_player.getPosition());
+        m_breadcrumb.timerUpdate();
+    }
 
     for (Tutorial& t : m_tutorials)
     {
@@ -520,6 +522,8 @@ void Game::standardUpdate()
     {
         d.update();
     }
+
+    CheckCollisions();
 
     if (m_timeCounting < REWIND_INTERVAL)
     {
@@ -870,28 +874,54 @@ void Game::handleInput()
 
 void Game::CheckCollisions()
 {
-    // Refactor later to use spacial partitioning
-
-    if (m_activeBoss && !m_timeSkip)
+    if (!m_timeSkip)
     {
-        if (m_boss->getUpgrade().isAlive())
+        for (NPC& e : m_enemies)
         {
-            if (CollisionCheck::CheckCollisionPickup(m_player, m_boss->getUpgrade()))
-            {
-                m_player.newAbility(m_boss->getUpgrade().getAbility());
-                m_boss->getUpgrade().deactivate();
-            }
-        }
-
-        if (m_boss->isAlive())
-        {
-            CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), *m_boss);
-            CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), *m_boss);
+            CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), e);
+            CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), e);
 
             if (!m_timestop)
             {
-                CollisionCheck::CheckCollisionAttack(m_boss->getAttack(), m_player);
-                CollisionCheck::CheckCollisionAttackSpecial(m_boss->getAttack(), m_player, *m_boss);
+                CollisionCheck::CheckCollisionAttack(e.getAttack(), m_player);
+            }
+
+            for (EnemySupport& es : m_supports)
+            {
+                if (CheckCollisionPointCircle(es.getTarget(), e.getPosition(), e.getRadius()))
+                {
+                    e.heal();
+                }
+            }
+        }
+
+        for (EnemySupport& es : m_supports)
+        {
+            CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), es);
+            CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), es);
+        }
+
+        if (m_activeBoss)
+        {
+            if (m_boss->getUpgrade().isAlive())
+            {
+                if (CollisionCheck::CheckCollisionPickup(m_player, m_boss->getUpgrade()))
+                {
+                    m_player.newAbility(m_boss->getUpgrade().getAbility());
+                    m_boss->getUpgrade().deactivate();
+                }
+            }
+
+            if (m_boss->isAlive())
+            {
+                CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), *m_boss);
+                CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), *m_boss);
+
+                if (!m_timestop)
+                {
+                    CollisionCheck::CheckCollisionAttack(m_boss->getAttack(), m_player);
+                    CollisionCheck::CheckCollisionAttackSpecial(m_boss->getAttack(), m_player, *m_boss);
+                }
             }
         }
     }
@@ -944,37 +974,6 @@ void Game::CheckCollisions()
         CollisionCheck::CheckCollisionsGoal(m_player, t);
     }
 
-    if (m_timeSkip)
-    {
-        return;
-    }
-
-    for (NPC& e : m_enemies)
-    {
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), e);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), e);
-
-        if (!m_timestop)
-        {
-            CollisionCheck::CheckCollisionAttack(e.getAttack(), m_player);
-        }
-
-        for (EnemySupport& es : m_supports)
-        {
-            if (CheckCollisionPointCircle(es.getTarget(), e.getPosition(), e.getRadius()))
-            {
-                e.heal();
-            }
-        }
-    }
-
-    for (EnemySupport& es : m_supports)
-    {
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(LIGHT), es);
-        CollisionCheck::CheckCollisionAttack(m_player.getAttack(HEAVY), es);
-    }
-
-
     if (m_startingPickup.getAbility() != TimeAbilities::MAX && m_startingPickup.isAlive())
     {
         if (CollisionCheck::CheckCollisionPickup(m_player, m_startingPickup))
@@ -982,6 +981,23 @@ void Game::CheckCollisions()
             m_player.newAbility(m_startingPickup.getAbility());
             m_startingPickup.deactivate();
         }
+    }
+
+    m_player.move();
+
+    for (NPC& e : m_enemies)
+    {
+        e.move();
+    }
+
+    for (EnemySupport& es : m_supports)
+    {
+        es.move();
+    }
+
+    if (m_activeBoss)
+    {
+        m_boss->move();
     }
 }
 

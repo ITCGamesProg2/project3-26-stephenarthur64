@@ -78,8 +78,6 @@ void Player::update()
 		addMomentum(5.0f);
 	}
 
-	move();
-
 	m_light.setStart(m_position);
 	m_light.process();
 

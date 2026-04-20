@@ -18,6 +18,7 @@ public:
 	virtual Vector2 nextPositionX();
 	virtual Vector2 nextPositionY();
 	virtual Vector2 nextPositionFull();
+	void invertVelocity() { m_velocity = {-m_velocity.x, -m_velocity.y}; }
 	void stopVelocity(int t_direction);
 	virtual void damage(int t_amount);
 	Vector2 getPosition() { return m_position; }

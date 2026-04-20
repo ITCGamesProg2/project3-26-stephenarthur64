@@ -25,20 +25,23 @@ void NPC::update()
 
 	GameObject::update();
 
-	decideTarget();
-
-	if (m_distToTarget < MAX_DIST && m_targetCrumb != nullptr)
+	if (!m_surprise)
 	{
-		if (m_distToTarget > 10000)
-		{
-			addForce(m_speed);
-		}
-		else
-		{
-			crumbFound(*m_targetCrumb);
+		decideTarget();
 
-			decideTarget();
-			addForce(m_speed);
+		if (m_distToTarget < MAX_DIST && m_targetCrumb != nullptr)
+		{
+			if (m_distToTarget > 10000)
+			{
+				addForce(m_speed);
+			}
+			else
+			{
+				crumbFound(*m_targetCrumb);
+
+				decideTarget();
+				addForce(m_speed);
+			}
 		}
 	}
 
@@ -49,8 +52,6 @@ void NPC::update()
 			m_attack->execute(m_target);
 		}
 	}
-
-	move();
 
 	m_attack->setStart(m_position);
 	m_attack->process();
