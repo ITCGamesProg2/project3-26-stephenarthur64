@@ -1,7 +1,7 @@
 #include "Attack.h"
 #include <iostream>
 
-Attack::Attack() : m_animation(5, 32, 32, 0.10f)
+Attack::Attack() : m_animation(5, 32, 32, 0.05f)
 {
 }
 

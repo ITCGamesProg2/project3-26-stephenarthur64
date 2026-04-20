@@ -13,7 +13,7 @@ public:
 		m_height = 100.0f;
 		m_speed = 7.0f;
 		m_maxWindup = 0.5f;
-		m_maxDuration = 0.5f;
+		m_maxDuration = 0.3f;
 		m_maxCooldown = 0.55f;
 		m_cooldown = m_maxCooldown;
 		m_hitboxOffset = 75.0f;
