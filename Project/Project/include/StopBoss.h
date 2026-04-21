@@ -10,6 +10,6 @@ public:
     virtual void draw() override;
     virtual void update() override;
     virtual void immuneCheck(Vector2 t_playerPos) override;
-  //  virtual float getRadius() override { return 1.0f; }
+    virtual void respawn() override;
     void setPlayerTarget(Vector2 t_target) override {}
 };

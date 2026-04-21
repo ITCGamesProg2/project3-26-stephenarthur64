@@ -187,6 +187,8 @@ void Game::draw()
             door.draw();
         }
 
+        m_goals.back().draw();
+
         for (Tutorial& t : m_tutorials)
         {
             t.draw();
@@ -1025,19 +1027,22 @@ void Game::CheckCollisions()
 
     m_player.move();
 
-    for (NPC& e : m_enemies)
+    if (!m_timestop)
     {
-        e.move();
-    }
+        for (NPC& e : m_enemies)
+        {
+            e.move();
+        }
 
-    for (EnemySupport& es : m_supports)
-    {
-        es.move();
-    }
+        for (EnemySupport& es : m_supports)
+        {
+            es.move();
+        }
 
-    if (m_activeBoss)
-    {
-        m_boss->move();
+        if (m_activeBoss)
+        {
+            m_boss->move();
+        }
     }
 }
 

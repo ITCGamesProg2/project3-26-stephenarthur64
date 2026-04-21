@@ -56,11 +56,6 @@ void StopBoss::update()
 	m_attack->setStart(m_position);
 	m_attack->process();
 
-	if (m_position.x < -1000)
-	{
-		int thing = 0;
-	}
-
 	if (m_attack->isRunning())
 	{
 		move();
@@ -82,4 +77,11 @@ void StopBoss::immuneCheck(Vector2 t_playerPos)
 	{
 		m_canDamage = true;
 	}
+}
+
+void StopBoss::respawn()
+{
+	GameObject::respawn();
+
+	m_speed = 0.5f;
 }

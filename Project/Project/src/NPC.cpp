@@ -76,8 +76,6 @@ void NPC::draw()
 	GameObject::draw();
 
 	m_attack->draw();
-
-	DrawLine(m_tempTarget.x, m_tempTarget.y, m_position.x, m_position.y, RED);
 }
 
 void NPC::collision(int t_damage, Vector2 t_pos)
