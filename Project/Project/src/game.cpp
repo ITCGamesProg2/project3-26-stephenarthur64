@@ -13,6 +13,8 @@ Game::Game() : m_player(BLUE, 35.0f), m_rewinding(false), REWIND_INTERVAL(0.2), 
 
 void Game::init()
 {
+    srand(time(nullptr));
+
     Grid::initGrid();
 
     m_background = LoadTexture("img/Environment/floor.png");
@@ -29,6 +31,8 @@ void Game::init()
     m_timeStopShader = AssetManager::getShader("stop");
     m_rewindShader = AssetManager::getShader("rewind");
     m_skipShader = AssetManager::getShader("skip");
+
+    m_breadcrumb.setStepSound(AssetManager::getSound("step"));
 
     target = LoadRenderTexture(SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -159,10 +163,8 @@ void Game::draw()
             m_boss->draw();
         }
 
-        for (Crumb& bc : m_breadcrumb.getCrumbs())
-        {
-            DrawCircle(bc.m_position.x, bc.m_position.y, 20.0f, BLUE);
-        }
+        m_breadcrumb.drawCrumbs();
+        m_breadcrumb.updateCrumbParticles();
 
         for (NPC& e : m_enemies)
         {
@@ -450,7 +452,6 @@ void Game::standardUpdate()
 
     if (!m_timeSkip)
     {
-        m_breadcrumb.spawn(m_player.getPosition());
         m_breadcrumb.timerUpdate();
     }
 
@@ -853,6 +854,12 @@ void Game::handleInput()
         {
             m_playerDirection.x += 1.0f;
         }
+
+        if (m_playerDirection.x != 0 || m_playerDirection.y != 0)
+        {
+            m_breadcrumb.spawn(m_player.getPosition());
+        }
+
         m_player.addForce(m_playerDirection);
     }
     else if (m_state == GameState::EDITING)

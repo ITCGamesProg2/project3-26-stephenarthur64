@@ -142,6 +142,7 @@
     <ClInclude Include="include\Button.h" />
     <ClInclude Include="include\Cell.h" />
     <ClInclude Include="include\CollisionCheck.h" />
+    <ClInclude Include="include\Crumb.h" />
     <ClInclude Include="include\Door.h" />
     <ClInclude Include="include\Editor.h" />
     <ClInclude Include="include\EnemyHeavy.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="src\Button.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CollisionCheck.cpp" />
+    <ClCompile Include="src\Crumb.cpp" />
     <ClCompile Include="src\Door.cpp" />
     <ClCompile Include="src\Editor.cpp" />
     <ClCompile Include="src\EnemyHeavy.cpp" />

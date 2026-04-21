@@ -144,6 +144,9 @@
     <ClInclude Include="include\Grid.h">
       <Filter>Header Files\Static</Filter>
     </ClInclude>
+    <ClInclude Include="include\Crumb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp">
@@ -241,6 +244,9 @@
     </ClCompile>
     <ClCompile Include="include\Grid.cpp">
       <Filter>Source Files\Static</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Crumb.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

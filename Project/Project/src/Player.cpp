@@ -126,6 +126,11 @@ void Player::damage(int t_amount)
 	GameObject::damage(t_amount);
 	std::cout << m_health << "\n";
 
+	if (m_health < 4)
+	{
+		PlaySound(AssetManager::getSound("low_health"));
+	}
+
 	if (m_invincibilityFrames <= 0.0f)
 	{
 		m_momentum -= t_amount * 2;

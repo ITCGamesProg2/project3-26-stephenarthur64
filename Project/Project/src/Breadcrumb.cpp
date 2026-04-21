@@ -4,6 +4,14 @@ Breadcrumb::Breadcrumb() : MAX_POSITIONS(10), MAX_TIME(0.3f), m_timer(0.0f), m_c
 {
 }
 
+void Breadcrumb::drawCrumbs()
+{
+	for (Crumb& bc : m_crumbs)
+	{
+		bc.drawParticles();
+	}
+}
+
 void Breadcrumb::spawn(Vector2 t_position)
 {
 	if (m_canSpawn)
@@ -18,7 +26,7 @@ void Breadcrumb::spawn(Vector2 t_position)
 			Crumb* oldBack = &m_crumbs.back();
 
 			m_crumbs.push_back({ t_position });
-			oldBack->m_next = &m_crumbs.back();
+			oldBack->setNext(&m_crumbs.back());
 		}
 		else
 		{
@@ -26,6 +34,13 @@ void Breadcrumb::spawn(Vector2 t_position)
 		}
 
 		m_canSpawn = false;
+
+		m_crumbs.back().initParticles();
+
+		if (!IsSoundPlaying(m_stepSound))
+		{
+		}
+		PlaySound(m_stepSound);
 	}
 }
 
@@ -39,5 +54,13 @@ void Breadcrumb::timerUpdate()
 	{
 		m_canSpawn = true;
 		m_timer = 0.0f;
+	}
+}
+
+void Breadcrumb::updateCrumbParticles()
+{
+	for (Crumb& bc : m_crumbs)
+	{
+		bc.updateParticles();
 	}
 }

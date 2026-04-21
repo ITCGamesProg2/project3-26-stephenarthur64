@@ -28,6 +28,8 @@ void AssetManager::initAssets()
 	m_sounds["timestopend"] = LoadSound("audio/sfx/TimeStopEnd.wav");
 	m_sounds["click"] = LoadSound("audio/sfx/click.wav");
 	m_sounds["confirm"] = LoadSound("audio/sfx/Confirm.wav");
+	m_sounds["step"] = LoadSound("audio/sfx/8-bit-foot-steps.mp3");
+	m_sounds["low_health"] = LoadSound("audio/sfx/Low_Health.wav");
 
 	m_music["title"] = LoadMusicStream("audio/music/8_Bit_Nostalgia.mp3");
 	m_music["main"] = LoadMusicStream("audio/music/8_Bit_Adventure.mp3");
