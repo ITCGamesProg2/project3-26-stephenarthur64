@@ -13,6 +13,8 @@ public:
         m_attack->setCooldownScale(3.0f);
         m_attack->setWindupScale(2.0f);
         m_spriteScale = 1.5f;
+        m_maxHealth = 5;
+        m_health = m_maxHealth;
     }
 };
 

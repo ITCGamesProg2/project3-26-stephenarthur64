@@ -21,6 +21,11 @@ void Boss::damage(int t_amount)
 	{
 		GameObject::damage(t_amount);
 	}
+
+	if (m_health <= 0)
+	{
+		m_upgrade.activate();
+	}
 }
 
 void Boss::setSprite(Texture2D* t_sp)

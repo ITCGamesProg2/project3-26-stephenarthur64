@@ -10,6 +10,7 @@ static Player* m_player;
 static SaveDetails m_saves[3];
 static float m_music;
 static float m_sfx;
+static bool m_tutorials;
 
 void LevelLoader::LoadLevel(std::vector<Wall>& t_w, std::vector<Goal>& t_g, std::vector<NPC>& t_e, std::vector<EnemySupport>& t_es, std::vector<Door>& t_d, TimeAbilities& t_bossType, Vector2& t_bossPos, std::vector<Tutorial>& t_tut, Pickup& t_pickup)
 {
@@ -238,10 +239,28 @@ void LevelLoader::clearFile(int t_file)
 {
     m_currentFile = t_file;
 
-    std::ofstream Save("saves/savefile" + std::to_string(t_file) + ".txt");
+    std::ifstream file("saves/savefile" + std::to_string(m_currentFile) + ".json");
+    nlohmann::json data;
+    data = nlohmann::json::parse(file);
 
-    Save << 1;
-    Save << 0;
+    data["health"] = 1.0;
+    data["momentum"] = 1.0;
+    data["rewind"] = false;
+    data["skip"] = false;
+    data["stop"] = false;
+
+    data["level"] = 1;
+    data["progress"] = 0;
+
+    file.close();
+
+    std::ofstream write("saves/savefile" + std::to_string(m_currentFile) + ".json");
+
+    write << data.dump(4);
+
+    write.close();
+
+    loadSaves();
 }
 
 SaveDetails LevelLoader::getSaveDetails(int t_file)
@@ -273,7 +292,7 @@ void LevelLoader::setPlayerRef(Player* t_p)
     m_player = t_p;
 }
 
-void LevelLoader::saveOptions(float t_music, float t_sfx)
+void LevelLoader::saveOptions(float t_music, float t_sfx, bool t_tutorial)
 {
     std::ifstream file("options.json");
     nlohmann::json data;
@@ -281,6 +300,8 @@ void LevelLoader::saveOptions(float t_music, float t_sfx)
 
     data["music"] = t_music;
     data["sfx"] = t_sfx;
+    data["fullscreen"] = IsWindowFullscreen();
+    data["tutorials"] = t_tutorial;
 
     file.close();
 
@@ -301,6 +322,11 @@ float LevelLoader::getSFXVolume()
     return m_sfx;
 }
 
+bool LevelLoader::getTutorials()
+{
+    return m_tutorials;
+}
+
 void LevelLoader::loadOptions()
 {
     std::ifstream file("options.json");
@@ -309,4 +335,10 @@ void LevelLoader::loadOptions()
 
     m_music = data["music"];
     m_sfx = data["sfx"];
+    m_tutorials = data["tutorials"];
+
+    if (data["fullscreen"])
+    {
+       ToggleFullscreen();
+    }
 }

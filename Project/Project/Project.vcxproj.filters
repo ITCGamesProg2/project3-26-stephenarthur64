@@ -295,5 +295,8 @@
     <None Include="levels\level8.json">
       <Filter>Resource Files\levels</Filter>
     </None>
+    <None Include="options.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

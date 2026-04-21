@@ -63,10 +63,6 @@ void Editor::drawDebug()
                 {
                     DrawRectangle(x * 100, y * 100, 100, 100, GREEN);
                 }
-                else if (current->getType() == CellType::FLOOR)
-                {
-                    DrawRectangle(x * 100, y * 100, 100, 100, BLUE);
-                }
 
                 if (current->visited() && !current->marked())
                 {

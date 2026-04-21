@@ -31,9 +31,10 @@ public:
 	static SaveDetails getSaveDetails(int t_file);
 	static void loadSaves();
 	static void setPlayerRef(Player* t_p);
-	static void saveOptions(float t_music, float t_sfx);
+	static void saveOptions(float t_music, float t_sfx, bool t_tutorial);
 	static float getMusicVolume();
 	static float getSFXVolume();
+	static bool getTutorials();
 	static void loadOptions();
 };
 

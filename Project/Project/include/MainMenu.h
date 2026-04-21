@@ -37,10 +37,12 @@ public:
 	bool startingGame() { return m_startingGame; }
 	void resetMenu();
 	void startGame(int t_file);
+	void clearSave(int t_file);
 	void endGame() { m_state = MenuState::END; }
 	void forceOptions() { m_state = MenuState::OPTIONS; m_forcedOptions = true; }
 
 	bool isEditing() { return m_editSelected; }
+	bool tutorialsActive() { return m_activeTutorials; }
 
 private:
 	bool m_end;
@@ -48,10 +50,13 @@ private:
 	bool m_forcedOptions;
 	Button m_main[3];
 	Button m_saves[3];
+	Button m_clearSaves[3];
 	Button m_edit;
 	Button m_back;
 	Button m_musicSlider;
 	Button m_sfxSlider;
+	Button m_fullscreen;
+	Button m_tutorial;
 	MenuState m_state;
 	Music* m_music;
 	std::string m_title;
@@ -65,5 +70,6 @@ private:
 	float m_newSFXVolume;
 
 	bool m_editSelected;
+	bool m_activeTutorials;
 };
 

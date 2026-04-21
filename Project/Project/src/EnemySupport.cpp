@@ -46,7 +46,7 @@ void EnemySupport::findNearest(std::vector<NPC>& t_e)
 		{
 			found = true;
 			m_attack->execute(e.getPosition()); 
-			setPlayerTarget(e.getPosition());
+			m_target = e.getPosition();
 			m_nearestDist = m_tempDist;
 		}
 	}
@@ -63,7 +63,7 @@ void EnemySupport::findNearest(std::vector<NPC>& t_e)
 		m_tempDist = Vector2Distance(e.getPosition(), m_position);
 		if (m_tempDist < m_nearestDist)
 		{
-			setPlayerTarget(e.getPosition());
+			m_target = e.getPosition();
 			m_nearestDist = m_tempDist;
 		}
 	}

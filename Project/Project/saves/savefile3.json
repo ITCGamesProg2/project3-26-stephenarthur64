@@ -1,9 +1,9 @@
 {
-    "health": 0.6000000238418579,
-    "level": 3,
+    "health": 1.0,
+    "level": 1,
     "momentum": 1.0,
-    "progress": 1,
-    "rewind": true,
-    "skip": true,
-    "stop": true
+    "progress": 0,
+    "rewind": false,
+    "skip": false,
+    "stop": false
 }

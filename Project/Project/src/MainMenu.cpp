@@ -24,6 +24,10 @@ void MainMenu::init()
 		m_saves[i].setSize({ 100.0f, 50.0f });
 		m_saves[i].setPosition({ ((SCREEN_WIDTH / 2.0f) - 200) + (200 * i), 500.0f });
 		m_saves[i].setText("Save " + std::to_string(i + 1));
+
+		m_clearSaves[i].setSize({ 100.0f, 50.0f });
+		m_clearSaves[i].setPosition({ ((SCREEN_WIDTH / 2.0f) - 200) + (200 * i), 600.0f });
+		m_clearSaves[i].setText("Clear");
 	}
 
 	m_edit.setSize({ 100.0f, 50.0f });
@@ -35,14 +39,33 @@ void MainMenu::init()
 	m_back.setText("Back");
 
 	m_musicSlider.setSize({ 50.0f, 50.0f });
-	m_musicSlider.setPosition({ 500.0f, 300.0f });
+	m_musicSlider.setPosition({ 500.0f, 200.0f });
 
 	m_sfxSlider.setSize({ 50.0f, 50.0f });
-	m_sfxSlider.setPosition({ 500.0f, 500.0f });
+	m_sfxSlider.setPosition({ 500.0f, 400.0f });
+
+	m_fullscreen.setSize({ 150.0f, 50.0f });
+	m_fullscreen.setPosition({ (SCREEN_WIDTH / 2.0f) - 200.0f, 600.0f });
+	m_fullscreen.setText("Fullscreen");
+
+	m_tutorial.setSize({ 150.0f, 50.0f });
+	m_tutorial.setPosition({ (SCREEN_WIDTH / 2.0f) + 50.0f, 600.0f });
+	m_tutorial.setText("Tutorials");
 
 	LevelLoader::loadOptions();
 	m_newMusicVolume = LevelLoader::getMusicVolume();
 	m_newSFXVolume = LevelLoader::getSFXVolume();
+	m_activeTutorials = LevelLoader::getTutorials();
+
+	if (m_activeTutorials)
+	{
+		m_tutorial.fullSelect();
+	}
+	if (IsWindowFullscreen())
+	{
+		m_fullscreen.fullSelect();
+	}
+
 	AssetManager::setMusicVolume(m_newMusicVolume);
 	AssetManager::setSFXVolume(m_newSFXVolume);
 
@@ -126,6 +149,7 @@ void MainMenu::savesUpdate()
 		if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
 		{
 			m_saves[i].detectClick(GetMousePosition());
+			m_clearSaves[i].detectClick(GetMousePosition());
 			m_back.detectClick(GetMousePosition());
 			m_edit.detectClick(GetMousePosition());
 		}
@@ -133,6 +157,7 @@ void MainMenu::savesUpdate()
 		for (int i = 0; i < 3; i++)
 		{
 			m_saves[i].detectHover(GetMousePosition());
+			m_clearSaves[i].detectHover(GetMousePosition());
 		}
 
 		m_back.detectHover(GetMousePosition());
@@ -142,6 +167,12 @@ void MainMenu::savesUpdate()
 		{
 			startGame(i + 1);
 			m_saves[i].resetTrigger();
+		}
+
+		if (m_clearSaves[i].triggered())
+		{
+			clearSave(i + 1);
+			m_clearSaves[i].resetTrigger();
 		}
 
 		if (m_back.triggered())
@@ -171,11 +202,15 @@ void MainMenu::settingsUpdate()
 		m_musicSlider.resetTrigger();
 		m_sfxSlider.resetTrigger();
 		m_back.detectClick(GetMousePosition());
+		m_fullscreen.detectClick(GetMousePosition());
+		m_tutorial.detectClick(GetMousePosition());
 	}
 
 	m_musicSlider.detectHover(GetMousePosition());
 	m_sfxSlider.detectHover(GetMousePosition());
 	m_back.detectHover(GetMousePosition());
+	m_fullscreen.detectHover(GetMousePosition());
+	m_tutorial.detectHover(GetMousePosition());
 
 	if (m_musicSlider.triggered())
 	{
@@ -184,7 +219,7 @@ void MainMenu::settingsUpdate()
 			m_musicSlider.newX(GetMousePosition().x);
 			m_newMusicVolume = (GetMousePosition().x - 100.0f) / (SCREEN_WIDTH - 200.0f);
 			AssetManager::setMusicVolume(m_newMusicVolume);
-			LevelLoader::saveOptions(m_newMusicVolume, m_newSFXVolume);
+			LevelLoader::saveOptions(m_newMusicVolume, m_newSFXVolume, m_activeTutorials);
 		}
 		m_musicSlider.forceHover();
 	}
@@ -196,7 +231,7 @@ void MainMenu::settingsUpdate()
 			m_sfxSlider.newX(GetMousePosition().x);
 			m_newSFXVolume = (GetMousePosition().x - 100.0f) / (SCREEN_WIDTH - 200.0f);
 			AssetManager::setSFXVolume(m_newSFXVolume);
-			LevelLoader::saveOptions(m_newMusicVolume, m_newSFXVolume);
+			LevelLoader::saveOptions(m_newMusicVolume, m_newSFXVolume, m_activeTutorials);
 		}
 		m_sfxSlider.forceHover();
 	}
@@ -215,6 +250,37 @@ void MainMenu::settingsUpdate()
 			m_state = MenuState::TITLE;
 			m_back.resetTrigger();
 		}
+	}
+
+	if (m_fullscreen.triggered())
+	{
+		ToggleFullscreen();
+		if (!m_fullscreen.isSelected())
+		{
+			m_fullscreen.fullSelect();
+		}
+		else
+		{
+			m_fullscreen.fullDeselect();
+		}
+		LevelLoader::saveOptions(m_newMusicVolume, m_newSFXVolume, m_activeTutorials);
+		m_fullscreen.resetTrigger();
+	}
+
+	if (m_tutorial.triggered())
+	{
+		m_activeTutorials = !m_activeTutorials;
+
+		if (m_activeTutorials)
+		{
+			m_tutorial.fullSelect();
+		}
+		else
+		{
+			m_tutorial.fullDeselect();
+		}
+		LevelLoader::saveOptions(m_newMusicVolume, m_newSFXVolume, m_activeTutorials);
+		m_tutorial.resetTrigger();
 	}
 }
 
@@ -274,6 +340,7 @@ void MainMenu::draw()
 			DrawRectangleLinesEx({ m_saveDetailsPos.x - 20, m_saveDetailsPos.y - 20, 150, 380 }, 10.0f, BLACK);
 
 			m_saves[i].draw();
+			m_clearSaves[i].draw();
 
 			m_tempSave = LevelLoader::getSaveDetails(i);
 
@@ -308,6 +375,8 @@ void MainMenu::draw()
 		m_sfxSlider.draw();
 
 		m_back.draw();
+		m_fullscreen.draw();
+		m_tutorial.draw();
 	}
 	else if (m_state == MenuState::END)
 	{
@@ -335,4 +404,9 @@ void MainMenu::startGame(int t_file)
 	LevelLoader::loadFile(t_file);
 	StopMusicStream(AssetManager::getMusic("title"));
 	m_state = MenuState::TITLE;
+}
+
+void MainMenu::clearSave(int t_file)
+{
+	LevelLoader::clearFile(t_file);
 }

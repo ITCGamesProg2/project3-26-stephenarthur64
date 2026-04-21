@@ -1,6 +1,6 @@
 #include "Pickup.h"
 
-Pickup::Pickup() : m_radius(25.0f), m_alive(true), m_frame(0)
+Pickup::Pickup() : m_radius(25.0f), m_alive(false), m_frame(0), m_tutorials(true)
 {
 }
 
@@ -49,5 +49,8 @@ void Pickup::deactivate()
 {
 	m_alive = false;
 	PlaySound(AssetManager::getSound("powerup"));
-	m_popup.spawn({ 600.0f, 200.0f }, { 50.0f, 50.0f });
+	if (m_tutorials)
+	{
+		m_popup.spawn({ 600.0f, 200.0f }, { 50.0f, 50.0f });
+	}
 }

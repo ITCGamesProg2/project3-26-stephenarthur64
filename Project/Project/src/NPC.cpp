@@ -4,7 +4,6 @@ NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), m_minDistance(40000), MAX
 									MAX_DIST(200000)
 {
 	m_speed = 0.3f;
-	m_health = 3;
 	m_maxIFrames = 0.5f;
 	m_alive = true;
 }

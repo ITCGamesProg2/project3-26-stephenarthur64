@@ -20,6 +20,7 @@ public:
 	void forceHover() { m_hover = true; }
 	void fullSelect() { m_fullSelect = true; }
 	void fullDeselect() { m_fullSelect = false; }
+	bool isSelected() { return m_fullSelect; }
 
 	Vector2 getPosition() { return m_position; }
 

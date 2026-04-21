@@ -15,6 +15,8 @@ public:
         m_attack->setWindupScale(2.0f);
         m_minDistance = 10000;
         m_spriteScale = 0.5f;
+        m_maxHealth = 3;
+        m_health = m_maxHealth;
     }
 
     virtual void update() override;
