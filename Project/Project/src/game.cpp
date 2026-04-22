@@ -93,6 +93,7 @@ void Game::loadLevel()
         m_state = GameState::END;
         m_camera.target = { SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
         endGame();
+        return;
     }
 
     m_player.setSprite(&AssetManager::getSprite("player"));
@@ -448,6 +449,10 @@ void Game::resetGame()
     m_walls.clear();
     m_goals.clear();
     m_doors.clear();
+    if (m_activeBoss)
+    {
+        m_boss->respawn();
+    }
     Timeline::clearTimeline();
 }
 

@@ -1,7 +1,7 @@
 #include "NPC.h"
 
 NPC::NPC(Color t_c, float t_r) : GameObject(t_c, t_r), m_minDistance(40000), MAX_SPEED(0.4f), MIN_SPEED(0.1f), m_surprise(false), MAX_HEAL_TIMER(1.0f), m_healTimer(0.0f), 
-									MAX_DIST(200000)
+									MAX_DIST(400000)
 {
 	m_speed = 0.3f;
 	m_maxIFrames = 0.5f;
