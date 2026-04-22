@@ -117,6 +117,8 @@ void Game::loadLevel()
         es.setSprite(&AssetManager::getSprite("support"));
     }
 
+    m_goals.back().setSprite(&AssetManager::getSprite("goal"));
+
     m_rewindBoss.setSprite(&AssetManager::getSprite("rewindboss"));
     m_skipBoss.setSprite(&AssetManager::getSprite("rewindboss"));
     m_stopBoss.setSprite(&AssetManager::getSprite("rewindboss"));
@@ -188,11 +190,6 @@ void Game::draw()
         }
 
         m_goals.back().draw();
-
-        for (Tutorial& t : m_tutorials)
-        {
-            t.draw();
-        }
 
         if (m_startingPickup.getAbility() != TimeAbilities::MAX)
         {
@@ -547,6 +544,8 @@ void Game::standardUpdate()
     {
         d.update();
     }
+
+    m_goals.back().update();
 
     CheckCollisions();
 

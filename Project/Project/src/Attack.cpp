@@ -92,7 +92,6 @@ void Attack::draw()
 	{
 		float angle = Vector2Angle(m_startPos, m_targetPos) * RAD2DEG;
 		angle -= 90.0f;
-		//DrawRectanglePro({ m_startPos.x, m_startPos.y,  m_width, m_height }, { m_width / 2.0f, m_height / 2.0f }, 0.0f, YELLOW);
 		DrawTexturePro(AssetManager::getSprite(m_name), m_animation.getFrame(), { m_startPos.x, m_startPos.y, 100 * 1.5f, 100 * 1.5f }, { m_width, m_height }, angle, WHITE);
 	}
 }

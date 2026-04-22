@@ -19,10 +19,14 @@ public:
         m_windup = 0.0f;
         m_duration = 0.0f;
         m_collided = false;
+        m_name = "specialattack";
     }
     virtual void draw() override
     {
-        if (m_running) { DrawCircleV(m_startPos, m_radius, YELLOW); }
+        if (m_running) {
+            m_animation.setValues(5, 96, 96, 0.05f);
+            DrawTexturePro(AssetManager::getSprite(m_name), m_animation.getFrame(), { m_startPos.x - (m_radius * 1.5f), m_startPos.y - (m_radius * 1.5f), 250, 250 }, { 0.0f, 0.0f }, 0.0f, WHITE);
+        }
     }
 
     virtual bool canAttack() override
@@ -47,13 +51,13 @@ public:
 			if (m_windup >= m_maxWindup)
 			{
 				m_duration += GetFrameTime();
-				//m_animation.nextFrame(GetFrameTime());
+				m_animation.nextFrame(GetFrameTime());
 
 				if (m_duration >= m_maxDuration)
 				{
 					m_running = false;
 					m_windup = 0.0f;
-					//m_animation.resetTime();
+					m_animation.resetTime();
 				}
 			}
 		}
