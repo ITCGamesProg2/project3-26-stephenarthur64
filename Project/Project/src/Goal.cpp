@@ -17,5 +17,8 @@ void Goal::collision(int t_damage, Vector2 t_pos)
 
 void Goal::draw()
 {
-	DrawTexturePro(*m_sprite, m_animation.getFrame(), { m_position.x, m_position.y, m_sizeX, m_sizeY }, { 0.0f, 0.0f }, 0, WHITE);
+	if (m_sprite != nullptr)
+	{
+		DrawTexturePro(*m_sprite, m_animation.getFrame(), { m_position.x, m_position.y, m_sizeX, m_sizeY }, { 0.0f, 0.0f }, 0, WHITE);
+	}
 }

@@ -70,10 +70,6 @@ void Grid::bfsAssignFloor()
 
     while (!queue.empty())
     {
-        if (queue.size() > 100000)
-        {
-            int yeah = 0;
-        }
         Cell* current = queue.front();
         queue.pop();
         if (current->getType() == CellType::EMPTY)

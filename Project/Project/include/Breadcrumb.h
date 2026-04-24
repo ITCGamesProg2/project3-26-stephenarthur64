@@ -18,7 +18,7 @@ private:
 	std::list<Crumb> m_crumbs;
 	const float MAX_TIME;
 	float m_timer;
-	const int MAX_POSITIONS;
+	const int MAX_POSITIONS;         
 	bool m_canSpawn;
 	Sound m_stepSound;
 };

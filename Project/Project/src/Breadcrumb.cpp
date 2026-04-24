@@ -37,9 +37,6 @@ void Breadcrumb::spawn(Vector2 t_position)
 
 		m_crumbs.back().initParticles();
 
-		if (!IsSoundPlaying(m_stepSound))
-		{
-		}
 		PlaySound(m_stepSound);
 	}
 }

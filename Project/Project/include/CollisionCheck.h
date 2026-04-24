@@ -5,7 +5,6 @@
 #include "Wall.h"
 #include "Goal.h"
 #include "Pickup.h"
-#include "NPC.h"
 #include "globals.h"
 
 static class CollisionCheck

@@ -342,10 +342,10 @@ void Editor::placeWall()
     m_placeSize.x = (int)m_placeSize.x;
     m_placeSize.y = (int)m_placeSize.y;
 
-    Grid::setGridData(m_placePos.x, m_placePos.y, m_placeSize.x, m_placeSize.y, CellType::WALL);
 
     if (checkPlacing(m_placePos, m_placeSize.x, m_placeSize.y))
     {
+        Grid::setGridData(m_placePos.x, m_placePos.y, m_placeSize.x, m_placeSize.y, CellType::WALL);
         m_actionList.push_back(m_state);
 
         Wall newWall(BROWN, m_placeSize.x, m_placeSize.y);
@@ -401,12 +401,12 @@ void Editor::placeGoal()
     m_placeSize.x = (int)m_placeSize.x;
     m_placeSize.y = (int)m_placeSize.y;
 
-    Grid::setGridData(m_placePos.x, m_placePos.y, m_placeSize.x, m_placeSize.y, CellType::GOAL);
 
     Goal newGoal(GREEN, m_placeSize.x, m_placeSize.y);
 
     if(checkPlacing(m_placePos, m_placeSize.x, m_placeSize.y))
     {
+        Grid::setGridData(m_placePos.x, m_placePos.y, m_placeSize.x, m_placeSize.y, CellType::GOAL);
         m_actionList.push_back(m_state);
 
         newGoal.setPosition(m_placePos);
@@ -577,6 +577,14 @@ bool Editor::checkPlacing(Vector2 t_pos, float t_radius)
         }
     }
 
+    for (Door& door : *m_doors)
+    {
+        if (CheckCollisionCircleRec(t_pos, t_radius, door.GetHitbox()))
+        {
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -585,6 +593,14 @@ bool Editor::checkPlacing(Vector2 t_pos, float t_x, float t_y)
     for (Wall& wall : *m_walls)
     {
         if (CheckCollisionRecs(wall.GetHitbox(), { t_pos.x, t_pos.y, t_x, t_y }))
+        {
+            return false;
+        }
+    }
+
+    for (Door& door : *m_doors)
+    {
+        if (CheckCollisionRecs(door.GetHitbox(), { t_pos.x, t_pos.y, t_x, t_y }))
         {
             return false;
         }
