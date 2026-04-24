@@ -354,8 +354,15 @@ void MainMenu::draw()
 
 			m_tempSave = LevelLoader::getSaveDetails(i);
 
-			DrawText(("Level: " + std::to_string(m_tempSave.level)).c_str(), m_saveDetailsPos.x, m_saveDetailsPos.y, 20, WHITE);
-			DrawText(("Progress: " + std::to_string(m_tempSave.progress)).c_str(), m_saveDetailsPos.x, m_saveDetailsPos.y + 30, 20, WHITE);
+			if (m_tempSave.level != 9 )
+			{
+				DrawText(("Level: " + std::to_string(m_tempSave.level)).c_str(), m_saveDetailsPos.x, m_saveDetailsPos.y, 20, WHITE);
+				DrawText(("Progress: " + std::to_string(m_tempSave.progress)).c_str(), m_saveDetailsPos.x, m_saveDetailsPos.y + 30, 20, WHITE);
+			}
+			else
+			{
+				DrawText("Complete", m_saveDetailsPos.x, m_saveDetailsPos.y, 20, WHITE);
+			}
 
 			if (m_tempSave.rewind)
 			{
@@ -397,7 +404,7 @@ void MainMenu::draw()
 		DrawText(m_title.c_str(), (SCREEN_WIDTH / 2.0f) - (30 * (m_title.size() / 2.0f)), 100, 50, WHITE);
 		DrawText("A Game by Lucy Arthur", (SCREEN_WIDTH / 2.0f) - (30 * (m_title.size() / 2.0f)), 200, 30, WHITE);
 		DrawText("Created with: Raylib", (SCREEN_WIDTH / 2.0f) - (30 * (m_title.size() / 2.0f)), 350, 30, WHITE);
-		DrawText("Sound Effects: Coffee 'Valen' Bat", (SCREEN_WIDTH / 2.0f) - (30 * (m_title.size() / 2.0f)), 400, 30, WHITE);
+		DrawText("Sound Effects: Coffee 'Valen' Bat and myInstant.com", (SCREEN_WIDTH / 2.0f) - (30 * (m_title.size() / 2.0f)), 400, 30, WHITE);
 		DrawText("Music: FesliyanStudios.com", (SCREEN_WIDTH / 2.0f) - (30 * (m_title.size() / 2.0f)), 450, 30, WHITE);
 
 		m_back.draw();
